@@ -1,0 +1,91 @@
+{% extends "drinks/base.html" %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/spectrum.css' %}"></style>
+<link rel="stylesheet" href="{% static 'css/drinks.css' %}"></style>
+<script src="{% static 'js/new_drink.js' %}"></script>
+<script src="{% static 'js/spectrum.js' %}"></script>
+<script src="{% static 'js/suggestions.js' %}"></script>
+
+<div class="container" style="margin-left: 0px; margin-right: 0px; max-width: unset">
+    <form action="/create/" enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-lg-12 col-sm-12 col-12 drink-header" style="background-image: linear-gradient(black, white)"></div>
+        </div>
+        <div class="row drink-detail">
+            <div class="offset-2 col-8">
+                <label for="{{form.image.auto_id}}" class="image-upload">
+                    <img src="/media/images/upload.svg" class="img-thumbnail img-fluid drink-thumbnail"/>
+                </label>
+                {{ form.image }}
+            </div>
+            <div class="col-lg-12 col-sm-12 py-3 input-group input-group-lg">
+                {{ form.name }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                    <ul id="ingredient-list" class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="input-group col-sm-6 col-8 pr-1">
+                                    <input type="text" class="form-control ingredient-name" placeholder="Search"/>
+                                </div>
+                                <div class="input-group col-sm-4 col-4 pl-1">
+                                    <input type="number"  step="0.1" value="0.0" class="form-control px-2" placeholder="0.0" aria-label="0.0"/>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">OZ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-8 offset-2 py-3 ">
+                <input type="Submit" value="Finish" class="btn btn-primary btn-lg btn-block">
+            </div>
+        </div>
+     </form>
+</div>
+
+<script type="text/javascript">
+    var ingredients = {{ingredients | safe}};
+
+    var input = $(".ingredient-name")[0];
+    var suggestions = new Suggestions(input, ingredients, { minLength: 1 });
+    suggestions.list.element.classList += " dropdown-menu"
+
+    $(".suggestions").append($("<div>", {class: "dropdown-divider"}));
+    $(".suggestions").append($("<a>", {class: "dropdown-item"}).text("New..."));
+
+    //function render(item, html){
+    //    element = document.createElement("li")
+    //}
+</script>
+
+
+<!--<div class="modal fade" id="ingredientModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ingredientModalLabel">New Ingredient</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Hello world!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>-->
+
+{% endblock %}

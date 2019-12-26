@@ -1,0 +1,30 @@
+{% extends "drinks/base.html" %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    {% for drink in drinks %}
+      <div class="col-sm-6 col-md-4 py-3">
+        <a class="text-dark" href="/show/{{drink.id}}">
+          <div class="card">
+            <div class="card-img-top">
+              <img src="{{drink.image.url}}" class="img-thumbnail" style="background-color: {{drink.color}}" alt="drink">
+            </div>
+            <div class="card-body">
+              <div class="card-title">
+                {{drink.name}}
+              </div>
+              <div class="card-text">
+                test
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% empty %}
+      <p>No drinks in the database!</p>
+      <a href="create">Create a Recipe</a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
