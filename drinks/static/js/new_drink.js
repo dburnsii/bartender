@@ -24,4 +24,5 @@ $(document).ready( () => {
         color: "#00aeef",
         preferredFormat: "hex"
     });
+
 });

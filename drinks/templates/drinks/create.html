@@ -62,6 +62,10 @@
     $(".suggestions").append($("<div>", {class: "dropdown-divider"}));
     $(".suggestions").append($("<a>", {class: "dropdown-item"}).text("New..."));
 
+    input.addEventListener('change', () => {
+	    console.log("changed!");
+	    console.log(suggestions);
+    });
     //function render(item, html){
     //    element = document.createElement("li")
     //}
