@@ -25,4 +25,25 @@ $(document).ready( () => {
         preferredFormat: "hex"
     });
 
+    /*$(".ingredient-name").keyup((event) => {
+        if(suggestions.list.items.length == 0){
+            var temp = document.createElement('li');
+            temp.appendChild(document.createTextNode('New...'));
+            temp.addEventListener('click', () => {console.log("test")});
+            suggestions.list.element.appendChild(temp);
+            suggestions.list.element.style.display = "block";
+            $(".suggestions li").click((e) => {
+                console.log("test");
+            });
+        }
+
+    });
+
+    $(".suggestions").click((event) => {
+        console.log("Click");
+        console.log(event.target);
+    })*/
+
+
+
 });

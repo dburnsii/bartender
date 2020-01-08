@@ -47,9 +47,15 @@ List.prototype.isVisible = function() {
 List.prototype.draw = function() {
   this.element.innerHTML = '';
 
-  if (this.items.length === 0) {
-    this.hide();
-    return;
+  if (this.items.length === 0 ) {
+    if(this.component.options.emptyText && this.component.query.length > 0 && !this.component.selected){
+      this.drawItem(({"string": this.component.options.emptyText, "original": this.component.options.emptyText}), true);
+      this.show();
+      return;
+  } else {
+      this.hide();
+      return;
+    }
   }
 
   for (var i = 0; i < this.items.length; i++) {

@@ -11,7 +11,8 @@ var Suggestions = function(el, data, options) {
     minLength: 2,
     limit: 5,
     filter: true,
-    hideOnBlur: true
+    hideOnBlur: true,
+    emptyText: "test!"
   }, options);
 
   this.el = el;

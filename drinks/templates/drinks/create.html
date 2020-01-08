@@ -4,13 +4,13 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/spectrum.css' %}"></style>
 <link rel="stylesheet" href="{% static 'css/drinks.css' %}"></style>
-<script src="{% static 'js/new_drink.js' %}"></script>
 <script src="{% static 'js/spectrum.js' %}"></script>
 <script src="{% static 'js/suggestions.js' %}"></script>
 
 <div class="container" style="margin-left: 0px; margin-right: 0px; max-width: unset">
     <form action="/create/" enctype="multipart/form-data" method="post">
         {% csrf_token %}
+        {{ form.ingredients }}
         <div class="row">
             <div class="col-lg-12 col-sm-12 col-12 drink-header" style="background-image: linear-gradient(black, white)"></div>
         </div>
@@ -28,7 +28,7 @@
         <div class="row">
             <div class="col-12">
                     <ul id="ingredient-list" class="list-group list-group-flush">
-                        <li class="list-group-item">
+                        <!--<li class="list-group-item">
                             <div class="row">
                                 <div class="input-group col-sm-6 col-8 pr-1">
                                     <input type="text" class="form-control ingredient-name" placeholder="Search"/>
@@ -40,7 +40,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </li>
+                        </li>-->
                     </ul>
             </div>
         </div>
@@ -54,25 +54,75 @@
 
 <script type="text/javascript">
     var ingredients = {{ingredients | safe}};
+    var suggestions = [];
 
-    var input = $(".ingredient-name")[0];
-    var suggestions = new Suggestions(input, ingredients, { minLength: 1 });
-    suggestions.list.element.classList += " dropdown-menu"
 
-    $(".suggestions").append($("<div>", {class: "dropdown-divider"}));
-    $(".suggestions").append($("<a>", {class: "dropdown-item"}).text("New..."));
+    appendIngredient();
+    //var input = $(".ingredient-name")[0];
+    //var sugg = new Suggestions(input, ingredients, { minLength: 1, emptyText: "New..."}));
+    //sugg.list.element.classList += " dropdown-menu"
+    //suggestions.push(sugg);
 
-    input.addEventListener('change', () => {
-	    console.log("changed!");
-	    console.log(suggestions);
-    });
-    //function render(item, html){
-    //    element = document.createElement("li")
-    //}
+
+
+
+    function appendIngredient() {
+        var item = $("<li></li>").addClass("list-group-item");
+        var row = $("<div></div>").addClass("row");
+        var nameDiv = $("<div></div>").addClass("input-group col-sm-6 col-8 pr-1");
+        var quantityDiv = $("<div></div>").addClass("input-group col-sm-4 col-4 pl-1");
+        var nameInput = $("<input type=\"text\" placeholder=\"Search\">").addClass("form-control ingredient-name")
+        nameDiv.append(nameInput);
+        quantityDiv.append($("<input type=\"number\" step=\"0.1\" value=\"0.0\">").addClass("form-control px-2"));
+        var unitsDiv = $("<div></div>").addClass("input-group-append");
+        unitsDiv.append($("<span>OZ</span>").addClass("input-group-text"));
+        quantityDiv.append(unitsDiv);
+        row.append(nameDiv);
+        row.append(quantityDiv);
+        item.append(row);
+        $("#ingredient-list").append(item);
+
+        var sugg = new Suggestions(nameInput[0], ingredients, { minLength: 1, emptyText: "New..."});
+        sugg.list.element.classList += " dropdown-menu";
+        suggestions.push(sugg);
+        //TODO: Make sure "new" shows up after selecting it the first time
+        //TODO: Make sure modal updates ingredients variable
+        //TODO: Make sure ingredients value update also updates sugg array
+        //TODO: Create a way to remove from list
+
+        nameInput.change((e) => {
+            if(e.target.value === "New..."){
+                console.log("Fire up the modal!");
+                $("#ingredientModal").modal();
+                //TODO: Create Modal form
+
+
+            } else if(ingredients.includes(e.target.value)){
+                //TODO: Prevent same ingredient from being added twice
+
+                console.log("Added " + e.target.value);
+                $(e.target).removeClass("is-invalid");
+
+                //TODO: Create JSON string of ingredients
+                $("#id_ingredients").value = "test!";
+
+
+                //TODO: Check if the length is >= than 10
+                appendIngredient();
+
+                //TODO: Set focus to quantity
+                //TODO: Animate this append
+
+            } else {
+                $(e.target).addClass("is-invalid");
+            }
+        });
+    }
 </script>
+<script src="{% static 'js/new_drink.js' %}"></script>
 
 
-<!--<div class="modal fade" id="ingredientModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
+<div class="modal fade" id="ingredientModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -90,6 +140,6 @@
             </div>
         </div>
     </div>
-</div>-->
+</div>
 
 {% endblock %}
