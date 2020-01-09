@@ -11,6 +11,7 @@
     <form action="/create/" enctype="multipart/form-data" method="post">
         {% csrf_token %}
         {{ form.ingredients }}
+        {{ form.color }}
         <div class="row">
             <div class="col-lg-12 col-sm-12 col-12 drink-header" style="background-image: linear-gradient(black, white)"></div>
         </div>
@@ -27,21 +28,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                    <ul id="ingredient-list" class="list-group list-group-flush">
-                        <!--<li class="list-group-item">
-                            <div class="row">
-                                <div class="input-group col-sm-6 col-8 pr-1">
-                                    <input type="text" class="form-control ingredient-name" placeholder="Search"/>
-                                </div>
-                                <div class="input-group col-sm-4 col-4 pl-1">
-                                    <input type="number"  step="0.1" value="0.0" class="form-control px-2" placeholder="0.0" aria-label="0.0"/>
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">OZ</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>-->
-                    </ul>
+                    <ul id="ingredient-list" class="list-group list-group-flush"></ul>
             </div>
         </div>
         <div class="row">
@@ -56,31 +43,31 @@
     var ingredients = {{ingredients | safe}};
     var suggestions = [];
 
-
     appendIngredient();
-    //var input = $(".ingredient-name")[0];
-    //var sugg = new Suggestions(input, ingredients, { minLength: 1, emptyText: "New..."}));
-    //sugg.list.element.classList += " dropdown-menu"
-    //suggestions.push(sugg);
 
-
-
+    function updateIngredients() {
+        var ingredientNames = $.map($(".ingredient-name"), (e) => e.value);
+        var ingredientQuantities = $.map($(".ingredient-quantity"), (e) => parseFloat(e.value) );
+        var updatedIngredients = {};
+        ingredientNames.forEach((key, i) =>  updatedIngredients[key] = ingredientQuantities[i]);
+        $("#id_ingredients").val(JSON.stringify(updatedIngredients));
+    }
 
     function appendIngredient() {
         var item = $("<li></li>").addClass("list-group-item");
-        var row = $("<div></div>").addClass("row");
+        var row = $("<div></div>").addClass("row ingredient-row");
         var nameDiv = $("<div></div>").addClass("input-group col-sm-6 col-8 pr-1");
         var quantityDiv = $("<div></div>").addClass("input-group col-sm-4 col-4 pl-1");
         var nameInput = $("<input type=\"text\" placeholder=\"Search\">").addClass("form-control ingredient-name")
         nameDiv.append(nameInput);
-        quantityDiv.append($("<input type=\"number\" step=\"0.1\" value=\"0.0\">").addClass("form-control px-2"));
+        var quantityInput = $("<input type=\"number\" step=\"0.1\" value=\"0.0\">").addClass("form-control px-2 ingredient-quantity");
+        quantityDiv.append(quantityInput);
         var unitsDiv = $("<div></div>").addClass("input-group-append");
         unitsDiv.append($("<span>OZ</span>").addClass("input-group-text"));
         quantityDiv.append(unitsDiv);
         row.append(nameDiv);
         row.append(quantityDiv);
         item.append(row);
-        $("#ingredient-list").append(item);
 
         var sugg = new Suggestions(nameInput[0], ingredients, { minLength: 1, emptyText: "New..."});
         sugg.list.element.classList += " dropdown-menu";
@@ -96,28 +83,33 @@
                 $("#ingredientModal").modal();
                 //TODO: Create Modal form
 
-
             } else if(ingredients.includes(e.target.value)){
                 //TODO: Prevent same ingredient from being added twice
-
                 console.log("Added " + e.target.value);
                 $(e.target).removeClass("is-invalid");
-
-                //TODO: Create JSON string of ingredients
-                $("#id_ingredients").value = "test!";
-
-
+                updateIngredients();
+                var quantity = $(".ingredient-name").parents(".ingredient-row").find(".ingredient-quantity")
+                quantity.val("");
+                quantity.focus();
                 //TODO: Check if the length is >= than 10
                 appendIngredient();
-
-                //TODO: Set focus to quantity
                 //TODO: Animate this append
-
             } else {
                 $(e.target).addClass("is-invalid");
             }
         });
+
+        quantityInput.change(() => {
+            updateIngredients();
+        });
+
+        $("#ingredient-list").append(item);
     }
+
+
+
+    // Trigger color change to make the background match the color picker
+    $("#colorPicker").change();
 </script>
 <script src="{% static 'js/new_drink.js' %}"></script>
 

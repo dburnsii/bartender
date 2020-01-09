@@ -13,3 +13,9 @@
 .image-upload {
     width: 100%;
 }
+
+.sp-replacer {
+    position: absolute;
+    top: 70px;
+    z-index: 2;
+}

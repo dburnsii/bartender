@@ -2,16 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c6190ab3-46bf-4ac7-85ef-911fe4c3aed2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinks/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/drinks/static/css/drinks.css" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/static/css/drinks.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/drinks/static/js/new_drink.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/static/js/new_drink.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinks/static/js/suggestions.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/static/js/suggestions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinks/templates/drinks/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/templates/drinks/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/drinks/templates/drinks/create.html" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/templates/drinks/create.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/suggestions/dist/suggestions.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/suggestions/dist/suggestions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/suggestions/src/list.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/suggestions/src/list.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/suggestions/src/suggestions.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/suggestions/src/suggestions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/drinks/templates/drinks/show.html" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/templates/drinks/show.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -168,6 +164,14 @@
       <option name="presentableId" value="Default" />
       <updated>1572970544481</updated>
     </task>
+    <task id="LOCAL-00001" summary="Added ingredient create modal">
+      <created>1578501093428</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1578501093428</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -182,5 +186,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added ingredient create modal" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added ingredient create modal" />
   </component>
 </project>

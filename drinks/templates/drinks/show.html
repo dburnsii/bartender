@@ -20,11 +20,11 @@
     <div class="row">
         <div class="col-12">
             <ul class="list-group list-group-flush">
-                {% for i in 'bartender' %}
+                {% for key, value in drink.ingredients.items %}
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="text-left col-sm-6 col-9">Ing {{i}}</div>
-                            <div class="text-left col-sm-2 col-3">1.0oz</div>
+                            <div class="text-left col-sm-6 col-9">{{key}}</div>
+                            <div class="text-left col-sm-2 col-3">{{value}} OZ</div>
                         </div>
                     </li>
                 {% endfor %}
@@ -37,5 +37,8 @@
         </div>
     </div>
 </div>
+<script>
+    var ing = {{drink.ingredients | safe}}
 
+</script>
 {% endblock %}
