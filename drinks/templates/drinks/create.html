@@ -2,10 +2,14 @@
 
 {% block content %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/spectrum.css' %}"></style>
-<link rel="stylesheet" href="{% static 'css/drinks.css' %}"></style>
+<link rel="stylesheet" href="{% static 'css/spectrum.css' %}">
+<link rel="stylesheet" href="{% static 'css/drinks.css' %}">
+<link rel="stylesheet" href="{% static 'css/suggestions.css' %}">
+<link rel="stylesheet" href="{% static 'css/cropper.min.css' %}">
 <script src="{% static 'js/spectrum.js' %}"></script>
 <script src="{% static 'js/suggestions.js' %}"></script>
+<script src="{% static 'js/cropper.min.js' %}"></script>
+<script src="{% static 'js/jquery-cropper.min.js' %}"></script>
 
 <div class="container" style="margin-left: 0px; margin-right: 0px; max-width: unset">
     <form action="/create/" enctype="multipart/form-data" method="post">
@@ -45,11 +49,34 @@
 
     appendIngredient();
 
+    var tempObj = {};
+
+    //$(".drink-thumbnail").cropper({
+    //    aspectRatio: 1
+    //});
+
+    $("#id_image").change((e) => {
+        if(e.target.files && e.target.files[0]){
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                $(".drink-thumbnail").attr("src", e.target.result);
+            }
+
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    });
+
     function updateIngredients() {
         var ingredientNames = $.map($(".ingredient-name"), (e) => e.value);
         var ingredientQuantities = $.map($(".ingredient-quantity"), (e) => parseFloat(e.value) );
         var updatedIngredients = {};
-        ingredientNames.forEach((key, i) =>  updatedIngredients[key] = ingredientQuantities[i]);
+        ingredientNames.forEach((key, i) => {
+            if(key && ingredientQuantities[i] ){
+                updatedIngredients[key] = ingredientQuantities[i];
+            }
+        });
+        console.log(updatedIngredients);
         $("#id_ingredients").val(JSON.stringify(updatedIngredients));
     }
 
@@ -88,12 +115,14 @@
                 console.log("Added " + e.target.value);
                 $(e.target).removeClass("is-invalid");
                 updateIngredients();
-                var quantity = $(".ingredient-name").parents(".ingredient-row").find(".ingredient-quantity")
+                var quantity = $(e.target).parents(".ingredient-row").find(".ingredient-quantity")
                 quantity.val("");
                 quantity.focus();
                 //TODO: Check if the length is >= than 10
                 appendIngredient();
                 //TODO: Animate this append
+            } else if(!e.target.value){
+                $(e.target).removeClass("is-invalid");
             } else {
                 $(e.target).addClass("is-invalid");
             }

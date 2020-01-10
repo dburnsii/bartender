@@ -30,11 +30,11 @@ def create(request):
     else:
         form_class = DrinkForm
 
-    ingredients = list(map(lambda ing: ing['name'], IngredientType.objects.values()))
+    ing = list(map(lambda ing: ing['name'], IngredientType.objects.values()))
 
     return render(request, 'drinks/create.html', {
         'form': form_class,
-        'ingredients': ingredients
+        'ingredients': ing
     })
 
 

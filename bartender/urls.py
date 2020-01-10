@@ -18,6 +18,7 @@ from django.contrib.auth import views as auth_views
 
 from bartender import settings
 from drinks import views as drinks
+from barkeep import views as barkeep
 from django.urls import path
 from django.conf.urls.static import static
 from . import views
@@ -30,7 +31,8 @@ urlpatterns = [
     path('ingredients/new/', drinks.new_ingredient),
     path('', drinks.index, name='index'),
     path('create/', drinks.create),
-    path('show/<int:drink_id>', drinks.show)
+    path('show/<int:drink_id>', drinks.show),
+    path('restock/', barkeep.index)
 ]
 
 if settings.DEBUG:
