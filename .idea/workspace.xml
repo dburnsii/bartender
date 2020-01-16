@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c6190ab3-46bf-4ac7-85ef-911fe4c3aed2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bartender/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/bartender/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/worker/worker.py" beforeDir="false" afterPath="$PROJECT_DIR$/worker/worker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -191,7 +191,14 @@
       <option name="project" value="LOCAL" />
       <updated>1578672223077</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Started background worker script">
+      <created>1579187277797</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1579187277797</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -211,6 +218,7 @@
     <MESSAGE value="Added ingredient create modal" />
     <MESSAGE value="Completed initial drink creation" />
     <MESSAGE value="Added Image manipulation library for drink creation, started bottle update functionality" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Image manipulation library for drink creation, started bottle update functionality" />
+    <MESSAGE value="Started background worker script" />
+    <option name="LAST_COMMIT_MESSAGE" value="Started background worker script" />
   </component>
 </project>

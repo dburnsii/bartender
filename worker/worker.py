@@ -1,9 +1,8 @@
 #!/usr/bin/python
 
-import asyncio
-import websockets
 import json
 import importlib
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
 smbus_lib = importlib.util.find_spec('smbus')
@@ -12,31 +11,38 @@ gpio_lib = importlib.util.find_spec('RPi')
 if smbus_lib is None or gpio_lib is None:
     testing = True
 else:
-   testing = False
-   import smbus
-   import RPi.GPIO as GPIO
+    testing = False
+    import smbus
+    import RPi.GPIO as GPIO
+
+PORT = 8080
+
+class S(BaseHTTPRequestHandler):
+    def _set_headers(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+
+    def _html(self, message):
+        return "test!".encode("utf8")
+
+    def do_GET(self):
+        self._set_headers()
+        self.wfile.write(self._html("test"))
+
+    def do_HEAD(self):
+        self._set_headers()
+
+    def do_POST(self):
+        self._set_headers()
+        self.wfile.write(self._html("Post"))
 
 
-async def socket(websocket, path):
-    while True:
-        name = await websocket.recv()
-        data = json.loads(name)
-        response = ""
+def run(server_class=HTTPServer, handler_class=S, addr="localhost", port=PORT):
+    server_address = (addr, port)
+    httpd = server_class(server_address, handler_class)
+    print("Serving")
+    httpd.serve_forever()
 
-        if "drink" in data:
-            response = "Pouring drink!"
-        elif "led_upper" in data:
-            response = "Setting upper LED"
-        elif "led_lower" in data:
-            response = "Setting lower LED"
-        elif "lcd" in data:
-            response = "Setting LCD text"
-        else:
-            response = "Command not recognized: " + str(data)
 
-        await websocket.send(response)
-
-start_server = websockets.serve(socket, "localhost", 8765)
-asyncio.get_event_loop().run_until_complete(start_server)
-print("Listening on ws://localhost:8765")
-asyncio.get_event_loop().run_forever()
+run()
