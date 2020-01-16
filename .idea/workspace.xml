@@ -3,22 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c6190ab3-46bf-4ac7-85ef-911fe4c3aed2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/barkeep/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/barkeep/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/barkeep/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/barkeep/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/barkeep/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/barkeep/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bartender/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/bartender/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinks/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinks/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinks/static/css/drinks.css" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/static/css/drinks.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinks/templates/drinks/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/templates/drinks/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinks/templates/drinks/create.html" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/templates/drinks/create.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinks/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/drinks/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/drinks.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/drinks.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/new_drink.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/new_drink.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/suggestions.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/suggestions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bartender/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/bartender/settings.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -29,8 +14,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -75,7 +60,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.makemigrations">
+  <component name="RunManager" selected="Python.manage">
     <configuration name="collectstatic" type="PythonConfigurationType" factoryName="Python">
       <module name="bartender" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -199,7 +184,14 @@
       <option name="project" value="LOCAL" />
       <updated>1578672145442</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Added Image manipulation library for drink creation, started bottle update functionality">
+      <created>1578672223077</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1578672223077</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

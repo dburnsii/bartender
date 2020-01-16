@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drinks',
     'users',
-    'barkeep'
+    'barkeep',
+    'channels'
 ]
 
 MIDDLEWARE = [
