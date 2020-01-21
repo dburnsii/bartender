@@ -198,7 +198,14 @@
       <option name="project" value="LOCAL" />
       <updated>1579187277797</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Convert worker to http requests for now">
+      <created>1579192194677</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1579192194677</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -219,6 +226,7 @@
     <MESSAGE value="Completed initial drink creation" />
     <MESSAGE value="Added Image manipulation library for drink creation, started bottle update functionality" />
     <MESSAGE value="Started background worker script" />
-    <option name="LAST_COMMIT_MESSAGE" value="Started background worker script" />
+    <MESSAGE value="Convert worker to http requests for now" />
+    <option name="LAST_COMMIT_MESSAGE" value="Convert worker to http requests for now" />
   </component>
 </project>
