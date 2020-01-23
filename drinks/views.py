@@ -2,6 +2,9 @@ from django.core import serializers
 from django.shortcuts import render, redirect
 
 from drinks.forms import *
+from barkeep.models import Pump
+
+import json
 
 
 def index(request):
@@ -11,8 +14,13 @@ def index(request):
 
 
 def show(request, drink_id):
+    drink = Drink.objects.get(pk=drink_id)
+    pumps = Pump.objects.filter(contents__type__name__in=drink.ingredients.keys())
+    ingredient_ids = pumps.values_list('contents', flat=True)
+    available = Ingredient.objects.filter(id__in=ingredient_ids)
     return render(request, 'drinks/show.html', {
-        'drink': Drink.objects.get(pk=drink_id)
+        'drink': drink,
+        'available': serializers.serialize('json', available, use_natural_foreign_keys=True)
     })
 
 
@@ -57,3 +65,12 @@ def new_ingredient(request):
     return render(request, 'ingredients/create_ingredient.html', {
         'form': form_class
     })
+
+
+def pour(request, drink):
+    if request.method == "POST":
+        drink = json.loads(request.POST.get('drink', '{}'))
+        for ing in drink:
+            print(ing)
+        return "yaaas"
+    return render(request, 'drinks/pouring.html')

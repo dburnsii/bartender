@@ -70,11 +70,14 @@ def pour_drink(drink):
 
     :return: int , ETA of drink being poured.
     """
-    print("Pouring a drink!!")
-    mcp.get_pin(3).value = False
-    time.sleep(3)
-    mcp.get_pin(3).value = True
-    return millis() + 5000
+
+    if testing:
+        print("Pouring a drink!!")
+    else:
+        mcp.get_pin(3).value = False
+        time.sleep(3)
+        mcp.get_pin(3).value = True
+        return millis() + 5000
 
 
 def run_server():
@@ -115,7 +118,7 @@ class WorkerServer(BaseHTTPRequestHandler):
             else:
                 response = "Invalid query!"
         elif "drink" in query:
-            response = pour_drink()
+            response = pour_drink("test")
         else:
             response = "Invalid Query!"
 

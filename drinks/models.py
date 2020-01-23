@@ -58,6 +58,9 @@ class Ingredient(models.Model):
     def __str__(self):
         return u'{0}'.format(self.name)
 
+    def natural_key(self):
+        return self.name
+
 
 class IngredientType(models.Model):
     name = models.CharField(max_length=128, null=False, default='Untitled')
@@ -67,3 +70,6 @@ class IngredientType(models.Model):
 
     def __str__(self):
         return u'{0}'.format(self.name)
+
+    def natural_key(self):
+        return self.name

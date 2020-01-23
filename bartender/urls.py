@@ -32,6 +32,7 @@ urlpatterns = [
     path('', drinks.index, name='index'),
     path('create/', drinks.create),
     path('show/<int:drink_id>', drinks.show),
+    path('pour/', drinks.pour),
     path('restock/', barkeep.index)
 ]
 
