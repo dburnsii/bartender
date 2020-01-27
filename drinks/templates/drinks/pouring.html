@@ -3,8 +3,7 @@
 {% block content %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/drinks.css' %}"/>
-<script src="{% static 'js/csrf_token.js' %}"></script>
-<script src="{% static 'js/show_drink.js' %}"></script>
+
 
 <div class="container" style="margin-left: 0px; margin-right: 0px; max-width: unset">
     <div class="row">
@@ -34,25 +33,12 @@
     </div>
     <div class="row">
         <div class="col-8 offset-2 py-3 ">
-            <button id="pour_button" type="button" class="btn btn-primary btn-lg btn-block">Start Pour</button>
+            <button type="button" class="btn btn-primary btn-lg btn-block">Start Pour</button>
         </div>
     </div>
 </div>
 <script>
-    var ingredients = {{drink.ingredients | safe}};
-    var available = {{available | safe}};
-
-    var options = {};
-
-    available.forEach( (ingredient, index) => {
-        console.log(ingredient.fields.type);
-        if(options[ingredient.fields.type]){
-            console.log("Got a duplicate type here! Giving the user the option to select on pour");
-            options[ingredient.fields.type].push(ingredient.fields.name);
-        } else {
-            options[ingredient.fields.type] = [ingredient.fields.name];
-        }
-    });
+    var ing = {{drink.ingredients | safe}}
 
 </script>
 {% endblock %}

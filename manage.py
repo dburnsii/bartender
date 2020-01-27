@@ -2,10 +2,16 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import threading
 
 
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bartender.settings')
+
+    worker_thread = threading.Thread(target="", name="Worker")
+    worker_thread.daemon = True
+    worker_thread.start()
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

@@ -1,6 +1,12 @@
-from django.core import serializers
-from django.shortcuts import render, redirect
+import time
 
+from django.core import serializers
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.conf import settings
+from sphinx.util import requests
+
+from bartender.models import Settings
 from drinks.forms import *
 from barkeep.models import Pump
 
@@ -67,10 +73,21 @@ def new_ingredient(request):
     })
 
 
-def pour(request, drink):
+def pour(request):
     if request.method == "POST":
-        drink = json.loads(request.POST.get('drink', '{}'))
-        for ing in drink:
-            print(ing)
-        return "yaaas"
-    return render(request, 'drinks/pouring.html')
+        drink_json = request.POST.get('drink')
+        drink = json.loads(drink_json)
+        pumps = Pump.objects.filter(contents__name__in=drink)
+        simplified = {}
+        for pump in pumps:
+            pour_time = Settings.objects.first().oz_interval * drink[pump.contents.name]
+            simplified[pump.address] = pour_time
+        print(simplified)
+        response = requests.get("http://localhost:" + str(settings.WORKER_PORT), params={'drink': json.dumps(simplified)})
+        if response.status_code == 200:
+            print(time.localtime(int(response.text)/1000))
+        else:
+            print("Pour unsuccessful...")
+    return HttpResponse("success")
+
+

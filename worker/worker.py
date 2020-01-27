@@ -2,7 +2,10 @@
 
 import json
 import importlib
+import os
+import threading
 import time
+import logging
 from urllib.parse import urlparse, parse_qs
 from http.server import HTTPServer, BaseHTTPRequestHandler
 gpio_lib = importlib.util.find_spec('RPi')
@@ -20,118 +23,128 @@ if gpio_lib and board_lib and busio_lib and mcp_lib:
 else:
     testing = True
 
-PORT = 8080
 led_upper_pins = [12, 13, 14]
 led_lower_pins = [15, 16, 17]
-led_upper_value = 16777215
-led_lower_value = 1052688
-current_drink = []
 mcp = None  # MCP23017 GPIO Device for controlling the motors
 mcp_address = 0x20
 
 
-def millis():
-    return int(round(time.time() * 1000))
+class Worker:
 
+    def __init__(self, port, led_upper="#AAAAAA", led_lower="#AAAAAA"):
+        global testing
+        if not testing:
+            self.init_motors()
+        self.port = port
+        self.led_upper = led_upper
+        self.led_lower = led_lower
+        self.current_drink = None
 
-def init_motors():
-    print("Initializing pump interface")
-    global mcp
-    global i2c
-    mcp = MCP23017(i2c, address=mcp_address)
-    mcp.iodir = 0
-    mcp.gpio = 0xFFFF
+        server_address = ("localhost", port)
+        httpd = HTTPServer(server_address, make_worker_server(self))
+        logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+        logging.info("Serving at " + str(server_address))
+        #httpd.serve_forever()
 
+        self.thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+        self.thread.start()
 
-def get_led_upper():
-    return led_upper_value
+    def init_motors(self):
+        logging.info("Initializing pump interface")
+        global mcp
+        global i2c
+        mcp = MCP23017(i2c, address=mcp_address)
+        mcp.iodir = 0
+        mcp.gpio = 0xFFFF
 
+    def get_led_upper(self):
+        return self.led_upper
 
-def set_led_upper(value):
-    global led_upper_value
-    led_upper_value = value
-    return "Success!"
+    def set_led_upper(self, value):
+        self.led_upper = value
+        # TODO: Actually write to GPIO
+        return "Success!"
 
+    def get_led_lower(self):
+        return self.led_lower
 
-def get_led_lower():
-    return led_lower_value
+    def set_led_lower(self, value):
+        self.led_lower = value
+        # TODO: Actually write to GPIO
+        return "Success!"
 
+    def pour_drink(self, drink):
+        """
+        Handles the activation of motors and setting of drink array to stop specified motors when pour time has elapsed.
+        :param drink : dict, Contains I2C Addresses (as Ints) and Pour times (in milliseconds) needed to pour specified drink.
 
-def set_led_lower(value):
-    global led_lower_value
-    led_lower_value = value
-    return "Success!"
+        :return: int , ETA of drink being poured.
+        """
 
-
-def pour_drink(drink):
-    """
-    Handles the activation of motors and setting of drink array to stop specified motors when pour time has elapsed.
-    :param drink : dict, Contains I2C Addresses (as Ints) and Pour times (in milliseconds) needed to pour specified drink.
-
-    :return: int , ETA of drink being poured.
-    """
-
-    if testing:
-        print("Pouring a drink!!")
-    else:
-        mcp.get_pin(3).value = False
-        time.sleep(3)
-        mcp.get_pin(3).value = True
-        return millis() + 5000
-
-
-def run_server():
-    server_address = ("localhost", PORT)
-    httpd = HTTPServer(server_address, WorkerServer)
-    print("Serving at " + str(server_address))
-    httpd.serve_forever()
-
-
-class WorkerServer(BaseHTTPRequestHandler):
-    def _set_headers(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.end_headers()
-
-    def _html(self, message):
-        return "test!".encode("utf8")
-
-    def do_GET(self):
-        response = ""
-        query_string = urlparse(self.path).query
-        query = parse_qs(query_string)
-        print(query)
-        if "get" in query:
-            target = query["get"][0]
-            if target == "led_upper":
-                response = str(get_led_upper())
-            elif target == "led_lower":
-                response = str(get_led_lower())
-            else:
-                response = "Invalid query!"
-        elif "set" in query:
-            target = query["set"][0]
-            if target == "led_upper":
-                response = set_led_upper(int(query["value"][0]))
-            elif target == "led_lower":
-                response = set_led_lower(int(query["value"][0]))
-            else:
-                response = "Invalid query!"
-        elif "drink" in query:
-            response = pour_drink("test")
+        if testing:
+            logging.info("Pouring a drink!!")
         else:
-            response = "Invalid Query!"
+            mcp.get_pin(3).value = False
+            time.sleep(3)
+            mcp.get_pin(3).value = True
+        return Worker.millis() + 30000
 
-        self._set_headers()
-        self.wfile.write(response.encode("utf8"))
-
-
-def main():
-    if testing:
-        run_server()
-    else:
-        init_motors()
-        run_server()
+    @staticmethod
+    def millis():
+        return int(round(time.time() * 1000))
 
 
-main()
+def make_worker_server(worker):
+    class WorkerServer(BaseHTTPRequestHandler):
+
+        def __init__(self, *args, **kwargs):
+            self.worker = worker
+            super(WorkerServer, self).__init__(*args, **kwargs)
+
+        def _set_headers(self):
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+
+        def _html(self, message):
+            return "test!".encode("utf8")
+
+        def do_GET(self):
+            response = ""
+            query_string = urlparse(self.path).query
+            query = parse_qs(query_string)
+            print(query)
+            if "get" in query:
+                target = query["get"][0]
+                if target == "led_upper":
+                    response = str(self.worker.get_led_upper())
+                elif target == "led_lower":
+                    response = str(self.worker.get_led_lower())
+                else:
+                    response = "Invalid query!"
+            elif "set" in query:
+                target = query["set"][0]
+                if target == "led_upper":
+                    response = self.worker.set_led_upper(int(query["value"][0]))
+                elif target == "led_lower":
+                    response = self.worker.set_led_lower(int(query["value"][0]))
+                else:
+                    response = "Invalid query!"
+            elif "drink" in query:
+                response = self.worker.pour_drink("test")
+            else:
+                response = "Invalid Query!"
+
+            self._set_headers()
+            self.wfile.write(str(response).encode("utf8"))
+    return WorkerServer
+
+#def run():
+#    print("running server")
+#    if testing:
+#        run_server()
+#    else:
+#        init_motors()
+#        run_server()
+
+

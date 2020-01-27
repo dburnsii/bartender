@@ -31,15 +31,16 @@ ALLOWED_HOSTS = ['localhost', '192.168.0.32']
 # Application definition
 
 INSTALLED_APPS = [
+    'drinks',
+    'users',
+    'barkeep',
+    'bartender',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'drinks',
-    'users',
-    'barkeep'
+    'django.contrib.staticfiles'
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 NPM_ROOT_PATH = BASE_DIR
+
+WORKER_PORT = 8080
