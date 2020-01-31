@@ -1,5 +1,5 @@
 .idea
-node-modules
+node_modules
 db.sqlite3
 __pycache__/
 *.py[cod]
