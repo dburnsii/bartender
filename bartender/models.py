@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Settings(models.Model):
-    oz_interval = models.IntegerField(default=100)
+    oz_interval = models.IntegerField(default=1000)
     name = models.CharField(max_length=32, default="Bartender")
     color = models.CharField(max_length=32, default="#b87333")
 
