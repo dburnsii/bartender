@@ -6,6 +6,7 @@ import os
 import threading
 import time
 import logging
+import asyncio
 from urllib.parse import urlparse, parse_qs
 from http.server import HTTPServer, BaseHTTPRequestHandler
 gpio_lib = importlib.util.find_spec('RPi')
@@ -22,7 +23,7 @@ if gpio_lib and board_lib and busio_lib and mcp_lib:
     i2c = busio.I2C(board.SCL, board.SDA)
 else:
     testing = True
-
+testing = True
 led_upper_pins = [12, 13, 14]
 led_lower_pins = [15, 16, 17]
 mcp = None  # MCP23017 GPIO Device for controlling the motors
@@ -73,7 +74,24 @@ class Worker:
         # TODO: Actually write to GPIO
         return "Success!"
 
-    def pour_drink(self, drink):
+    def activate_motor(self, address):
+        if testing:
+            logging.info("Simulated turning on " + str(address))
+        else:
+            mcp.get_pin(address).value = False
+
+    def deactivate_motor(self, address):
+        if testing:
+            logging.info("Simulated turning off " + str(address))
+        else:
+            mcp.get_pin(address).value = True
+
+    async def timed_pour(self, address, delay):
+        activate_motor(address)
+        await asyncio.sleep(delay)
+        deactivate_motor(address)
+
+    def pour_drink(self, drink_json):
         """
         Handles the activation of motors and setting of drink array to stop specified motors when pour time has elapsed.
         :param drink : dict, Contains I2C Addresses (as Ints) and Pour times (in milliseconds) needed to pour specified drink.
@@ -81,12 +99,15 @@ class Worker:
         :return: int , ETA of drink being poured.
         """
 
-        if testing:
-            logging.info("Pouring a drink!!")
-        else:
-            mcp.get_pin(3).value = False
-            time.sleep(3)
-            mcp.get_pin(3).value = True
+        logging.info("Pouring a drink!!")
+        logging.info(drink_json)
+        drink = json.loads(drink_json)
+
+        for ingredient in drink.keys():
+            asyincio.run(self.timed_pour(ingredient, drink[ingredient]))
+            #mcp.get_pin(3).value = False
+            #time.sleep(3)
+            #mcp.get_pin(3).value = True
         return Worker.millis() + 30000
 
     @staticmethod
@@ -131,7 +152,10 @@ def make_worker_server(worker):
                 else:
                     response = "Invalid query!"
             elif "drink" in query:
-                response = self.worker.pour_drink("test")
+                try:
+                    response = self.worker.pour_drink(query["drink"][0])
+                except:
+                    response = 0
             else:
                 response = "Invalid Query!"
 
@@ -146,5 +170,3 @@ def make_worker_server(worker):
 #    else:
 #        init_motors()
 #        run_server()
-
-

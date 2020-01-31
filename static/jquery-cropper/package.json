@@ -1,0 +1,143 @@
+{
+  "_args": [
+    [
+      "jquery-cropper@1.0.1",
+      "/home/dburnsii/bartender"
+    ]
+  ],
+  "_from": "jquery-cropper@1.0.1",
+  "_id": "jquery-cropper@1.0.1",
+  "_inBundle": false,
+  "_integrity": "sha512-KGlY8b0IJQi2Bxe3lqMKmd5Z2Ce4GrnDE5O8Iciza9xCzXISkL6EqX/jFHwnLL1H6Q4FGjoRguuv3lxezsbKJQ==",
+  "_location": "/jquery-cropper",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "jquery-cropper@1.0.1",
+    "name": "jquery-cropper",
+    "escapedName": "jquery-cropper",
+    "rawSpec": "1.0.1",
+    "saveSpec": null,
+    "fetchSpec": "1.0.1"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/jquery-cropper/-/jquery-cropper-1.0.1.tgz",
+  "_spec": "1.0.1",
+  "_where": "/home/dburnsii/bartender",
+  "author": {
+    "name": "Chen Fengyuan",
+    "url": "https://chenfengyuan.com"
+  },
+  "browser": "dist/jquery-cropper.js",
+  "browserslist": [
+    "last 2 versions",
+    "> 1%",
+    "not ie <= 8"
+  ],
+  "bugs": {
+    "url": "https://github.com/fengyuanchen/jquery-cropper/issues"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "description": "A jQuery plugin wrapper for Cropper.js.",
+  "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@babel/preset-env": "^7.6.3",
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-conventional": "^8.2.0",
+    "babel-plugin-istanbul": "^5.2.0",
+    "chai": "^4.2.0",
+    "codecov": "^3.6.1",
+    "create-banner": "^1.0.0",
+    "cropperjs": "^1.5.6",
+    "del-cli": "^3.0.0",
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "husky": "^3.0.9",
+    "jquery": "^3.3.1",
+    "karma": "^4.4.1",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage-istanbul-reporter": "^2.1.0",
+    "karma-mocha": "^1.3.0",
+    "karma-mocha-reporter": "^2.2.5",
+    "karma-rollup-preprocessor": "^7.0.2",
+    "lint-staged": "^9.4.2",
+    "mocha": "^6.2.2",
+    "puppeteer": "^1.20.0",
+    "rollup": "^1.25.0",
+    "rollup-plugin-alias": "^2.1.0",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-watch": "^4.3.1",
+    "uglify-js": "^3.6.2"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "homepage": "https://fengyuanchen.github.io/jquery-cropper",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "keywords": [
+    "image",
+    "crop",
+    "move",
+    "zoom",
+    "rotate",
+    "scale",
+    "cropper",
+    "cropper.js",
+    "cropping",
+    "processing",
+    "jquery",
+    "plugin",
+    "jquery-plugin",
+    "html",
+    "css",
+    "javascript",
+    "front-end",
+    "web"
+  ],
+  "license": "MIT",
+  "lint-staged": {
+    "{src,test}/**/*.js|*.conf*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "main": "dist/jquery-cropper.common.js",
+  "module": "dist/jquery-cropper.esm.js",
+  "name": "jquery-cropper",
+  "peerDependencies": {
+    "cropperjs": ">=1.0.0",
+    "jquery": ">=1.9.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fengyuanchen/jquery-cropper.git"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "clear": "del-cli dist",
+    "codecov": "cat coverage/lcov.info | codecov",
+    "compress": "uglifyjs dist/jquery-cropper.js -o dist/jquery-cropper.min.js -c -m --comments /^!/",
+    "lint": "eslint src test *.js --fix",
+    "release": "npm run clear && npm run lint && npm run build && npm run compress && npm test",
+    "start": "rollup -c -m -w",
+    "test": "karma start"
+  },
+  "version": "1.0.1"
+}

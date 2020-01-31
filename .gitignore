@@ -1,4 +1,6 @@
 .idea
 node-modules
 db.sqlite3
-
+__pycache__/
+*.py[cod]
+media/images/*
