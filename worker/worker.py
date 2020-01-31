@@ -6,7 +6,6 @@ import os
 import threading
 import time
 import logging
-import asyncio
 from urllib.parse import urlparse, parse_qs
 from http.server import HTTPServer, BaseHTTPRequestHandler
 gpio_lib = importlib.util.find_spec('RPi')
@@ -23,11 +22,12 @@ if gpio_lib and board_lib and busio_lib and mcp_lib:
     i2c = busio.I2C(board.SCL, board.SDA)
 else:
     testing = True
-testing = True
+
 led_upper_pins = [12, 13, 14]
 led_lower_pins = [15, 16, 17]
 mcp = None  # MCP23017 GPIO Device for controlling the motors
 mcp_address = 0x20
+eta = 0
 
 
 class Worker:
@@ -86,10 +86,19 @@ class Worker:
         else:
             mcp.get_pin(address).value = True
 
-    async def timed_pour(self, address, delay):
-        activate_motor(address)
-        await asyncio.sleep(delay)
-        deactivate_motor(address)
+    def timed_pour(self, address, delay):
+        self.activate_motor(address)
+        time.sleep(delay/1000)
+        self.deactivate_motor(address)
+
+    def complete_pour(self, threads):
+        global eta
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        eta = 0
+        logging.info("Pour complete!")
 
     def pour_drink(self, drink_json):
         """
@@ -102,13 +111,12 @@ class Worker:
         logging.info("Pouring a drink!!")
         logging.info(drink_json)
         drink = json.loads(drink_json)
+        threads = []
 
         for ingredient in drink.keys():
-            asyincio.run(self.timed_pour(ingredient, drink[ingredient]))
-            #mcp.get_pin(3).value = False
-            #time.sleep(3)
-            #mcp.get_pin(3).value = True
-        return Worker.millis() + 30000
+            threads.append(threading.Thread(target=self.timed_pour, args=(ingredient, drink[ingredient])))
+        threading.Thread(target=self.complete_pour, args=(threads,)).start()
+        return eta
 
     @staticmethod
     def millis():
