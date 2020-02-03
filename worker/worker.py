@@ -114,7 +114,7 @@ class Worker:
         threads = []
 
         for ingredient in drink.keys():
-            threads.append(threading.Thread(target=self.timed_pour, args=(ingredient, drink[ingredient])))
+            threads.append(threading.Thread(target=self.timed_pour, args=(int(ingredient), drink[ingredient])))
         threading.Thread(target=self.complete_pour, args=(threads,)).start()
         return eta
 
