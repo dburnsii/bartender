@@ -8,14 +8,14 @@ import time
 import logging
 from urllib.parse import urlparse, parse_qs
 from http.server import HTTPServer, BaseHTTPRequestHandler
-gpio_lib = importlib.util.find_spec('RPi')
+gpio_lib = importlib.util.find_spec('pigpio')
 board_lib = importlib.util.find_spec('board')
 busio_lib = importlib.util.find_spec('busio')
 mcp_lib = importlib.util.find_spec('adafruit_mcp230xx')
 
 if gpio_lib and board_lib and busio_lib and mcp_lib:
     testing = False
-    import RPi.GPIO as GPIO
+    import pigpio
     import board
     import busio
     from adafruit_mcp230xx.mcp23017 import MCP23017
@@ -23,8 +23,9 @@ if gpio_lib and board_lib and busio_lib and mcp_lib:
 else:
     testing = True
 
-led_upper_pins = [12, 13, 14]
-led_lower_pins = [15, 16, 17]
+led_upper_pins = [21, 20, 16]
+led_lower_pins = [13, 19, 26]
+gpio = None
 mcp = None  # MCP23017 GPIO Device for controlling the motors
 mcp_address = 0x20
 eta = 0
@@ -32,14 +33,17 @@ eta = 0
 
 class Worker:
 
-    def __init__(self, port, led_upper="#AAAAAA", led_lower="#AAAAAA"):
+    def __init__(self, port, led_upper="AAAAAA", led_lower="AAAAAA"):
         global testing
+        self.mcp = None
         if not testing:
             self.init_motors()
         self.port = port
         self.led_upper = led_upper
         self.led_lower = led_lower
         self.current_drink = None
+        if not testing:
+            self.init_leds()
 
         server_address = ("localhost", port)
         httpd = HTTPServer(server_address, make_worker_server(self))
@@ -52,18 +56,33 @@ class Worker:
 
     def init_motors(self):
         logging.info("Initializing pump interface")
-        global mcp
         global i2c
-        mcp = MCP23017(i2c, address=mcp_address)
-        mcp.iodir = 0
-        mcp.gpio = 0xFFFF
+        self.mcp = MCP23017(i2c, address=mcp_address)
+        self.mcp.iodir = 0
+        self.mcp.gpio = 0xFFFF
+
+    def init_leds(self):
+        global gpio
+        gpio = pigpio.pi()
+        # Convert hex string to list of ints for setting gpio
+        upper_bytes = Worker.hex_str_to_bytes(self.led_upper)
+        lower_bytes = Worker.hex_str_to_bytes(self.led_lower)
+        for i in range(len(led_upper_pins)):
+            gpio.set_mode(led_upper_pins[i], pigpio.OUTPUT)
+            gpio.set_PWM_dutycycle(led_upper_pins[i], upper_bytes[i])
+        for i in range(len(led_lower_pins)):
+            gpio.set_mode(led_lower_pins[i], pigpio.OUTPUT)
+            gpio.set_PWM_dutycycle(led_lower_pins[i], lower_bytes[i])
 
     def get_led_upper(self):
         return self.led_upper
 
     def set_led_upper(self, value):
         self.led_upper = value
-        # TODO: Actually write to GPIO
+        if not testing:
+            values = Worker.hex_str_to_bytes(value)
+            for i in range(len(led_upper_pins)):
+                gpio.set_PWM_dutycycle(led_upper_pins[i], values[i])
         return "Success!"
 
     def get_led_lower(self):
@@ -71,20 +90,23 @@ class Worker:
 
     def set_led_lower(self, value):
         self.led_lower = value
-        # TODO: Actually write to GPIO
+        if not testing:
+            values = Worker.hex_str_to_bytes(value)
+            for i in range(len(led_upper_pins)):
+                gpio.set_PWM_dutycycle(led_upper_pins[i], values[i])
         return "Success!"
 
     def activate_motor(self, address):
         if testing:
             logging.info("Simulated turning on " + str(address))
         else:
-            mcp.get_pin(address).value = False
+            self.mcp.get_pin(address).value = False
 
     def deactivate_motor(self, address):
         if testing:
             logging.info("Simulated turning off " + str(address))
         else:
-            mcp.get_pin(address).value = True
+            self.mcp.get_pin(address).value = True
 
     def timed_pour(self, address, delay):
         self.activate_motor(address)
@@ -122,6 +144,10 @@ class Worker:
     def millis():
         return int(round(time.time() * 1000))
 
+    @staticmethod
+    def hex_str_to_bytes(string):
+        return [int(string[i:i + 2], 16) for i in range(0, len(string), 2)]
+
 
 def make_worker_server(worker):
     class WorkerServer(BaseHTTPRequestHandler):
@@ -132,8 +158,14 @@ def make_worker_server(worker):
 
         def _set_headers(self):
             self.send_response(200)
-            self.send_header("Content-type", "text/html")
+            self.send_header("Content-type", "application/json")
             self.end_headers()
+
+        def _send_error(self, message):
+            self.send_response(400)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(message).encode("utf8"))
 
         def _html(self, message):
             return "test!".encode("utf8")
@@ -160,21 +192,15 @@ def make_worker_server(worker):
                 else:
                     response = "Invalid query!"
             elif "drink" in query:
-                try:
-                    response = self.worker.pour_drink(query["drink"][0])
-                except:
-                    response = 0
+                if eta > 0:
+                    self._send_error({"error": "Motors are busy.", "eta": eta})
+                    return
+                response = {"eta": self.worker.pour_drink(query["drink"][0])}
             else:
-                response = "Invalid Query!"
+                self._send_error({"error": "No valid command supplied."})
+                return
 
             self._set_headers()
-            self.wfile.write(str(response).encode("utf8"))
-    return WorkerServer
+            self.wfile.write(json.dumps(response).encode("utf8"))
 
-#def run():
-#    print("running server")
-#    if testing:
-#        run_server()
-#    else:
-#        init_motors()
-#        run_server()
+    return WorkerServer
