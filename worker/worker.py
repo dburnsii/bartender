@@ -186,9 +186,9 @@ def make_worker_server(worker):
             elif "set" in query:
                 target = query["set"][0]
                 if target == "led_upper":
-                    response = self.worker.set_led_upper(int(query["value"][0]))
+                    response = self.worker.set_led_upper(query["value"][0])
                 elif target == "led_lower":
-                    response = self.worker.set_led_lower(int(query["value"][0]))
+                    response = self.worker.set_led_lower(query["value"][0])
                 else:
                     response = "Invalid query!"
             elif "drink" in query:

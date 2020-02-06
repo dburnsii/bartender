@@ -1,2 +1,4 @@
 requests>=2.22.0
-Django>=3.0
+Django>=3.0.2
+sphinx>=2.2.1
+django-npm>=1.0.0
