@@ -83,9 +83,9 @@ def pour(request):
             pour_time = Settings.objects.first().oz_interval * drink[pump.contents.name]
             simplified[str(pump.address)] = pour_time
         print(simplified)
-        response = requests.get("http://localhost:" + str(settings.WORKER_PORT), params={'drink': json.dumps(simplified)})
+        response = requests.get("http://localhost:" + str(settings.WORKER_PORT), params={'drink': json.dumps(simplified), 'color': 'FFFFFF'})
         if response.status_code == 200:
-            print(time.localtime(int(response.text)/1000))
+            print(response.text)
         else:
             print("Pour unsuccessful...")
     return HttpResponse("success")

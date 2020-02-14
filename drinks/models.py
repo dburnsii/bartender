@@ -49,7 +49,7 @@ class Drink(models.Model):
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=128, null=False, default='Untitled')
+    name = models.CharField(max_length=128, null=False)
     type = models.ForeignKey('IngredientType', on_delete=models.CASCADE)
 
     def __unicode__(self):
@@ -63,7 +63,7 @@ class Ingredient(models.Model):
 
 
 class IngredientType(models.Model):
-    name = models.CharField(max_length=128, null=False, default='Untitled')
+    name = models.CharField(max_length=128, null=False)
 
     def __unicode__(self):
         return u'{0}'.format(self.name)

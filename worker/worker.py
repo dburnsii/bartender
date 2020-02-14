@@ -8,102 +8,120 @@ import time
 import logging
 from urllib.parse import urlparse, parse_qs
 from http.server import HTTPServer, BaseHTTPRequestHandler
-gpio_lib = importlib.util.find_spec('pigpio')
-board_lib = importlib.util.find_spec('board')
-busio_lib = importlib.util.find_spec('busio')
-mcp_lib = importlib.util.find_spec('adafruit_mcp230xx')
+import pigpio
+#import board
+#import busio
+from adafruit_blinka import agnostic
+from adafruit_mcp230xx.mcp23017 import MCP23017
 
-if gpio_lib and board_lib and busio_lib and mcp_lib:
-    testing = False
-    import pigpio
-    import board
-    import busio
-    from adafruit_mcp230xx.mcp23017 import MCP23017
-    i2c = busio.I2C(board.SCL, board.SDA)
-else:
-    testing = True
-
+#i2c = busio.I2C(board.SCL, board.SDA)
 led_upper_pins = [21, 20, 16]
 led_lower_pins = [13, 19, 26]
-gpio = None
 mcp = None  # MCP23017 GPIO Device for controlling the motors
 mcp_address = 0x20
-eta = 0
 
 
 class Worker:
 
     def __init__(self, port, led_upper="AAAAAA", led_lower="AAAAAA"):
-        global testing
-        self.mcp = None
-        if not testing:
-            self.init_motors()
-        self.port = port
+        self.testing = False
+        logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+        logging.info("Intitializing worker thread")
+        self.gpio = pigpio.pi()
+
+        if not self.gpio.connected:
+            logging.info("pigpio unable to connect to gpiod. Running in simulation mode.")
+            self.testing = True
+        else:
+            logging.info("Connected to gpio daemon")
+
+        if not agnostic.detector.get_device_compatible():
+            logging.info("Device not compatible with CircuitPython. Running in testing mode.")
+            self.testing = True
+
+        if not self.testing:
+            import board
+            import busio
+            self.i2c = busio.I2C(board.SCL, board.SDA)
+            self.mcp = MCP23017(self.i2c, address=mcp_address)
+
+        self.init_motors()
         self.led_upper = led_upper
         self.led_lower = led_lower
+        self.led_upper_default = led_upper
+        self.led_lower_default = led_lower
+        self.init_leds()
+
+        self.port = port
         self.current_drink = None
-        if not testing:
-            self.init_leds()
+        self.eta = 0
 
         server_address = ("localhost", port)
         httpd = HTTPServer(server_address, make_worker_server(self))
-        logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
-        logging.info("Serving at " + str(server_address))
-        #httpd.serve_forever()
+        logging.info("Serving worker at " + str(server_address))
 
         self.thread = threading.Thread(target=httpd.serve_forever, daemon=True)
         self.thread.start()
 
     def init_motors(self):
         logging.info("Initializing pump interface")
-        global i2c
-        self.mcp = MCP23017(i2c, address=mcp_address)
-        self.mcp.iodir = 0
-        self.mcp.gpio = 0xFFFF
+        if not self.testing:
+            self.mcp.iodir = 0
+            self.mcp.gpio = 0xFFFF
 
     def init_leds(self):
-        global gpio
-        gpio = pigpio.pi()
         # Convert hex string to list of ints for setting gpio
         upper_bytes = Worker.hex_str_to_bytes(self.led_upper)
         lower_bytes = Worker.hex_str_to_bytes(self.led_lower)
         for i in range(len(led_upper_pins)):
-            gpio.set_mode(led_upper_pins[i], pigpio.OUTPUT)
-            gpio.set_PWM_dutycycle(led_upper_pins[i], upper_bytes[i])
+            if not self.testing:
+                self.gpio.set_mode(led_upper_pins[i], pigpio.OUTPUT)
+                self.gpio.set_PWM_dutycycle(led_upper_pins[i], upper_bytes[i])
         for i in range(len(led_lower_pins)):
-            gpio.set_mode(led_lower_pins[i], pigpio.OUTPUT)
-            gpio.set_PWM_dutycycle(led_lower_pins[i], lower_bytes[i])
+            if not self.testing:
+                self.gpio.set_mode(led_lower_pins[i], pigpio.OUTPUT)
+                self.gpio.set_PWM_dutycycle(led_lower_pins[i], lower_bytes[i])
 
     def get_led_upper(self):
         return self.led_upper
 
     def set_led_upper(self, value):
-        self.led_upper = value
-        if not testing:
+        if not self.eta:
+            self.led_upper = value
             values = Worker.hex_str_to_bytes(value)
             for i in range(len(led_upper_pins)):
-                gpio.set_PWM_dutycycle(led_upper_pins[i], values[i])
-        return "Success!"
+                if self.testing:
+                    logging.info("Simulating setting pin " + str(led_upper_pins[i]) + " to " + str(values[i]))
+                else:
+                    self.gpio.set_PWM_dutycycle(led_upper_pins[i], values[i])
+            return "Success!"
+        else:
+            return "Refusing to set color while drink in progress"
 
     def get_led_lower(self):
         return self.led_lower
 
-    def set_led_lower(self, value):
-        self.led_lower = value
-        if not testing:
+    def set_led_lower(self, value, time=0):
+        if not self.eta:
+            self.led_lower = value
             values = Worker.hex_str_to_bytes(value)
-            for i in range(len(led_upper_pins)):
-                gpio.set_PWM_dutycycle(led_upper_pins[i], values[i])
-        return "Success!"
+            for i in range(len(led_lower_pins)):
+                if self.testing:
+                    logging.info("Simulating setting pin " + str(led_lower_pins[i]) + " to " + str(values[i]))
+                else:
+                    self.gpio.set_PWM_dutycycle(led_lower_pins[i], values[i])
+            return "Success!"
+        else:
+            return "Refusing to set lower color while drink in progress"
 
     def activate_motor(self, address):
-        if testing:
+        if self.testing:
             logging.info("Simulated turning on " + str(address))
         else:
             self.mcp.get_pin(address).value = False
 
     def deactivate_motor(self, address):
-        if testing:
+        if self.testing:
             logging.info("Simulated turning off " + str(address))
         else:
             self.mcp.get_pin(address).value = True
@@ -114,15 +132,15 @@ class Worker:
         self.deactivate_motor(address)
 
     def complete_pour(self, threads):
-        global eta
         for t in threads:
             t.start()
         for t in threads:
             t.join()
-        eta = 0
+        self.eta = 0
+        self.set_led_lower(self.led_lower_default)
         logging.info("Pour complete!")
 
-    def pour_drink(self, drink_json):
+    def pour_drink(self, drink_query):
         """
         Handles the activation of motors and setting of drink array to stop specified motors when pour time has elapsed.
         :param drink : dict, Contains I2C Addresses (as Ints) and Pour times (in milliseconds) needed to pour specified drink.
@@ -131,14 +149,16 @@ class Worker:
         """
 
         logging.info("Pouring a drink!!")
-        logging.info(drink_json)
-        drink = json.loads(drink_json)
+        logging.info(drink_query)
+        drink = json.loads(drink_query["drink"][0])
+        color = drink_query["color"][0]
+        self.set_led_lower(color)
         threads = []
 
         for ingredient in drink.keys():
             threads.append(threading.Thread(target=self.timed_pour, args=(int(ingredient), drink[ingredient])))
         threading.Thread(target=self.complete_pour, args=(threads,)).start()
-        return eta
+        return self.eta
 
     @staticmethod
     def millis():
@@ -186,16 +206,21 @@ def make_worker_server(worker):
             elif "set" in query:
                 target = query["set"][0]
                 if target == "led_upper":
+                    self.worker.led_upper_default = query["value"][0]
                     response = self.worker.set_led_upper(query["value"][0])
                 elif target == "led_lower":
+                    self.worker.led_lower_default = query["value"][0]
                     response = self.worker.set_led_lower(query["value"][0])
+                elif target == "demo_color":
+                    response = json.dumps({"error": "Not yet implemented..."})
                 else:
                     response = "Invalid query!"
             elif "drink" in query:
-                if eta > 0:
-                    self._send_error({"error": "Motors are busy.", "eta": eta})
+                logging.info("Pouring a drink maybe")
+                if self.worker.eta > 0:
+                    self._send_error({"error": "Motors are busy.", "eta": self.worker.eta})
                     return
-                response = {"eta": self.worker.pour_drink(query["drink"][0])}
+                response = {"eta": self.worker.pour_drink(query)}
             else:
                 self._send_error({"error": "No valid command supplied."})
                 return

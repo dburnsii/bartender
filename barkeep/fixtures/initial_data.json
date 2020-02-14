@@ -3,28 +3,32 @@
     "model": "barkeep.pump",
     "pk": 1,
     "fields": {
-      "address": 3
+      "address": 3,
+      "contents": 4
     }
   },
   {
     "model": "barkeep.pump",
     "pk": 2,
     "fields": {
-      "address": 4
+      "address": 4,
+      "contents": 2
     }
   },
   {
     "model": "barkeep.pump",
     "pk": 3,
     "fields": {
-      "address": 5
+      "address": 5,
+      "contents": 6
     }
   },
   {
     "model": "barkeep.pump",
     "pk": 4,
     "fields": {
-      "address": 6
+      "address": 6,
+      "contents": 7
     }
   },
   {
