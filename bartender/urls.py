@@ -27,11 +27,15 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', auth_views.auth_login, name='login'),
     path('logout/', auth_views.auth_login, name='logout'),
+    path('ingredients/new/', drinks.ingredients),
     path('ingredients/', drinks.ingredients),
-    path('ingredients/new/', drinks.new_ingredient),
+    path('ingredient_types/new/', drinks.ingredient_types),
+    path('ingredient_Types/<int:ingredient_type_id>', drinks.ingredient_types),
+    path('ingredient_types/', drinks.ingredient_types),
     path('', drinks.index, name='index'),
-    path('create/', drinks.create),
-    path('show/<int:drink_id>', drinks.show),
+    path('drinks/new', drinks.drink_new),
+    path('drinks/<int:drink_id>', drinks.drinks),
+    path('drinks/', drinks.drinks),
     path('pour/', drinks.pour),
     path('restock/', barkeep.index)
 ]

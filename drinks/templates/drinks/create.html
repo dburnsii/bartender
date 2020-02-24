@@ -11,23 +11,31 @@
 <script src="{% static 'js/cropper.min.js' %}"></script>
 <script src="{% static 'js/jquery-cropper.min.js' %}"></script>
 
+{% if drink_form.subject.errors %}
+    <ol>
+    {% for error in drink_form.subject.errors %}
+        <li><strong>{{ error|escape }}</strong></li>
+    {% endfor %}
+    </ol>
+{% endif %}
+
 <div class="container" style="margin-left: 0px; margin-right: 0px; max-width: unset">
-    <form action="/create/" enctype="multipart/form-data" method="post">
+    <form action="/drinks/" enctype="multipart/form-data" method="post">
         {% csrf_token %}
-        {{ form.ingredients }}
-        {{ form.color }}
+        {{ drink_form.ingredients }}
+        {{ drink_form.color }}
         <div class="row">
             <div class="col-lg-12 col-sm-12 col-12 drink-header" style="background-image: linear-gradient(black, white)"></div>
         </div>
         <div class="row drink-detail">
             <div class="offset-2 col-8">
-                <label for="{{form.image.auto_id}}" class="image-upload">
+                <label for="{{drink_form.image.auto_id}}" class="image-upload">
                     <img src="/media/images/upload.svg" class="img-thumbnail img-fluid drink-thumbnail"/>
                 </label>
-                {{ form.image }}
+                {{ drink_form.image }}
             </div>
             <div class="col-lg-12 col-sm-12 py-3 input-group input-group-lg">
-                {{ form.name }}
+                {{ drink_form.name }}
             </div>
         </div>
         <div class="row">
@@ -43,117 +51,29 @@
      </form>
 </div>
 
-<script type="text/javascript">
-    var ingredients = {{ingredients | safe}};
-    var suggestions = [];
-
-    appendIngredient();
-
-    var tempObj = {};
-
-    //$(".drink-thumbnail").cropper({
-    //    aspectRatio: 1
-    //});
-
-    $("#id_image").change((e) => {
-        if(e.target.files && e.target.files[0]){
-            var reader = new FileReader();
-
-            reader.onload = function(e) {
-                $(".drink-thumbnail").attr("src", e.target.result);
-            }
-
-            reader.readAsDataURL(e.target.files[0]);
-        }
-    });
-
-    function updateIngredients() {
-        var ingredientNames = $.map($(".ingredient-name"), (e) => e.value);
-        var ingredientQuantities = $.map($(".ingredient-quantity"), (e) => parseFloat(e.value) );
-        var updatedIngredients = {};
-        ingredientNames.forEach((key, i) => {
-            if(key && ingredientQuantities[i] ){
-                updatedIngredients[key] = ingredientQuantities[i];
-            }
-        });
-        console.log(updatedIngredients);
-        $("#id_ingredients").val(JSON.stringify(updatedIngredients));
-    }
-
-    function appendIngredient() {
-        var item = $("<li></li>").addClass("list-group-item");
-        var row = $("<div></div>").addClass("row ingredient-row");
-        var nameDiv = $("<div></div>").addClass("input-group col-sm-6 col-8 pr-1");
-        var quantityDiv = $("<div></div>").addClass("input-group col-sm-4 col-4 pl-1");
-        var nameInput = $("<input type=\"text\" placeholder=\"Search\">").addClass("form-control ingredient-name")
-        nameDiv.append(nameInput);
-        var quantityInput = $("<input type=\"number\" step=\"0.1\" value=\"0.0\">").addClass("form-control px-2 ingredient-quantity");
-        quantityDiv.append(quantityInput);
-        var unitsDiv = $("<div></div>").addClass("input-group-append");
-        unitsDiv.append($("<span>OZ</span>").addClass("input-group-text"));
-        quantityDiv.append(unitsDiv);
-        row.append(nameDiv);
-        row.append(quantityDiv);
-        item.append(row);
-
-        var sugg = new Suggestions(nameInput[0], ingredients, { minLength: 1, emptyText: "New..."});
-        sugg.list.element.classList += " dropdown-menu";
-        suggestions.push(sugg);
-        //TODO: Make sure "new" shows up after selecting it the first time
-        //TODO: Make sure modal updates ingredients variable
-        //TODO: Make sure ingredients value update also updates sugg array
-        //TODO: Create a way to remove from list
-
-        nameInput.change((e) => {
-            if(e.target.value === "New..."){
-                console.log("Fire up the modal!");
-                $("#ingredientModal").modal();
-                //TODO: Create Modal form
-
-            } else if(ingredients.includes(e.target.value)){
-                //TODO: Prevent same ingredient from being added twice
-                console.log("Added " + e.target.value);
-                $(e.target).removeClass("is-invalid");
-                updateIngredients();
-                var quantity = $(e.target).parents(".ingredient-row").find(".ingredient-quantity")
-                quantity.val("");
-                quantity.focus();
-                //TODO: Check if the length is >= than 10
-                appendIngredient();
-                //TODO: Animate this append
-            } else if(!e.target.value){
-                $(e.target).removeClass("is-invalid");
-            } else {
-                $(e.target).addClass("is-invalid");
-            }
-        });
-
-        quantityInput.change(() => {
-            updateIngredients();
-        });
-
-        $("#ingredient-list").append(item);
-    }
-
-
-
-    // Trigger color change to make the background match the color picker
-    $("#colorPicker").change();
-</script>
-<script src="{% static 'js/new_drink.js' %}"></script>
-
-
 <div class="modal fade" id="ingredientModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="ingredientModalLabel">New Ingredient</h5>
+                <h5 class="modal-title" id="ingredientModalLabel">New Ingredient Type</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Hello world!
+                <form id="ingredient_type_form" action="/ingredient_types/" enctype="multipart/form-data" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12 py-3 input-group input-group-lg">
+                            {{ ingredient_type_form.name }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-8 offset-2 py-3 ">
+                            <input type="Submit" value="Finish" class="btn btn-primary btn-lg btn-block">
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -162,5 +82,12 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    var ingredient_types = {{ingredient_types | safe}};
+</script>
+<script src="{% static 'js/new_drink.js' %}"></script>
+
+
 
 {% endblock %}

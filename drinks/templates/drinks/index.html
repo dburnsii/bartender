@@ -5,7 +5,7 @@
   <div class="row">
     {% for drink in drinks %}
       <div class="col-sm-6 col-md-4 py-3">
-        <a class="text-dark" href="/show/{{drink.id}}">
+        <a class="text-dark" href="/drinks/{{drink.id}}">
           <div class="card">
             <div class="card-img-top">
               <img src="{{drink.image.url}}" class="img-thumbnail" style="background-color: {{drink.color}}" alt="drink">

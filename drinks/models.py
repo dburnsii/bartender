@@ -39,7 +39,7 @@ class Drink(models.Model):
     color = models.CharField(max_length=7, null=False, default='#FFFFFF')
     creator = models.ForeignKey('users.User', null=True, on_delete=models.CASCADE)
     ingredients = IngredientsField()
-    image = models.ImageField(upload_to='images/', default='images/default.jpg')
+    image = models.ImageField(upload_to='images/', blank=True, null=False, default='images/default.jpg')
 
     def __unicode__(self):
         return u'{0}'.format(self.name)
@@ -63,7 +63,7 @@ class Ingredient(models.Model):
 
 
 class IngredientType(models.Model):
-    name = models.CharField(max_length=128, null=False)
+    name = models.CharField(max_length=128, unique=True, null=False)
 
     def __unicode__(self):
         return u'{0}'.format(self.name)
