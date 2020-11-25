@@ -1,0 +1,11 @@
+[Unit]
+Description=Bartender Valve Server
+After=central
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 [BARTENDERDIR]/backend/valve_server/valve_server.py
+User=pi
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+div.hg-button {
+  height: 35px !important;
+}
+
+div.react-simple-keyboard {
+  width: 800px;
+  position: fixed;
+  z-index: 1200;
+  left: 0px;
+  bottom: 0px;
+}
+
+@font-face {
+  font-family: 'Lobster';
+  src: local('Lobster'), url('./fonts/Lobster-Regular.ttf') format('truetype');
+}

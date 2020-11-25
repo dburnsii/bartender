@@ -1,0 +1,11 @@
+[Unit]
+Description=Bartender Led Server
+After=central
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 [BARTENDERDIR]/backend/led_server/led_server.py
+User=pi
+
+[Install]
+WantedBy=multi-user.target

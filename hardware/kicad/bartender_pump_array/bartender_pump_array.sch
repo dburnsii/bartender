@@ -1,0 +1,880 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Connector:Conn_01x02_Female J11
+U 1 1 60BA3BF9
+P 1650 2300
+F 0 "J11" H 1542 1975 50  0000 C CNN
+F 1 "12V INPUT" H 1542 2066 50  0000 C CNN
+F 2 "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" H 1650 2300 50  0001 C CNN
+F 3 "~" H 1650 2300 50  0001 C CNN
+	1    1650 2300
+	-1   0    0    1   
+$EndComp
+$Comp
+L Connector:Conn_01x02_Female J6
+U 1 1 60BA3C05
+P 2900 2300
+F 0 "J6" H 2850 2400 50  0000 C CNN
+F 1 "Pump 6" H 2792 2066 50  0001 C CNN
+F 2 "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" H 2900 2300 50  0001 C CNN
+F 3 "~" H 2900 2300 50  0001 C CNN
+	1    2900 2300
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	1850 2200 2000 2200
+Wire Wire Line
+	2000 2200 2000 1750
+Wire Wire Line
+	2800 1750 2800 2100
+Wire Wire Line
+	2800 2100 3100 2100
+Wire Wire Line
+	2800 2100 2800 2550
+Connection ~ 2800 2100
+Wire Wire Line
+	1850 2300 2200 2300
+Wire Wire Line
+	7350 2450 7700 2450
+$Comp
+L Device:R R1
+U 1 1 60BA3C65
+P 7850 1950
+F 0 "R1" V 7850 1950 50  0000 C CNN
+F 1 "1KR" V 7734 1950 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P5.08mm_Vertical" V 7780 1950 50  0001 C CNN
+F 3 "~" H 7850 1950 50  0001 C CNN
+	1    7850 1950
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2800 2550 3100 2550
+Wire Wire Line
+	3100 2550 3100 2750
+Wire Wire Line
+	2600 5300 4600 5300
+Connection ~ 2800 2550
+Wire Wire Line
+	4550 5400 7350 5400
+Wire Wire Line
+	4500 5450 7400 5450
+Wire Wire Line
+	7400 2550 7700 2550
+Wire Wire Line
+	4450 3550 4450 5500
+Wire Wire Line
+	4450 5500 7450 5500
+Wire Wire Line
+	7450 2650 7700 2650
+Wire Wire Line
+	4400 4200 4400 5550
+Wire Wire Line
+	4400 5550 7500 5550
+Wire Wire Line
+	7500 2750 7700 2750
+Wire Wire Line
+	4350 5600 7550 5600
+Wire Wire Line
+	7550 2850 7700 2850
+Wire Wire Line
+	2800 1750 4800 1750
+Connection ~ 2800 1750
+$Comp
+L Transistor_BJT:TIP120 Q6
+U 1 1 60BA3D07
+P 3650 2200
+F 0 "Q6" H 3857 2154 50  0000 L CNN
+F 1 "TIP120" H 3857 2245 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 3850 2125 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 3650 2200 50  0001 L CNN
+	1    3650 2200
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	4600 5300 6700 5300
+Connection ~ 4600 5300
+Wire Wire Line
+	6750 2200 6750 1950
+Wire Wire Line
+	6750 1950 7700 1950
+Wire Wire Line
+	6800 2850 6800 2050
+Wire Wire Line
+	6800 2050 7700 2050
+Wire Wire Line
+	6850 2150 7700 2150
+Wire Wire Line
+	6900 2250 7700 2250
+Wire Wire Line
+	6950 4900 6950 2350
+Wire Wire Line
+	6950 2350 7700 2350
+$Comp
+L Diode:1N4001 D6
+U 1 1 60BA3D9E
+P 3300 2250
+F 0 "D6" H 3300 2362 50  0000 C CNN
+F 1 "DIODE" H 3300 2424 50  0001 C CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P5.08mm_Vertical_AnodeUp" H 3300 2250 50  0001 C CNN
+F 3 "~" H 3300 2250 50  0001 C CNN
+	1    3300 2250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2600 2300 2600 5300
+Wire Wire Line
+	7350 2450 7350 5400
+Wire Wire Line
+	7400 2550 7400 5450
+Wire Wire Line
+	7450 2650 7450 5500
+Wire Wire Line
+	7500 2750 7500 5550
+Wire Wire Line
+	7550 2850 7550 5600
+Wire Wire Line
+	6700 5300 8850 5300
+Connection ~ 6700 5300
+Wire Wire Line
+	8000 2850 9050 2850
+Wire Wire Line
+	8000 2750 9050 2750
+Wire Wire Line
+	8000 2650 9050 2650
+Wire Wire Line
+	8000 2550 9050 2550
+Wire Wire Line
+	8000 2450 9050 2450
+Wire Wire Line
+	8000 2350 9050 2350
+Wire Wire Line
+	8000 2250 9050 2250
+Wire Wire Line
+	8000 2150 9050 2150
+Wire Wire Line
+	8000 2050 9050 2050
+$Comp
+L Connector:Conn_01x12_Female J12
+U 1 1 60BA3DB6
+P 9250 2450
+F 0 "J12" H 9278 2426 50  0000 L CNN
+F 1 "Conn_01x12_Female" H 9278 2335 50  0000 L CNN
+F 2 "Connector_JST:JST_XH_B12B-XH-A_1x12_P2.50mm_Vertical" H 9250 2450 50  0001 C CNN
+F 3 "~" H 9250 2450 50  0001 C CNN
+	1    9250 2450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8850 5300 8850 3050
+Wire Wire Line
+	8850 3050 9050 3050
+Wire Wire Line
+	4800 1750 7100 1750
+Wire Wire Line
+	7100 1750 7100 2950
+Wire Wire Line
+	7100 2950 9050 2950
+Connection ~ 4800 1750
+$Comp
+L power:GND #PWR0101
+U 1 1 60BA3DC2
+P 2200 2300
+F 0 "#PWR0101" H 2200 2050 50  0001 C CNN
+F 1 "GND" H 2205 2127 50  0000 C CNN
+F 2 "" H 2200 2300 50  0001 C CNN
+F 3 "" H 2200 2300 50  0001 C CNN
+	1    2200 2300
+	1    0    0    -1  
+$EndComp
+Connection ~ 2200 2300
+Wire Wire Line
+	2200 2300 2600 2300
+Wire Wire Line
+	8000 1950 9050 1950
+Text Label 8900 3050 0    50   ~ 0
+GND
+Text Label 8900 1950 0    50   ~ 0
+P1
+Text Label 8900 2050 0    50   ~ 0
+P2
+Text Label 8900 2150 0    50   ~ 0
+P3
+Text Label 8900 2250 0    50   ~ 0
+P4
+Text Label 8900 2350 0    50   ~ 0
+P5
+Text Label 8900 2450 0    50   ~ 0
+P6
+Text Label 8900 2550 0    50   ~ 0
+P7
+Text Label 8900 2650 0    50   ~ 0
+P8
+Text Label 8900 2750 0    50   ~ 0
+P9
+Text Label 8900 2850 0    50   ~ 0
+P10
+Text Label 8900 2950 0    50   ~ 0
+12v
+Text Label 1850 2200 0    50   ~ 0
+12v
+Text Label 1850 2300 0    50   ~ 0
+GND
+Wire Wire Line
+	3100 2200 3100 2100
+Wire Wire Line
+	3100 2100 3300 2100
+Connection ~ 3100 2100
+Wire Wire Line
+	3100 2300 3100 2400
+Wire Wire Line
+	3100 2400 3300 2400
+Wire Wire Line
+	3300 2400 3550 2400
+Connection ~ 3300 2400
+Wire Wire Line
+	3550 2000 4600 2000
+Wire Wire Line
+	3850 2200 4550 2200
+Wire Wire Line
+	4550 2200 4550 5400
+Text Label 4000 2000 0    50   ~ 0
+GND
+Wire Wire Line
+	4600 2000 4600 2650
+$Comp
+L Transistor_BJT:TIP120 Q7
+U 1 1 60D0A444
+P 3650 2850
+F 0 "Q7" H 3857 2804 50  0000 L CNN
+F 1 "TIP120" H 3857 2895 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 3850 2775 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 3650 2850 50  0001 L CNN
+	1    3650 2850
+	-1   0    0    1   
+$EndComp
+$Comp
+L Diode:1N4001 D7
+U 1 1 60D0A44A
+P 3300 2900
+F 0 "D7" H 3300 3012 50  0000 C CNN
+F 1 "DIODE" H 3300 3074 50  0001 C CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P5.08mm_Vertical_AnodeUp" H 3300 2900 50  0001 C CNN
+F 3 "~" H 3300 2900 50  0001 C CNN
+	1    3300 2900
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3100 3050 3300 3050
+Wire Wire Line
+	3300 3050 3550 3050
+Connection ~ 3300 3050
+Wire Wire Line
+	3100 2950 3100 3050
+Wire Wire Line
+	3850 2850 4500 2850
+Wire Wire Line
+	4500 2850 4500 5450
+Wire Wire Line
+	3550 2650 4600 2650
+Connection ~ 4600 2650
+Wire Wire Line
+	3100 2750 3300 2750
+Connection ~ 3100 2750
+Wire Wire Line
+	3100 2750 3100 2850
+$Comp
+L Connector:Conn_01x02_Female J7
+U 1 1 60BA3C0B
+P 2900 2950
+F 0 "J7" H 2850 3050 50  0000 C CNN
+F 1 "Pump 7" H 2792 2716 50  0001 C CNN
+F 2 "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" H 2900 2950 50  0001 C CNN
+F 3 "~" H 2900 2950 50  0001 C CNN
+	1    2900 2950
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	2800 2550 2800 3250
+Wire Wire Line
+	4600 2650 4600 3350
+Wire Wire Line
+	3100 3250 3100 3450
+$Comp
+L Transistor_BJT:TIP120 Q8
+U 1 1 60D69C23
+P 3650 3550
+F 0 "Q8" H 3857 3504 50  0000 L CNN
+F 1 "TIP120" H 3857 3595 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 3850 3475 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 3650 3550 50  0001 L CNN
+	1    3650 3550
+	-1   0    0    1   
+$EndComp
+$Comp
+L Diode:1N4001 D8
+U 1 1 60D69C29
+P 3300 3600
+F 0 "D8" H 3300 3712 50  0000 C CNN
+F 1 "DIODE" H 3300 3774 50  0001 C CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P5.08mm_Vertical_AnodeUp" H 3300 3600 50  0001 C CNN
+F 3 "~" H 3300 3600 50  0001 C CNN
+	1    3300 3600
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3100 3750 3300 3750
+Wire Wire Line
+	3300 3750 3550 3750
+Connection ~ 3300 3750
+Wire Wire Line
+	3100 3650 3100 3750
+Wire Wire Line
+	3100 3450 3300 3450
+Connection ~ 3100 3450
+Wire Wire Line
+	3100 3450 3100 3550
+$Comp
+L Connector:Conn_01x02_Female J8
+U 1 1 60D69C38
+P 2900 3650
+F 0 "J8" H 2850 3750 50  0000 C CNN
+F 1 "Pump 8" H 2792 3416 50  0001 C CNN
+F 2 "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" H 2900 3650 50  0001 C CNN
+F 3 "~" H 2900 3650 50  0001 C CNN
+	1    2900 3650
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	3100 3900 3100 4100
+$Comp
+L Transistor_BJT:TIP120 Q9
+U 1 1 60D730E6
+P 3650 4200
+F 0 "Q9" H 3857 4154 50  0000 L CNN
+F 1 "TIP120" H 3857 4245 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 3850 4125 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 3650 4200 50  0001 L CNN
+	1    3650 4200
+	-1   0    0    1   
+$EndComp
+$Comp
+L Diode:1N4001 D9
+U 1 1 60D730EC
+P 3300 4250
+F 0 "D9" H 3300 4362 50  0000 C CNN
+F 1 "DIODE" H 3300 4424 50  0001 C CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P5.08mm_Vertical_AnodeUp" H 3300 4250 50  0001 C CNN
+F 3 "~" H 3300 4250 50  0001 C CNN
+	1    3300 4250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3100 4400 3300 4400
+Wire Wire Line
+	3300 4400 3550 4400
+Connection ~ 3300 4400
+Wire Wire Line
+	3100 4300 3100 4400
+Wire Wire Line
+	3100 4100 3300 4100
+Connection ~ 3100 4100
+Wire Wire Line
+	3100 4100 3100 4200
+$Comp
+L Connector:Conn_01x02_Female J9
+U 1 1 60D730FB
+P 2900 4300
+F 0 "J9" H 2850 4400 50  0000 C CNN
+F 1 "Pump 9" H 2792 4066 50  0001 C CNN
+F 2 "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" H 2900 4300 50  0001 C CNN
+F 3 "~" H 2900 4300 50  0001 C CNN
+	1    2900 4300
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	3100 4600 3100 4800
+$Comp
+L Transistor_BJT:TIP120 Q10
+U 1 1 60D7CD82
+P 3650 4900
+F 0 "Q10" H 3857 4854 50  0000 L CNN
+F 1 "TIP120" H 3857 4945 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 3850 4825 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 3650 4900 50  0001 L CNN
+	1    3650 4900
+	-1   0    0    1   
+$EndComp
+$Comp
+L Diode:1N4001 D10
+U 1 1 60D7CD88
+P 3300 4950
+F 0 "D10" H 3300 5062 50  0000 C CNN
+F 1 "DIODE" H 3300 5124 50  0001 C CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P5.08mm_Vertical_AnodeUp" H 3300 4950 50  0001 C CNN
+F 3 "~" H 3300 4950 50  0001 C CNN
+	1    3300 4950
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3100 5100 3300 5100
+Wire Wire Line
+	3300 5100 3550 5100
+Connection ~ 3300 5100
+Wire Wire Line
+	3100 5000 3100 5100
+Wire Wire Line
+	3100 4800 3300 4800
+Connection ~ 3100 4800
+Wire Wire Line
+	3100 4800 3100 4900
+$Comp
+L Connector:Conn_01x02_Female J10
+U 1 1 60D7CD97
+P 2900 5000
+F 0 "J10" H 2850 5100 50  0000 C CNN
+F 1 "Pump 10" H 2792 4766 50  0001 C CNN
+F 2 "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" H 2900 5000 50  0001 C CNN
+F 3 "~" H 2900 5000 50  0001 C CNN
+	1    2900 5000
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	3850 3550 4450 3550
+Wire Wire Line
+	3550 3350 4600 3350
+Connection ~ 4600 3350
+Wire Wire Line
+	4600 3350 4600 4000
+Wire Wire Line
+	3850 4200 4400 4200
+Wire Wire Line
+	3550 4000 4600 4000
+Connection ~ 4600 4000
+Wire Wire Line
+	4600 4000 4600 4700
+Wire Wire Line
+	3850 4900 4350 4900
+Wire Wire Line
+	4350 4900 4350 5600
+Wire Wire Line
+	3550 4700 4600 4700
+Connection ~ 4600 4700
+Wire Wire Line
+	4600 4700 4600 5300
+Wire Wire Line
+	3100 3250 2800 3250
+Connection ~ 2800 3250
+Wire Wire Line
+	2800 3250 2800 3900
+Wire Wire Line
+	3100 3900 2800 3900
+Connection ~ 2800 3900
+Wire Wire Line
+	2800 3900 2800 4600
+Wire Wire Line
+	2800 4600 3100 4600
+Wire Wire Line
+	6700 2000 6700 2650
+Wire Wire Line
+	4800 1750 4800 2100
+$Comp
+L Connector:Conn_01x02_Female J1
+U 1 1 60E4FCCD
+P 4900 2300
+F 0 "J1" H 4850 2400 50  0000 C CNN
+F 1 "Pump 1" H 4792 2066 50  0001 C CNN
+F 2 "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" H 4900 2300 50  0001 C CNN
+F 3 "~" H 4900 2300 50  0001 C CNN
+	1    4900 2300
+	-1   0    0    1   
+$EndComp
+$Comp
+L Transistor_BJT:TIP120 Q1
+U 1 1 60E4FCD6
+P 5650 2200
+F 0 "Q1" H 5857 2154 50  0000 L CNN
+F 1 "TIP120" H 5857 2245 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 5850 2125 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 5650 2200 50  0001 L CNN
+	1    5650 2200
+	-1   0    0    1   
+$EndComp
+$Comp
+L Diode:1N4001 D1
+U 1 1 60E4FCDC
+P 5300 2250
+F 0 "D1" H 5300 2362 50  0000 C CNN
+F 1 "DIODE" H 5300 2424 50  0001 C CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P5.08mm_Vertical_AnodeUp" H 5300 2250 50  0001 C CNN
+F 3 "~" H 5300 2250 50  0001 C CNN
+	1    5300 2250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5100 2200 5100 2100
+Wire Wire Line
+	5100 2100 5300 2100
+Wire Wire Line
+	5100 2300 5100 2400
+Wire Wire Line
+	5100 2400 5300 2400
+Wire Wire Line
+	5300 2400 5550 2400
+Connection ~ 5300 2400
+Text Label 6000 2000 0    50   ~ 0
+GND
+$Comp
+L Transistor_BJT:TIP120 Q2
+U 1 1 60E4FCEC
+P 5650 2850
+F 0 "Q2" H 5857 2804 50  0000 L CNN
+F 1 "TIP120" H 5857 2895 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 5850 2775 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 5650 2850 50  0001 L CNN
+	1    5650 2850
+	-1   0    0    1   
+$EndComp
+$Comp
+L Diode:1N4001 D2
+U 1 1 60E4FCF2
+P 5300 2900
+F 0 "D2" H 5300 3012 50  0000 C CNN
+F 1 "DIODE" H 5300 3074 50  0001 C CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P5.08mm_Vertical_AnodeUp" H 5300 2900 50  0001 C CNN
+F 3 "~" H 5300 2900 50  0001 C CNN
+	1    5300 2900
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5100 3050 5300 3050
+Wire Wire Line
+	5300 3050 5550 3050
+Connection ~ 5300 3050
+Wire Wire Line
+	5100 2950 5100 3050
+Wire Wire Line
+	5100 2750 5300 2750
+Connection ~ 5100 2750
+Wire Wire Line
+	5100 2750 5100 2850
+$Comp
+L Connector:Conn_01x02_Female J2
+U 1 1 60E4FD01
+P 4900 2950
+F 0 "J2" H 4850 3050 50  0000 C CNN
+F 1 "Pump 2" H 4792 2716 50  0001 C CNN
+F 2 "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" H 4900 2950 50  0001 C CNN
+F 3 "~" H 4900 2950 50  0001 C CNN
+	1    4900 2950
+	-1   0    0    1   
+$EndComp
+$Comp
+L Transistor_BJT:TIP120 Q3
+U 1 1 60E4FD08
+P 5650 3550
+F 0 "Q3" H 5857 3504 50  0000 L CNN
+F 1 "TIP120" H 5857 3595 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 5850 3475 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 5650 3550 50  0001 L CNN
+	1    5650 3550
+	-1   0    0    1   
+$EndComp
+$Comp
+L Diode:1N4001 D3
+U 1 1 60E4FD0E
+P 5300 3600
+F 0 "D3" H 5300 3712 50  0000 C CNN
+F 1 "DIODE" H 5300 3774 50  0001 C CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P5.08mm_Vertical_AnodeUp" H 5300 3600 50  0001 C CNN
+F 3 "~" H 5300 3600 50  0001 C CNN
+	1    5300 3600
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5100 3750 5300 3750
+Wire Wire Line
+	5300 3750 5550 3750
+Connection ~ 5300 3750
+Wire Wire Line
+	5100 3650 5100 3750
+Wire Wire Line
+	5100 3450 5300 3450
+Connection ~ 5100 3450
+Wire Wire Line
+	5100 3450 5100 3550
+$Comp
+L Connector:Conn_01x02_Female J3
+U 1 1 60E4FD1B
+P 4900 3650
+F 0 "J3" H 4850 3750 50  0000 C CNN
+F 1 "Pump 3" H 4792 3416 50  0001 C CNN
+F 2 "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" H 4900 3650 50  0001 C CNN
+F 3 "~" H 4900 3650 50  0001 C CNN
+	1    4900 3650
+	-1   0    0    1   
+$EndComp
+$Comp
+L Transistor_BJT:TIP120 Q4
+U 1 1 60E4FD22
+P 5650 4200
+F 0 "Q4" H 5857 4154 50  0000 L CNN
+F 1 "TIP120" H 5857 4245 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 5850 4125 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 5650 4200 50  0001 L CNN
+	1    5650 4200
+	-1   0    0    1   
+$EndComp
+$Comp
+L Diode:1N4001 D4
+U 1 1 60E4FD28
+P 5300 4250
+F 0 "D4" H 5300 4362 50  0000 C CNN
+F 1 "DIODE" H 5300 4424 50  0001 C CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P5.08mm_Vertical_AnodeUp" H 5300 4250 50  0001 C CNN
+F 3 "~" H 5300 4250 50  0001 C CNN
+	1    5300 4250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5100 4400 5300 4400
+Wire Wire Line
+	5300 4400 5550 4400
+Connection ~ 5300 4400
+Wire Wire Line
+	5100 4300 5100 4400
+Wire Wire Line
+	5100 4100 5300 4100
+Connection ~ 5100 4100
+Wire Wire Line
+	5100 4100 5100 4200
+$Comp
+L Connector:Conn_01x02_Female J4
+U 1 1 60E4FD35
+P 4900 4300
+F 0 "J4" H 4850 4400 50  0000 C CNN
+F 1 "Pump 4" H 4792 4066 50  0001 C CNN
+F 2 "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" H 4900 4300 50  0001 C CNN
+F 3 "~" H 4900 4300 50  0001 C CNN
+	1    4900 4300
+	-1   0    0    1   
+$EndComp
+$Comp
+L Transistor_BJT:TIP120 Q5
+U 1 1 60E4FD3C
+P 5650 4900
+F 0 "Q5" H 5857 4854 50  0000 L CNN
+F 1 "TIP120" H 5857 4945 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 5850 4825 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/TI/TIP120.pdf" H 5650 4900 50  0001 L CNN
+	1    5650 4900
+	-1   0    0    1   
+$EndComp
+$Comp
+L Diode:1N4001 D5
+U 1 1 60E4FD42
+P 5300 4950
+F 0 "D5" H 5300 5062 50  0000 C CNN
+F 1 "DIODE" H 5300 5124 50  0001 C CNN
+F 2 "Diode_THT:D_DO-41_SOD81_P5.08mm_Vertical_AnodeUp" H 5300 4950 50  0001 C CNN
+F 3 "~" H 5300 4950 50  0001 C CNN
+	1    5300 4950
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5100 5100 5300 5100
+Wire Wire Line
+	5300 5100 5550 5100
+Connection ~ 5300 5100
+Wire Wire Line
+	5100 5000 5100 5100
+Wire Wire Line
+	5100 4800 5300 4800
+Connection ~ 5100 4800
+Wire Wire Line
+	5100 4800 5100 4900
+$Comp
+L Connector:Conn_01x02_Female J5
+U 1 1 60E4FD4F
+P 4900 5000
+F 0 "J5" H 4850 5100 50  0000 C CNN
+F 1 "Pump 5" H 4792 4766 50  0001 C CNN
+F 2 "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" H 4900 5000 50  0001 C CNN
+F 3 "~" H 4900 5000 50  0001 C CNN
+	1    4900 5000
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	5100 2100 4800 2100
+Connection ~ 5100 2100
+Connection ~ 4800 2100
+Wire Wire Line
+	4800 2100 4800 2750
+Wire Wire Line
+	5100 2750 4800 2750
+Connection ~ 4800 2750
+Wire Wire Line
+	4800 2750 4800 3450
+Wire Wire Line
+	5100 3450 4800 3450
+Connection ~ 4800 3450
+Wire Wire Line
+	5100 4100 4800 4100
+Wire Wire Line
+	4800 3450 4800 4100
+Connection ~ 4800 4100
+Wire Wire Line
+	5100 4800 4800 4800
+Wire Wire Line
+	4800 4100 4800 4800
+Wire Wire Line
+	5550 2000 6700 2000
+Wire Wire Line
+	5550 2650 6700 2650
+Connection ~ 6700 2650
+Wire Wire Line
+	6700 2650 6700 3350
+Connection ~ 6700 3350
+Wire Wire Line
+	6700 3350 6700 4000
+Wire Wire Line
+	5550 3350 6700 3350
+Wire Wire Line
+	5550 4000 6700 4000
+Connection ~ 6700 4000
+Wire Wire Line
+	6700 4000 6700 4700
+Wire Wire Line
+	5550 4700 6700 4700
+Connection ~ 6700 4700
+Wire Wire Line
+	6700 4700 6700 5300
+Wire Wire Line
+	5850 4900 6950 4900
+Wire Wire Line
+	6900 2250 6900 4200
+Wire Wire Line
+	5850 4200 6900 4200
+Wire Wire Line
+	6850 2150 6850 3550
+Wire Wire Line
+	5850 3550 6850 3550
+Wire Wire Line
+	5850 2850 6800 2850
+Wire Wire Line
+	5850 2200 6750 2200
+$Comp
+L Device:R R2
+U 1 1 60F3074A
+P 7850 2050
+F 0 "R2" V 7850 2050 50  0000 C CNN
+F 1 "1KR" V 7734 2050 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P5.08mm_Vertical" V 7780 2050 50  0001 C CNN
+F 3 "~" H 7850 2050 50  0001 C CNN
+	1    7850 2050
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R3
+U 1 1 60F375FE
+P 7850 2150
+F 0 "R3" V 7850 2150 50  0000 C CNN
+F 1 "1KR" V 7734 2150 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P5.08mm_Vertical" V 7780 2150 50  0001 C CNN
+F 3 "~" H 7850 2150 50  0001 C CNN
+	1    7850 2150
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R4
+U 1 1 60F3E5F9
+P 7850 2250
+F 0 "R4" V 7850 2250 50  0000 C CNN
+F 1 "1KR" V 7734 2250 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P5.08mm_Vertical" V 7780 2250 50  0001 C CNN
+F 3 "~" H 7850 2250 50  0001 C CNN
+	1    7850 2250
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R5
+U 1 1 60F454FC
+P 7850 2350
+F 0 "R5" V 7850 2350 50  0000 C CNN
+F 1 "1KR" V 7734 2350 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P5.08mm_Vertical" V 7780 2350 50  0001 C CNN
+F 3 "~" H 7850 2350 50  0001 C CNN
+	1    7850 2350
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R6
+U 1 1 60F4C51B
+P 7850 2450
+F 0 "R6" V 7850 2450 50  0000 C CNN
+F 1 "1KR" V 7734 2450 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P5.08mm_Vertical" V 7780 2450 50  0001 C CNN
+F 3 "~" H 7850 2450 50  0001 C CNN
+	1    7850 2450
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R7
+U 1 1 60F534DF
+P 7850 2550
+F 0 "R7" V 7850 2550 50  0000 C CNN
+F 1 "1KR" V 7734 2550 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P5.08mm_Vertical" V 7780 2550 50  0001 C CNN
+F 3 "~" H 7850 2550 50  0001 C CNN
+	1    7850 2550
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R8
+U 1 1 60F5A548
+P 7850 2650
+F 0 "R8" V 7850 2650 50  0000 C CNN
+F 1 "1KR" V 7734 2650 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P5.08mm_Vertical" V 7780 2650 50  0001 C CNN
+F 3 "~" H 7850 2650 50  0001 C CNN
+	1    7850 2650
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R9
+U 1 1 60F61565
+P 7850 2750
+F 0 "R9" V 7850 2750 50  0000 C CNN
+F 1 "1KR" V 7734 2750 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P5.08mm_Vertical" V 7780 2750 50  0001 C CNN
+F 3 "~" H 7850 2750 50  0001 C CNN
+	1    7850 2750
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R10
+U 1 1 60F685FF
+P 7850 2850
+F 0 "R10" V 7850 2850 50  0000 C CNN
+F 1 "1KR" V 7734 2850 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P5.08mm_Vertical" V 7780 2850 50  0001 C CNN
+F 3 "~" H 7850 2850 50  0001 C CNN
+	1    7850 2850
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2000 1750 2800 1750
+$EndSCHEMATC

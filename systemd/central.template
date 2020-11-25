@@ -1,0 +1,10 @@
+[Unit]
+Description=Bartender Central Socket.io Server
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 [BARTENDERDIR]/backend/central_server/central_server.py
+User=pi
+
+[Install]
+WantedBy=multi-user.target

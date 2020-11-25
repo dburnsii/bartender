@@ -1,0 +1,1 @@
+{"name": "moscow mule", "ingredients": [{"ingredient": "vodka", "quantity": 60.0, "required": true}, {"ingredient": "lime juice", "quantity": 15.0, "required": true}, {"ingredient": "ginger beer", "quantity": 180.0, "required": true}, {"ingredient": "mint", "quantity": 1.0, "required": false}], "alias": ["mule"], "image": "moscow_mule.jpg"}

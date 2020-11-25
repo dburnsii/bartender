@@ -1,0 +1,11 @@
+Length,Width,Qty,Label,Enabled
+48,24,1,Frame Back,true
+48,6,2,Frame Top & Bottom,true
+23,6,2,Frame Left & Right,true
+47,6,2,Frame Shelves,true
+6,4,2,Drawer Barrier,true
+16,4,2,Drawer Faces,true
+5,3.5,4,Drawer Sides,true
+15,3.5,2,Drawer Rear,true
+14,5,2,Drawer Bottom,true
+47,5.5,1,Pump Door,true

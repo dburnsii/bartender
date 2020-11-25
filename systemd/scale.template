@@ -1,0 +1,11 @@
+[Unit]
+Description=Bartender Scale Server
+After=central
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 [BARTENDERDIR]/backend/scale_server/scale_server.py
+User=pi
+
+[Install]
+WantedBy=multi-user.target

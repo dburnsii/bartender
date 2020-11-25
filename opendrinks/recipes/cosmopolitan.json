@@ -1,0 +1,1 @@
+{"name": "cosmopolitan", "ingredients": [{"ingredient": "vodka", "quantity": 45.0, "required": true}, {"ingredient": "lemon juice", "quantity": 15.0, "required": true}, {"ingredient": "triple sec", "quantity": 15.0, "required": true}, {"ingredient": "cranberry juice", "quantity": 15.0, "required": true}], "alias": ["cosmo"], "image": "cosmopolitan.jpg"}

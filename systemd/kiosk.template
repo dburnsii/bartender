@@ -1,0 +1,18 @@
+[Unit]
+Description=Bartender Kiosk (Browser) Server
+After=frontend.service database.service graphical.target
+Requires=graphical.target
+StartLimitIntervalSec=0
+
+[Service]
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/pi/.Xauthority
+Type=simple
+ExecStart=/usr/bin/firefox --kiosk http://localhost:3000
+User=pi
+Group=pi
+RestartSec=10s
+Restart=always
+
+[Install]
+WantedBy=graphical.target

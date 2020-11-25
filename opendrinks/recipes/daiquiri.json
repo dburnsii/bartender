@@ -1,0 +1,1 @@
+{"name": "daiquiri", "ingredients": [{"ingredient": "rum", "quantity": 45.0, "required": true}, {"ingredient": "lime juice", "quantity": 30.0, "required": true}, {"ingredient": "simple syrup", "quantity": 15.0, "required": true}], "alias": [], "image": "daiquiri.jpg"}

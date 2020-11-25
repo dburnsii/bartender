@@ -1,0 +1,12 @@
+[Unit]
+Description=Bartender Frontend Server
+After=central
+
+[Service]
+Type=simple
+WorkingDirectory=[BARTENDERDIR]/frontend/build
+ExecStart=/usr/bin/python3 -m http.server 3000
+User=pi
+
+[Install]
+WantedBy=multi-user.target

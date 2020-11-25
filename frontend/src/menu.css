@@ -1,0 +1,7 @@
+div.MuiListItemIcon-root {
+  min-width: 60px;
+}
+
+svg.MuiSvgIcon-root.menuIcon {
+  font-size: 60px;
+}

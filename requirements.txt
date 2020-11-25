@@ -1,0 +1,14 @@
+python-socketio
+aiohttp
+hx711
+pymongo==3.5.1
+flask
+flask-mongoengine
+flask-cors
+flask-restful
+websocket-client
+pyserial
+rpi-backlight
+
+# Testing only
+pytest
