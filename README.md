@@ -1,7 +1,7 @@
 ![Pytest](https://github.com/dburnsii/bartender/actions/workflows/pytest.yml/badge.svg)
 # The Bartender
 
-[![Product Video](https://imgur.com/6ZcyR7p)](https://youtu.be/YWqvJ5PAxSI)
+[![Product Video](https://imgur.com/6ZcyR7p.png)](https://youtu.be/YWqvJ5PAxSI)
 
 The Bartender is an intelligent, robotic, drink-making machine. It's made to
 display your bottles and pour you a cocktail just the way you like. The scale
