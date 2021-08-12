@@ -16,9 +16,7 @@ def cleanup():
             gpio.output(pin, gpio.LOW)
         gpio.cleanup()
 
-pins = [21, 20, 26, 16, 19, 12, 23, 22, 4, 27]
-#enable_pin = 27
-#enable_time = 0
+pins = [21, 26, 20, 19, 16, 12, 22, 23, 27, 4]
 pour_target = 0
 pour_total = 0
 pour_queue = []
@@ -36,6 +34,7 @@ def activate_valve(data):
     global cup_presence_status
     print(data)
     print("Oh you want me to turn on  pump {}?".format(data['pin']))
+    print(pins[int(data['pin'])])
     if not simulation:
         if cup_presence_status or manual_override:
             gpio.output(pins[int(data['pin'])], gpio.HIGH)
