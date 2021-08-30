@@ -29,6 +29,8 @@ of your setup. With two drawers for storage, and knobs or handles on the front
 side, **The Bartender** feels like a cabinet with some extra wizardry, and can
 also hold things like Margarita Salt or tools like a stirrer.
 
+[Demo Video](https://youtu.be/VJUhfgaUki0)
+
 ### Getting Started
 The Bartender calls for equal parts hardware and software, so some woodworking
 and soldering is required. Currently you'll have to buy the components and
