@@ -31,22 +31,24 @@ print("name blank and press enter.")
 ingredients = []
 ingredient_name = input("Ingredient name: ").lower()
 while len(ingredient_name):
-    ingredient_object = next((ing for ing in ing_list if ing["name"] == ingredient_name), None)
+    ingredient_object = \
+        next((ing for ing in ing_list if ing["name"] == ingredient_name), None)
     if not ingredient_object:
         ingredient_object = {}
-        print("Uh oh! We don't know about {} just yet!".format(ingredient_name))
-        print("We can add it now. First, we'll need to know how you'd measure this.")
-        print("With things like lemon wedges and ice")
-        print("cubes, we normally use \"count\". For things like liqour and soda")
-        print("we'll use \"mL\". For things we only need a dash of like bitters,")
-        print("we'll use \"dash\"")
-        print("Select one of the following:")
-        print("[1] mL\n[2] dash\n[3] count")
+        print("Uh oh! We don't know about {} just yet!".
+              format(ingredient_name))
+        print("We can add it now. First, we'll need to know how you'd measure "
+              "this. \nWith things like lemon wedges and ice\n"
+              "cubes, we normally use \"count\". For things like liqour and "
+              "soda, we'll use \"mL\". For things we only need a dash of like "
+              "bitters, we'll use \"dash\".\n Select one of the following:\n"
+              "[1] mL\n[2] dash\n[3] count")
         measure = input("measure: ")
         carbonated_boolean = False
         if measure == "1":
             measure_type = "mL"
-            carbonated = input("Is this ingredient carbonated? Even a little bit? (yes/no): ")
+            carbonated = input("Is this ingredient carbonated? Even a little "
+                               "bit? (yes/no): ")
             if carbonated.lower() == "y" or carbonated.lower() == "yes":
                 carbonated_boolean = True
             elif carbonated.lower() == "n" or carbonated.lower() == "no":
@@ -68,7 +70,10 @@ while len(ingredient_name):
         print(json.dumps(ingredient_object))
 
         # TODO: further validate ingredient name for filename
-        ing_file = open(os.path.join(ing_path, ingredient_name.replace(" ", "_") + ".json"), "w")
+        ing_file = open(os.path.join(ing_path,
+                                     ingredient_name.replace(" ", "_") +
+                                     ".json"),
+                        "w")
         json.dump(ingredient_object, ing_file)
         ing_file.close()
         print("All done adding {}!".format(ingredient_name))
@@ -76,9 +81,12 @@ while len(ingredient_name):
         print(ingredient_object)
     drink_ingredient = {}
     drink_ingredient["ingredient"] = ingredient_object["name"]
-    drink_ingredient["quantity"] = float(input("Cool, how much should we add? ({}): ".format(ingredient_object["measure"])))
-    required = input("Is this ingredient required to make this drink? (yes/no): ")
-    while not 'required' in drink_ingredient:
+    drink_ingredient["quantity"] = \
+        float(input("Cool, how much should we add? ({}): ".
+                    format(ingredient_object["measure"])))
+    required = \
+        input("Is this ingredient required to make this drink? (yes/no): ")
+    while 'required' not in drink_ingredient:
         if required.lower() == "y" or required.lower() == "yes":
             drink_ingredient['required'] = True
         elif required.lower() == "n" or required.lower() == "no":
@@ -90,7 +98,7 @@ while len(ingredient_name):
     print("When you get done with the igredients, just leave the ")
     print("name blank and press enter.")
     ingredient_name = input("Ingredient name: ").lower()
-    
+
 drink = {}
 drink['name'] = name
 drink['ingredients'] = ingredients

@@ -1,17 +1,19 @@
 #!/usr/bin/python3
 
-from mongo import *
+from mongo import Ingredient, Drink, Valve, Config
 import os
-import json
 
 valveCount = 10
 
 # TODO validate that all fields are lowercase
+
+
 def validateIngredient(ing):
-    if not "name" in ing:
+    if "name" not in ing:
         print("Ingredient missing name!")
         return False
     return True
+
 
 Ingredient.objects().delete()
 Drink.objects().delete()
@@ -37,10 +39,6 @@ for drink_filename in os.listdir(drink_path):
     print("Processing {}".format(drink_filename))
     drink_file = open(os.path.join(drink_path, drink_filename))
     drink = Drink.from_json(drink_file.read())
-        #ing_name = ing['ingredient']
-        #ing_reference = Ingredient.objects(name=ing_name).first()
-        #print(ing_reference)
-        #ing.ingredient = ing_reference
     drink.save()
     for ing in drink.ingredients:
         print(ing)
