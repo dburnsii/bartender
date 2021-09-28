@@ -94,6 +94,13 @@ async def abort_pour(sid, data):
     await sio.emit('abort_pour', data)
 
 #
+# System server
+#
+@sio.event
+async def screen_brightness(sid, data):
+    await sio.emit('screen_brightness', data)
+
+#
 #  Central Server Stuff
 #
 

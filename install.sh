@@ -56,6 +56,9 @@ sudo systemctl enable scale
 sed  's%\[BARTENDERDIR\]%'"$PWD"'%g' systemd/led.template | sudo tee /usr/lib/systemd/system/led.service
 sudo systemctl enable led
 
+sed  's%\[BARTENDERDIR\]%'"$PWD"'%g' systemd/system.template | sudo tee /usr/lib/systemd/system/system.service
+sudo systemctl enable system
+
 sed  's%\[BARTENDERDIR\]%'"$PWD"'%g' systemd/frontend.template | sudo tee /usr/lib/systemd/system/frontend.service
 sudo systemctl enable frontend
 
