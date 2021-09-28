@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Divider , Box, Typography, Grid } from '@material-ui/core';
+import { Button, Divider , Box, Typography, Grid, Slider, Switch } from '@mui/material';
+import throttle from 'lodash.throttle';
 
 class SettingsPage extends React.Component {
 

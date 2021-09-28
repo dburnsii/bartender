@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button, CircularProgress, Box, Typography } from '@material-ui/core';
+import { Button, CircularProgress, Box, Typography } from '@mui/material';
 import './index.css';
 //import App from './App';
 import reportWebVitals from './reportWebVitals';

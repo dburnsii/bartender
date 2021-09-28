@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Card, Modal } from '@material-ui/core';
+import { Typography, Card, Modal } from '@mui/material';
 import BokehAnimation from './bokeh';
 
 class Screensaver extends React.Component {

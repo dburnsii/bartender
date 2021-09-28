@@ -1,8 +1,8 @@
 import React from 'react';
-import { Card, Box, Button, CircularProgress } from '@material-ui/core';
+import { Card, Box, Button, CircularProgress } from '@mui/material';
 import DrinkCard from './components/drinkCard';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 class SearchPage extends React.Component {
   constructor(props){

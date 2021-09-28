@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, CircularProgress, Box, Typography } from '@material-ui/core';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { Button, CircularProgress, Box, Typography } from '@mui/material';
+import { makeStyles, useTheme } from '@mui/material/styles';
 const drawerWidth = 60;
 
 

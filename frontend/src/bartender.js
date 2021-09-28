@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@mui/material/styles';
 import Menu from './menu';
 import Scale from './scale';
 import Manual from './manual';

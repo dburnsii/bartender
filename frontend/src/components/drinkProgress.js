@@ -1,10 +1,9 @@
 import React from 'react';
-import { Button, Card, LinearProgress, Box, Typography, Modal} from '@material-ui/core';
-import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
-import CloseIcon from '@material-ui/icons/Close';
-//import Modal from '@material-ui/core/Modal';
+import { Button, Card, LinearProgress, Box, Typography, Modal} from '@mui/material';
+import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
+import CloseIcon from '@mui/icons-material/Close';
 import { titleCase } from "title-case";
-import { green } from '@material-ui/core/colors';
+import { green } from '@mui/material/colors';
 
 class DrinkProgress extends React.Component {
   constructor(props){

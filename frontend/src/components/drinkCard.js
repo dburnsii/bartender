@@ -1,10 +1,10 @@
 import React from 'react';
-import { Button, Card, CircularProgress, Box, Typography, Dialog, DialogContent, DialogTitle, TableContainer, Table, TableBody, TableRow, TableCell, IconButton, Paper} from '@material-ui/core';
-import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
-import CloseIcon from '@material-ui/icons/Close';
-import Modal from '@material-ui/core/Modal';
+import { Button, Card, CircularProgress, Box, Typography, Dialog, DialogContent, DialogTitle, TableContainer, Table, TableBody, TableRow, TableCell, IconButton, Paper} from '@mui/material';
+import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
+import CloseIcon from '@mui/icons-material/Close';
+import Modal from '@mui/material/Modal';
 import { titleCase } from "title-case";
-import { green } from '@material-ui/core/colors';
+import { green } from '@mui/material/colors';
 
 class DrinkCard extends React.Component {
   constructor(props){

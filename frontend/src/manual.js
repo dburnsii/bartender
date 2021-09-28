@@ -1,11 +1,11 @@
 import React from 'react';
-import { Button, Divider , Box, Typography, Grid } from '@material-ui/core';
+import { Button, Divider , Box, Typography, Grid } from '@mui/material';
 import ValvePage from './components/valvePage';
 import Scale from './components/scale';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import LockClosedIcon from '@material-ui/icons/Lock';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import LockClosedIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 
 class ManualModePage extends React.Component {
 

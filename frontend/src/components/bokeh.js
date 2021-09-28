@@ -1,5 +1,5 @@
 import React from 'react';
-import Card from '@material-ui/core';
+import Card from '@mui/material';
 
 class BokehParticle extends React.Component {
   constructor(props){

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, CircularProgress, Box, Typography } from '@material-ui/core';
+import { Button, CircularProgress, Box, Typography } from '@mui/material';
 
 class Scale extends React.Component {
   constructor(props){
