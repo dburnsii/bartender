@@ -36,7 +36,7 @@ class DrinkCard extends React.Component {
               .then(response => response.json())
               .then((data) => {
                 this.setState({ingredients: [...this.state.ingredients, data]});
-                if(data.required && !(data.ingredient in this.props.valves)){
+                if(data.required && data.measure == "mL" && !(data.ingredient in this.props.valves)){
                   console.log("Missing required ingredient. marking as unavailable");
                   this.setState({available: false});
                 }
@@ -102,7 +102,7 @@ class DrinkCard extends React.Component {
               {
                 if("name" in value && this.props.valves){
                   const ing_prop =  this.ingredients.find(x => x.ingredient == value.name)
-                  if(ing_prop.required && this.props.valves.includes(value.name)){
+                  if((ing_prop.required && this.props.valves.includes(value.name)) || value.measure != "mL"){
                     return (
                       <TableRow style={styles.ingredientRow}>
                         <TableCell style={styles.ingredientCell}>{this.quantityText(value)}</TableCell>
