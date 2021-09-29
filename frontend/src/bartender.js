@@ -22,11 +22,12 @@ class Bartender extends React.Component {
     this.hideProgress = this.hideProgress.bind(this);
     this.clearError = this.clearError.bind(this);
     this.cancelPour = this.cancelPour.bind(this);
+    this.updateScreenTimeout = this.updateScreenTimeout.bind(this);
+    this.updateScreenBrightness = this.updateScreenBrightness.bind(this);
     this.socket = io("ws://" + window.location.hostname + ":8080");
     this.weight = 0;
     this.updateWeight = throttle(w => this.setState({weight: w}), 500);
     this.mouseDown = this.mouseDown.bind(this);
-    this.blankTime = 60 * 1000;
     this.state = {
       page: 'favorites',
       metric: false,
@@ -37,7 +38,9 @@ class Bartender extends React.Component {
       errorTitle: "",
       errorText: "",
       lastActive: Date.now(),
-      idle: true
+      idle: true,
+      blankTime: 60 * 1000,
+      screenBrightness: 100
     };
   }
 
@@ -46,6 +49,21 @@ class Bartender extends React.Component {
       page: page
     })
   }
+
+  updateScreenTimeout(timeout){
+    this.setConfig("blank_time", timeout);
+    this.setState({blankTime: timeout});
+  }
+
+  updateScreenBrightness(brightness){
+    this.setState({screenBrightness: brightness})
+    this.backendScreenBrightnessUpdate(this, brightness)
+  }
+
+  backendScreenBrightnessUpdate = throttle((instance, brightness) => {
+    instance.setConfig("screen_brightness", brightness);
+    instance.socket.emit("screen_brightness", {"value": brightness})
+  }, 500);
 
   activatePump(pin){
   }
@@ -76,7 +94,7 @@ class Bartender extends React.Component {
         return <Manual weight={this.state.weight} socket={this.socket}
                     presence={this.state.presence} metric={this.state.metric}/>
       case 'settings':
-        return <Settings socket={this.socket}/>
+        return <Settings socket={this.socket} blankTime={this.state.blankTime} screenBrightness={this.state.screenBrightness} updateScreenTimeout={this.updateScreenTimeout} updateScreenBrightness={this.updateScreenBrightness}/>
       default:
         return <Favorites socket={this.socket}/>
     }
@@ -91,10 +109,37 @@ class Bartender extends React.Component {
     }
   }
 
+  getConfig(key, callback){
+    fetch("http://" + window.location.hostname + ":5000/config/" + key)
+      .then(response => response.json())
+      .then((data) => {
+        console.log("Got config");
+        console.log(data);
+        callback(data);
+      });
+  }
+
+  setConfig(key, value){
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", "http://" + window.location.hostname + ":5000/config");
+    xhr.setRequestHeader("key", key);
+    xhr.setRequestHeader("value", value);
+    xhr.send();
+    console.log("Set config")
+    console.log(value)
+    console.log(xhr)
+  }
+
   componentDidMount(){
+    this.getConfig('blank_time', (data) => {
+      this.setState({blankTime: parseInt(data)})
+    })
+    this.getConfig('screen_brightness', (data) => {
+      this.setState({screenBrightness: parseInt(data)})
+    })
     this.socket.on('weight', (data) => {
       this.updateWeight(data['weight']);
-      if(this.state.lastActive + this.blankTime < Date.now() && !this.state.idle){
+      if(this.state.lastActive + this.state.blankTime < Date.now() && !this.state.idle){
         console.log("Time for bed.");
         this.socket.emit('idle', {});
         this.setState({idle: true});

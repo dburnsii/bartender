@@ -1,0 +1,11 @@
+[Unit]
+Description=Bartender System Server
+After=central
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 [BARTENDERDIR]/backend/system_server/system_server.py
+User=pi
+
+[Install]
+WantedBy=multi-user.target

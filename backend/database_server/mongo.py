@@ -22,6 +22,7 @@ class Drink(me.Document):
     image = me.StringField(required=True)
     alias = me.ListField()
     ingredients = me.ListField(me.EmbeddedDocumentField(DrinkIngredient))
+    opendrinks = me.BooleanField(required=True, default=True)
 
 
 class Valve(me.Document):
