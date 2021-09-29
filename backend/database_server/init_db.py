@@ -7,11 +7,13 @@ valveCount = 10
 
 # TODO validate that all fields are lowercase
 
+
 def validateIngredient(ing):
     if "name" not in ing:
         print("Ingredient missing name!")
         return False
     return True
+
 
 Drink.objects().delete()
 

@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import time
-import json
 import socketio
 import sys
 import rpi_backlight
@@ -20,10 +19,12 @@ def screen_brightness(data):
     else:
         print("Setting backlight to '{}'".format(data["value"]))
 
+
 @sio.event
 def idle(data):
     # TODO: Maybe turn the screen off eventually? backlight.power = False
     pass
+
 
 @sio.event
 def connect():
