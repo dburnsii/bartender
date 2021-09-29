@@ -47,8 +47,8 @@ class Menu extends React.Component {
          <ListItem button selected={this.props.page == 'gasstation'} key='GasStation'>
             <ListItemIcon> <NotInterestedIcon className="menuIcon" /></ListItemIcon>
          </ListItem>
-         <ListItem button selected={this.props.page == 'future'} key='future'>
-            <ListItemIcon> <NotInterestedIcon className="menuIcon" /></ListItemIcon>
+         <ListItem button selected={this.props.page == 'lights'} key='lights' onClick={() => this.props.changePage('lights')}>
+            <ListItemIcon> <LightIcon className="menuIcon" /></ListItemIcon>
          </ListItem>
          <ListItem button selected={this.props.page == 'settings'} key='Settings' onClick={() => this.props.changePage('settings')}>
             <ListItemIcon> <SettingsIcon className="menuIcon" /></ListItemIcon>

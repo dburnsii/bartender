@@ -6,6 +6,7 @@ import Scale from './scale';
 import Manual from './manual';
 import Search from './search';
 import Favorites from './favorites';
+import Lights from './lights';
 import Settings from './settings';
 import DrinkProgress from './components/drinkProgress';
 import ErrorScreen from './components/errorScreen';
@@ -93,6 +94,8 @@ class Bartender extends React.Component {
       case 'manual':
         return <Manual weight={this.state.weight} socket={this.socket}
                     presence={this.state.presence} metric={this.state.metric}/>
+      case 'lights':
+        return <Lights />
       case 'settings':
         return <Settings socket={this.socket} blankTime={this.state.blankTime} screenBrightness={this.state.screenBrightness} updateScreenTimeout={this.updateScreenTimeout} updateScreenBrightness={this.updateScreenBrightness}/>
       default:
