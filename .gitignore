@@ -1,6 +1,7 @@
 .idea
 node_modules
 db.sqlite3
+bartender.db
 __pycache__/
 *.py[cod]
 media/images/*
@@ -10,3 +11,4 @@ hardware/stl
 *-bak
 fp-info-cache
 *-cache.lib
+venv

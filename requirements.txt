@@ -3,7 +3,8 @@ aiohttp
 hx711
 pymongo==3.5.1
 flask
-flask-mongoengine
+flask-sqlalchemy
+flask-migrate
 flask-cors
 flask-restful
 websocket-client

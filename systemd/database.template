@@ -1,10 +1,9 @@
 [Unit]
 Description=Bartender Database Server
-After=mongodb
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 [BARTENDERDIR]/backend/database_server/database_server.py
+ExecStart=/usr/bin/python3 [BARTENDERDIR]/backend/database_server/app.py
 User=pi
 
 [Install]

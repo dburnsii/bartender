@@ -30,17 +30,17 @@ class DrinkCard extends React.Component {
         .then(response => response.json())
         .then((data) => {
           this.ingredients = data.ingredients
-          console.log(this.props.name + " -> " + JSON.stringify(this.ingredients))
+          this.setState({ingredients: this.ingredients});
+          console.log(data);
+          console.log(this.props.valves)
           this.ingredients.forEach((ingredient, index) => {
-            fetch("http://" + window.location.hostname + ":5000/ingredients?name=" + ingredient.ingredient)
-              .then(response => response.json())
-              .then((data) => {
-                this.setState({ingredients: [...this.state.ingredients, data]});
-                if(data.required && data.measure == "mL" && !(data.ingredient in this.props.valves)){
+                if(ingredient.required && ingredient.ingredient.measure == "mL" && !(ingredient.ingredient.name in this.props.valves)){
                   console.log("Missing required ingredient. marking as unavailable");
                   this.setState({available: false});
+                  console.log(ingredient)
+                } else {
+                  console.log(ingredient)
                 }
-              });
           });
         });
       } else {
@@ -63,14 +63,14 @@ class DrinkCard extends React.Component {
     this.setState({activated: false});
   }
 
-  quantityText(ingredient){
-    const ing_prop =  this.ingredients.find(x => x.ingredient == ingredient.name)
-    if(ingredient.measure == "mL"){
-      return `• ${ing_prop.quantity} mL`
-    } else if(ingredient.measure == "dash"){
-      return `• ${ing_prop.quantity} dah(es)`
-    } else if(ingredient.measure == "count"){
-      return `• ${ing_prop.quantity}`
+  quantityText(di){
+    //const ing_prop =  this.ingredients.find(x => x.ingredient == ingredient.name)
+    if(di.ingredient.measure == "mL"){
+      return `• ${di.quantity} mL`
+    } else if(di.ingredient.measure == "dash"){
+      return `• ${di.quantity} dah(es)`
+    } else if(di.ingredient.measure == "count"){
+      return `• ${di.quantity}`
     }
   }
 
@@ -100,22 +100,30 @@ class DrinkCard extends React.Component {
             <TableBody>
             {this.state.ingredients.slice(start, end).map((value, index) =>
               {
-                if("name" in value && this.props.valves){
-                  const ing_prop =  this.ingredients.find(x => x.ingredient == value.name)
-                  if((ing_prop.required && this.props.valves.includes(value.name)) || value.measure != "mL"){
+                if("ingredient" in value && "name" in value.ingredient && this.props.valves){
+                  //const ing_prop =  this.ingredients.find(x => x.ingredient == value.name)
+                  if((value.required && this.props.valves.map(x => x.ingredient_id).includes(value.ingredient.id)) || value.ingredient.measure != "mL"){
                     return (
                       <TableRow style={styles.ingredientRow}>
                         <TableCell style={styles.ingredientCell}>{this.quantityText(value)}</TableCell>
-                        <TableCell style={styles.ingredientCell}>{titleCase(value.name)}</TableCell>
+                        <TableCell style={styles.ingredientCell}>{titleCase(value.ingredient.name)}</TableCell>
                       </TableRow> )
                     } else {
+                      console.log("TT")
+                      console.log(this.props.valves)
                       return (
                         <TableRow style={styles.ingredientRow}>
                           <TableCell style={styles.ingredientCellUnavailable}>{this.quantityText(value)}</TableCell>
-                          <TableCell style={styles.ingredientCellUnavailable}>{titleCase(value.name)}</TableCell>
+                          <TableCell style={styles.ingredientCellUnavailable}>{titleCase(value.ingredient.name)}</TableCell>
                         </TableRow> )
                     }
-                }
+                } else {
+                  console.log("t!")
+                  console.log(value);
+                  console.log(this.props.valves)
+                  return (
+                  <Typography>test</Typography>
+                ) }
               }
             )}
             </TableBody>
