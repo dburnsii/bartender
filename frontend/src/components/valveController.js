@@ -68,9 +68,9 @@ class ValveController extends React.Component {
       return <CircularProgress/>
     } else if("name" in ingredient){
       return titleCase(ingredient.name);
-    } else if("$oid" in ingredient){
+    } else if("id" in ingredient){
       console.log("Finna load up: " + JSON.stringify(ingredient));
-      fetch("http://" + window.location.hostname + ":5000/ingredients/" + ingredient.$oid)
+      fetch("http://" + window.location.hostname + ":5000/ingredients/" + ingredient.id)
         .then(response => response.json())
         .then((data) => {
           console.log("Loaded ingredient__: ");
@@ -84,8 +84,8 @@ class ValveController extends React.Component {
   }
 
   inputChange(e, value, reason) {
-    if(reason == "select-option"){
-      fetch("http://" + window.location.hostname + ":5000/valves/" + this.props.pin + "?ingredient=" + value._id.$oid,
+    if(reason == "selectOption"){
+      fetch("http://" + window.location.hostname + ":5000/valves/" + this.props.pin + "?ingredient=" + value.id,
         {method: "PUT"})
         .then(response => {console.log(response); this.componentDidMount()});
       this.setState({typing: false})
@@ -118,7 +118,7 @@ class ValveController extends React.Component {
   }
 
   getButton(ingredient){
-    if(ingredient && "$oid" in ingredient ){
+    if(ingredient && "id" in ingredient ){
       return (
         <Button disableRipple={true} onClick={this.clear}>
           <RemoveCircleIcon style={{fontSize: "30px"}}/>
@@ -151,9 +151,10 @@ class ValveController extends React.Component {
     fetch("http://" + window.location.hostname + ":5000/valves/" + this.props.pin)
       .then(response => response.json())
       .then((data) => {
-        if('ingredient' in data){
+        if('ingredient' in data && data.ingredient){
           this.setState({ingredient: data.ingredient});
         } else {
+          console.log("Setting ingredient to nothin")
           this.setState({ingredient: {}});
         }
       });

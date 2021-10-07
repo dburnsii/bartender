@@ -56,7 +56,8 @@ class FavoritesPage extends React.Component {
       .then(response => response.json())
       .then((data) => {
         // Clean the list to only contain the available ingredients
-        this.setState({valves: data.map((d) => { return(d.ingredient ? d.ingredient.name : null ) }).filter((d) => d)});
+        //this.setState({valves: data.map((d) => { return(d.ingredient ? d.ingredient.name : null ) }).filter((d) => d)});
+        this.setState({valves: data})
       });
   }
 
@@ -65,15 +66,16 @@ class FavoritesPage extends React.Component {
 
   drinkCards(drinks, page){
     console.log(drinks)
+    console.log("Valves before creating drink cards:")
     console.log(this.state.valves);
     if(drinks.length > page){
       if(this.cards.length <= page) {
         this.cards[page] = drinks[page].map((drink, index) => {
             console.log("Making drink card: " + drink.name)
            return (<DrinkCard
-            key={drink['_id']['$oid'] + "card"}
+            key={drink['id'] + "card"}
             socket={this.props.socket}
-            id={drink['_id']['$oid']}
+            id={drink['id']}
             name={drink['name']}
             image={drink['image']}
             valves={this.state.valves}/>)})
