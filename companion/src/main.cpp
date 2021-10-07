@@ -2,14 +2,10 @@
 #include <ArduinoJson.h>
 
 int pin         = 9;
-//int cupPixels = 12;
-//int bottlePixels   = 70;
-//int totalPixels = cupPixels + bottlePixels;
 int totalPixels = 70;
 int bottleCount = 10;
 int pixelsPerBottle = totalPixels / bottleCount;
-// message = "";
-int totalLocations = totalPixels * 255; //(17850)
+int totalLocations = totalPixels * 255;
 int bottleLocations[] = {450, 2300, 4075, 6000, 7800, 9600, 11400, 13350, 15100, 17000};
 int flow = -1;
 int flowDirection = 1;
@@ -18,7 +14,7 @@ int pixelFormat = NEO_GRB + NEO_KHZ800;
 Adafruit_NeoPixel *pixels;
 DynamicJsonDocument doc(512);
 
-void do_highlight(int location, long color, int spread){
+void doHighlight(int location, long color, int spread){
   if(location < 1){
     location = 1;
   } else if(location > totalLocations){
@@ -44,9 +40,6 @@ void do_highlight(int location, long color, int spread){
     int g = ((tempcolor & 255) * factor) >> 8;
     tempcolor >>= 8;
     int r = ((tempcolor & 255) * factor) >> 8;
-    //int r = min(lb, 255);
-    //int g = r;
-    //int b = r;
 
     // Check if there were colors set previously, and mix (average)
     unsigned long prevColor = pixels->getPixelColor(lower);
@@ -98,15 +91,46 @@ void do_highlight(int location, long color, int spread){
   pixels->show();
 }
 
+void highlightProgress(float progress){
+  int brightness_left = (int) ( ( progress / 100) * ( totalLocations / 2 ) );
+  int brightness_right = brightness_left;
+
+  int i = 0;
+  while(brightness_left > 0){
+    uint32_t color;
+    if(brightness_left > 255){
+      color = pixels->Color(255, 255, 255);
+    } else {
+      color = pixels->Color(brightness_left, brightness_left, brightness_left);
+    }
+    pixels->setPixelColor(i, color);
+    brightness_left -= 255;
+    i++;
+  }
+
+  i = totalPixels - 1;
+  while(brightness_right > 0){
+    uint32_t color;
+    if(brightness_right > 255){
+      color = pixels->Color(255, 255, 255);
+    } else {
+      color = pixels->Color(brightness_right, brightness_right, brightness_right);
+    }
+    pixels->setPixelColor(i, color);
+    brightness_right -= 255;
+    i--;
+  }
+}
+
 void highlight(JsonArray locations, JsonArray colors){
   if(colors){
   //TODO: Replace this with a .begin() iterator for both
     for(int i = 0; i < locations.size(); i++){
-      do_highlight(bottleLocations[locations[i].as<int>()], colors[i].as<long>(), 255);
+      doHighlight(bottleLocations[locations[i].as<int>()], colors[i].as<long>(), 255);
     }
   } else {
     for(int i = 0; i < locations.size(); i++){
-      do_highlight(bottleLocations[locations[i].as<int>()], 0xffffff, 255);
+      doHighlight(bottleLocations[locations[i].as<int>()], 0xffffff, 255);
     }
   }
 }
@@ -134,9 +158,13 @@ void loop() {
       JsonArray colors  = doc["colors"].as<JsonArray>();
       highlight(locations, colors);
     } else if(strcmp(cmd, "idle") == 0){
+      // Set flow to 0, as a signal to start animating
       flow = 0;
       flowDirection = 1;
-      //pixels->clear();
+    } else if(strcmp(cmd, "drinkProgress") == 0){
+      flow = -1;
+      float progress = doc["progress"];
+      highlightProgress(progress);
     } else {
       flow = -1;
       Serial.print("No matching command for: ");
@@ -145,7 +173,7 @@ void loop() {
   } else if(flow >= 0){
     pixels->clear();
     int increment = 10;
-    do_highlight(flow, 0xffffff, 255);
+    doHighlight(flow, 0xffffff, 255);
     flow += (flowDirection * increment);
     if(flow + (increment * flowDirection) <= 0 || flow + (increment * flowDirection) >= totalLocations){
       flowDirection *= -1;

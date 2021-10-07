@@ -23,8 +23,11 @@ def cleanup():
 
 def serial_write(data):
     if isinstance(data, dict):
-        data = json.jumps(data)
-    tty.write((data + "\x00").encode())
+        data = json.dumps(data)
+    if not simulation:
+        tty.write((data + "\x00").encode())
+    else:
+        print("Writing: {}".format(data))
 
 
 @sio.event
@@ -115,6 +118,12 @@ def disconnect():
 
 sio.connect("http://localhost:8080")
 
+i = 0.0
+
 while 1:
     time.sleep(0.25)
     sio.emit("ping", "")
+    serial_write({"command": "drinkProgress", "progress": str(i)})
+    i += 1.0
+    if i > 100:
+        i = 0
