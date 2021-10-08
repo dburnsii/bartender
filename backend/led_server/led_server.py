@@ -7,10 +7,13 @@ import serial.tools.list_ports
 import socketio
 import atexit
 import sys
+from datetime import datetime, timedelta
 
+serial_queue = []
 
 simulation = True
 cup_presence_status = False
+serial_ready = False
 
 sio = socketio.Client()
 
@@ -24,24 +27,33 @@ def cleanup():
 def serial_write(data):
     if isinstance(data, dict):
         data = json.dumps(data)
-    if not simulation:
+    if not simulation and serial_ready:
         tty.write((data + "\x00").encode())
     else:
         print("Writing: {}".format(data))
 
 
 @sio.event
+def manual_pour_status(data):
+    global serial_queue
+    if(data['complete']):
+        idle(None)
+    elif data["percentage"] >= 0 and data["percentage"] <= 100:
+        serial_queue.append({"command": "drinkProgress", "progress": data["percentage"] * 100})
+
+@sio.event
 def activate_valve(data):
+    global serial_queue
     global cup_presence_status
     if not simulation:
         if cup_presence_status:
             print("Activating leds above valve {}".format(data['pin']))
             if("colors" in data):
-                serial_write({"command": "highlight",
+                serial_queue.append({"command": "highlight",
                               "locations": [data['pin']],
                               "colors": data['colors']})
             else:
-                serial_write({"command": "highlight",
+                serial_queue.append({"command": "highlight",
                               "locations": [data['pin']]})
     else:
         print("Simulating LED activation on valve {}".format(data['pin']))
@@ -49,13 +61,14 @@ def activate_valve(data):
 
 @sio.event
 def highlight_bottles(data):
+    global serial_queue
     print("Highlighting leds above valve {}".format(data['pins']))
     if("colors" in data):
-        serial_write({"command": "highlight",
+        serial_queue.append({"command": "highlight",
                       "locations": data['pins'],
                       "colors": data['colors']})
     else:
-        serial_write({"command": "highlight",
+        serial_queue.append({"command": "highlight",
                       "locations": data['pins']})
 
 
@@ -77,7 +90,8 @@ def cup_presence(data):
 
 @sio.event
 def idle(data):
-    serial_write({"command": "idle"})
+    global serial_queue
+    serial_queue.append({"command": "idle"})
 
 
 @sio.event
@@ -89,6 +103,7 @@ def connect():
 @sio.event
 def simulation(data):
     global simulation
+    global serial_ready
     print("Updating simulation status.")
     simulation = data["status"]
 
@@ -104,9 +119,10 @@ def simulation(data):
         if not arduino_port:
             print("No Arduino found")
             return
-        tty = serial.Serial(arduino_port, 19200, timeout=2)
+        tty = serial.Serial(arduino_port, 115200, timeout=2)
         # Allow Arduino to reset due to new connection
         time.sleep(2)
+        serial_ready = True
         print("Serial port ready!")
 
 
@@ -118,12 +134,13 @@ def disconnect():
 
 sio.connect("http://localhost:8080")
 
-i = 0.0
+lastping = datetime.now()
 
 while 1:
-    time.sleep(0.25)
-    sio.emit("ping", "")
-    serial_write({"command": "drinkProgress", "progress": str(i)})
-    i += 1.0
-    if i > 100:
-        i = 0
+    time.sleep(0.01)
+    if(serial_queue):
+        serial_write(serial_queue[-1])
+        serial_queue = []
+    if(datetime.now() - lastping > timedelta(seconds=5)):
+        lastping = datetime.now()
+        sio.emit('ping', "")

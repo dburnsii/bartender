@@ -16,6 +16,8 @@ calibration = 222.23
 cup_threshold = 30
 bad_reads = 0
 hx = None
+manual_target = 0
+manual_start = 0
 
 
 def cleanup():
@@ -36,6 +38,19 @@ def cup_presence_request():
     print("Broadcasting presence '{}'".format(present))
     sys.stdout.flush()
     sio.emit('cup_presence', {'present': present})
+
+@sio.event
+def manual_pour_init(data):
+    global present
+    global weight
+    global manual_target
+    global manual_start
+
+    print("Received manual pour request: {}".format(data))
+    #if not present:
+    #    return
+    manual_target = data['target']
+    manual_start = weight
 
 
 @sio.event
@@ -146,8 +161,17 @@ while 1:
                 present = False
                 cup_presence_request()
                 hx.tare()
+            elif(manual_target > 0):
+                manual_percentage = (weight - manual_start) / manual_target
+                print("Manual percentage: {}".format(manual_percentage))
+                if(manual_percentage >= 1.0):
+                    print("Manual pour complete!")
+                    manual_target = 0
+                    sio.emit('manual_pour_status', {'percentage': manual_percentage, 'complete': True})
+                else:
+                    sio.emit('manual_pour_status', {'percentage': manual_percentage, 'complete': False})
             weight_request()
-            time.sleep(0.25)
+            time.sleep(0.05)
         elif connected:
             if simulated_pour_status:
                 if not present:

@@ -92,16 +92,20 @@ void doHighlight(int location, long color, int spread){
 }
 
 void highlightProgress(float progress){
-  int brightness_left = (int) ( ( progress / 100) * ( totalLocations / 2 ) );
+  int brightness_left = (uint32_t) ( ( totalLocations / 20000.0 ) * ( progress * progress ) );
   int brightness_right = brightness_left;
+  int maxb = 32;
+  int factorb = log(maxb) / log(2);
 
+  pixels->clear();
   int i = 0;
   while(brightness_left > 0){
-    uint32_t color;
+    uint32_t color = 0;
     if(brightness_left > 255){
-      color = pixels->Color(255, 255, 255);
+      color = pixels->Color(maxb, maxb, maxb);
     } else {
-      color = pixels->Color(brightness_left, brightness_left, brightness_left);
+      uint16_t finalb = brightness_right >> factorb;
+      color = pixels->Color(finalb, finalb, finalb);
     }
     pixels->setPixelColor(i, color);
     brightness_left -= 255;
@@ -110,16 +114,19 @@ void highlightProgress(float progress){
 
   i = totalPixels - 1;
   while(brightness_right > 0){
-    uint32_t color;
+    uint32_t color = 0;
     if(brightness_right > 255){
-      color = pixels->Color(255, 255, 255);
+      color = pixels->Color(maxb, maxb, maxb);
     } else {
-      color = pixels->Color(brightness_right, brightness_right, brightness_right);
+      uint16_t finalb = brightness_right >> factorb;
+      color = pixels->Color(finalb, finalb, finalb);
     }
     pixels->setPixelColor(i, color);
     brightness_right -= 255;
     i--;
   }
+  pixels->show();
+  //delay(100);
 }
 
 void highlight(JsonArray locations, JsonArray colors){
@@ -136,7 +143,7 @@ void highlight(JsonArray locations, JsonArray colors){
 }
 
 void setup() {
-  Serial.begin(19200);
+  Serial.begin(115200);
   pixels = new Adafruit_NeoPixel(totalPixels, pin, pixelFormat);
   pixels->begin();
   pixels->setBrightness(255);
@@ -148,7 +155,9 @@ void loop() {
     String message = "";
     while(Serial.available()) {message = Serial.readStringUntil(0);}
 
+    //Serial.println(message);
     deserializeJson(doc, message);
+    //Serial.println("Decoded message");
 
     const char* cmd = doc["command"];
     if(strcmp(cmd, "highlight") == 0){
@@ -164,6 +173,7 @@ void loop() {
     } else if(strcmp(cmd, "drinkProgress") == 0){
       flow = -1;
       float progress = doc["progress"];
+      //Serial.println("Highlighting progress");
       highlightProgress(progress);
     } else {
       flow = -1;
