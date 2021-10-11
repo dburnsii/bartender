@@ -57,10 +57,27 @@ def create_drink_queue(ingredients, valves):
     output = []
     total = 0
     for ingredient in ingredients:
-        valve = next(
-            valve for valve in valves if
-            valve['ingredient']['name'] == ingredient['ingredient'])
+        valve = None
+        try:
+            valve = next(
+                valve for valve in valves if
+                valve['ingredient']['id'] == ingredient['ingredient_id'])
+        except Exception as e:
+            print(e)
+            if ingredient['ingredient']['carbonated'] is True:
+                print("Skipping carbonated")
+                valve = {}
+                valve['pin'] = None
+            elif ingredient['required'] is False:
+                print("Skipping non-required ingredient")
+                continue
+            elif ingredient['ingredient']['measure'] != "mL":
+                print("Skipping non-liquid ingredient")
+                continue
+            else:
+                return None
+            pass
         output.append(
-            {'pin': valve['pin'], 'quantity': ingredient['quantity']})
+            {'pin': valve['pin'], 'quantity': ingredient['quantity'], 'name': ingredient['ingredient']['name']})
         total += ingredient['quantity']
     return (output, total)

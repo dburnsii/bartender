@@ -9,6 +9,7 @@ import Favorites from './favorites';
 import Lights from './lights';
 import Settings from './settings';
 import DrinkProgress from './components/drinkProgress';
+import ManualPourProgress from './components/manualPourProgress';
 import ErrorScreen from './components/errorScreen';
 import Screensaver from './components/screensaver';
 import io from 'socket.io-client';
@@ -23,6 +24,7 @@ class Bartender extends React.Component {
     this.hideProgress = this.hideProgress.bind(this);
     this.clearError = this.clearError.bind(this);
     this.cancelPour = this.cancelPour.bind(this);
+    this.skipManualPour = this.skipManualPour.bind(this);
     this.updateScreenTimeout = this.updateScreenTimeout.bind(this);
     this.updateScreenBrightness = this.updateScreenBrightness.bind(this);
     this.socket = io("ws://" + window.location.hostname + ":8080");
@@ -35,7 +37,9 @@ class Bartender extends React.Component {
       weight: 0,
       presence: false,
       pour_active: false,
+      manual_pour_active: false,
       pour_progress: 0,
+      manual_pour_progress: 0,
       errorTitle: "",
       errorText: "",
       lastActive: Date.now(),
@@ -76,6 +80,10 @@ class Bartender extends React.Component {
     this.setState({pour_active: false, pour_progress: 0})
   }
 
+  hideManualPourProgress(){
+    this.setState({pour_active: true, pour_progress: 0})
+  }
+
   clearError() {
     this.setState({errorTitle: "", errorText: ""})
   }
@@ -83,6 +91,10 @@ class Bartender extends React.Component {
   cancelPour(){
     console.log("Canceling pour.")
     this.socket.emit('abort_pour', '')
+  }
+
+  skipManualPour(){
+    console.log("Skip manual ingredient")
   }
 
   getPage(page){
@@ -187,6 +199,16 @@ class Bartender extends React.Component {
         });
       }
     });
+    this.socket.on('manual_pour_init', (data) => {
+      console.log("Start manual pour");
+      console.log(data)
+      this.setState({manual_pour_active: true, manual_pour_progress: 0, manual_pour_name: data['name']})
+    });
+    this.socket.on('manual_pour_status', (data) => {
+      console.log("Manual pour status update");
+      console.log(data);
+      this.setState({manual_pour_progress: data['percentage'] * 100, manual_pour_active: !data['complete']})
+    });
   }
 
   componentWillUnmount(){}
@@ -196,6 +218,7 @@ class Bartender extends React.Component {
       <div style={{overflow: "hidden", width: "800px", height: "480px"}} onPointerDown={this.mouseDown}>
         <Menu page={this.state.page} changePage={this.changePage} />
         <DrinkProgress progress={this.state.pour_progress} open={this.state.pour_active} hide={this.hideProgress} cancelPour={this.cancelPour}/>
+        <ManualPourProgress progress={this.state.manual_pour_progress} open={this.state.manual_pour_active} hide={this.hideManualPourProgress} cancelPour={this.cancelPour} skipPour={this.skipPour} name={this.state.manual_pour_name}/>
         <ErrorScreen title={this.state.errorTitle} text={this.state.errorText} hide={this.clearError} open={this.state.errorText != ""}/>
         <Screensaver idle={this.state.idle}/>
         {this.getPage(this.state.page)}

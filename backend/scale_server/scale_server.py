@@ -49,7 +49,7 @@ def manual_pour_init(data):
     print("Received manual pour request: {}".format(data))
     #if not present:
     #    return
-    manual_target = data['target']
+    manual_target = data['quantity']
     manual_start = weight
 
 
@@ -178,13 +178,22 @@ while 1:
                     present = True
                     cup_presence_request()
                 weight += 5
+                if manual_target > 0:
+                    manual_percentage = (weight - manual_start) / manual_target
+                    print("Manual percentage: {}".format(manual_percentage))
+                    if(manual_percentage >= 1.0):
+                        print("Manual pour complete!")
+                        manual_target = 0
+                        sio.emit('manual_pour_status', {'percentage': manual_percentage, 'complete': True})
+                    else:
+                        sio.emit('manual_pour_status', {'percentage': manual_percentage, 'complete': False})
             else:
                 if present:
                     present = False
                     weight = 0
                     cup_presence_request()
             weight_request()
-            time.sleep(0.5)
+            time.sleep(0.1)
         else:
             print("Not connected...")
             # sio.connect('http://localhost:8080')

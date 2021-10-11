@@ -29,7 +29,23 @@ class FavoritesPage extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    return true;
+    if(this.state.page != nextState.page){
+      console.log("page changed")
+      return true;
+    } else if (this.state.valves != nextState.valves){
+      console.log("valves updated")
+      console.log(this.state.valves)
+      console.log(nextState.valves)
+
+      return true;
+    } else if (this.state.filter != nextState.filter){
+      console.log("filter status changed")
+      return true;
+    } else if(this.state.drinks != nextState.drinks){
+      console.log("Drnks updated")
+      return true;
+    }
+    return false;
   }
 
   componentDidMount() {

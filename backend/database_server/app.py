@@ -134,17 +134,24 @@ class DrinkListApi(Resource):
         args = parser.parse_args()
         print(args)
 
+        carbonated = True
+
         if 'pourable' in args and args['pourable'] == 1:
             print("Pourable")
             # Grab all the ingredient id's that are loaded to a valve
             available_ingredient_q = \
                 Ingredient.query.join(Valve).with_entities(Ingredient.id)
+
+            carbonated_ingredient_q = \
+                Ingredient.query.filter(Ingredient.carbonated == True).with_entities(Ingredient.id)
             # Find all the drink_ingredients that are missing
+            #| (DrinkIngredient.ingredient_id.not_in(carbonated_ingredient_q)) ).\
+            #
             drink_ingredient_q = \
-                DrinkIngredient.query.filter(or_(
-                    DrinkIngredient.ingredient_id.
-                    not_in(available_ingredient_q),
-                    DrinkIngredient.required is False)).\
+                DrinkIngredient.query.\
+                filter(DrinkIngredient.required == True).\
+                filter(DrinkIngredient.ingredient_id.not_in(available_ingredient_q)).\
+                filter(DrinkIngredient.ingredient_id.not_in(carbonated_ingredient_q)).\
                 join(Drink).with_entities(Drink.id)
             # Filter drinks by those that aren't missing required ingredients
             drink_q = drink_q.filter(Drink.id.not_in(drink_ingredient_q))
