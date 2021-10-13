@@ -133,10 +133,13 @@ def drink_pour(data):
 def abort_pour(data):
     global pour_target
     global pour_queue
+    global manual_pour_active
     deactivate_valves()
     pour_target = 0
     pour_queue = []
+    manual_pour_active = False
     sio.emit("drink_pour_active", {"status": False, "progress": 0})
+    sio.emit("manual_pour_status", {"complete": True, "progress": 0})
 
 @sio.event
 def manual_pour_status(data):

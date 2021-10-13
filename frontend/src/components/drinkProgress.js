@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Card, LinearProgress, Box, Typography, Modal} from '@mui/material';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
 import CloseIcon from '@mui/icons-material/Close';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { titleCase } from "title-case";
 import { green } from '@mui/material/colors';
 
@@ -46,8 +47,14 @@ class DrinkProgress extends React.Component {
     if(complete){
       return(
         <Card style={styles.card}>
-          <Typography styles={styles.complete}>
+          <Typography style={styles.completeTitle}>
             Complete
+          </Typography>
+          <CheckCircleIcon
+            color='success'
+            style={styles.completeIcon}/>
+          <Typography style={styles.completeText}>
+            Enjoy your beverage!
           </Typography>
         </Card>
       )
@@ -99,6 +106,20 @@ class DrinkProgress extends React.Component {
       cancelBox : {
         width: "100%",
         textAlign: "center"
+      },
+      completeTitle : {
+        textAlign: "center",
+        fontSize: "48px",
+        marginTop: "5%"
+      },
+      completeIcon : {
+        align: "center",
+        width: "100%",
+        fontSize: "72px"
+      },
+      completeText : {
+        textAlign: "center",
+        fontSize: "32px"
       }
     };
     return (

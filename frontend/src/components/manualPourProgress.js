@@ -25,10 +25,15 @@ class ManualPourProgress extends React.Component {
         height: "60%",
         margin: "15%"
       },
-      text : {
+      ingredientName : {
         textAlign: "center",
-        margin: "5%",
-        fontSize: "36px"
+        margin: "0% 5% 5% 2%",
+        fontSize: "42px"
+      },
+      instructions : {
+        textAlign: "center",
+        margin: "0% 5% 5% 5%",
+        fontSize: "16px"
       },
       progress : {
         width: "80%",
@@ -36,8 +41,13 @@ class ManualPourProgress extends React.Component {
         margin: "5% 10% 8% 10%",
         borderRadius: "10px"
       },
+      skip : {
+        align: "center",
+        margin: "2%"
+      },
       cancel : {
-        align: "center"
+        align: "center",
+        margin: "2%"
       },
       cancelBox : {
         width: "100%",
@@ -47,8 +57,11 @@ class ManualPourProgress extends React.Component {
     return (
       <Modal open={this.props.open} onClose={this.props.hide}>
         <Card style={styles.card}>
-          <Typography style={styles.text}>
-            Manual Pour Mode - Please pour {this.props.name} until the LEDs below meet in the middle.
+          <Typography style={styles.ingredientName}>
+            {titleCase(this.props.name || "")}
+          </Typography>
+          <Typography style={styles.instructions}>
+            Pour until LEDs below meet in the middle.
           </Typography>
           <LinearProgress
             variant="determinate"
@@ -56,7 +69,7 @@ class ManualPourProgress extends React.Component {
             style={styles.progress}/>
           <Box style={styles.cancelBox}>
           <Button
-            style={styles.cancel}
+            style={styles.skip}
             variant="contained"
             color="secondary"
             onClick={this.props.cancelPour}>

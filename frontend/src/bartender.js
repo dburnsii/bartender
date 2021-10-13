@@ -81,7 +81,7 @@ class Bartender extends React.Component {
   }
 
   hideManualPourProgress(){
-    this.setState({pour_active: true, pour_progress: 0})
+    this.setState({manual_pour_active: false, pour_progress: 0})
   }
 
   clearError() {
