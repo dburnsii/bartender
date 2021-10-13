@@ -2,7 +2,7 @@
 Description=Bartender Central Socket.io Server
 
 [Service]
-Type=simple
+Type=notify
 ExecStart=/usr/bin/python3 [BARTENDERDIR]/backend/central_server/central_server.py
 User=pi
 

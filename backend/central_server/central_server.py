@@ -4,6 +4,7 @@ from aiohttp import web
 import socketio
 import time
 import os
+import sdnotify
 
 sio = socketio.AsyncServer(async_mode='aiohttp', cors_allowed_origins='*')
 app = web.Application()
@@ -186,6 +187,12 @@ async def disconnect(sid):
             await sio.emit('service_disconnected', {'name': service})
             break
 
+async def on_startup(app):
+    n = sdnotify.SystemdNotifier()
+    n.notify("READY=1")
+    print("Server started")
+
 if __name__ == '__main__':
     print("Starting server")
+    app.on_startup.append(on_startup)
     web.run_app(app)
