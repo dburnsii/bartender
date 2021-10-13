@@ -4,6 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { titleCase } from "title-case";
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
+import { createFilterOptions } from '@mui/material/Autocomplete';
 
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
@@ -21,6 +22,13 @@ class ValveController extends React.Component {
     this.closeKeyboard = this.closeKeyboard.bind(this);
     this.inputChange = this.inputChange.bind(this);
     this.clear = this.clear.bind(this);
+
+    this.filterOptions = createFilterOptions({
+      matchFrom: 'start',
+      limit: 5,
+      ignoreCase: true
+    });
+
     this.state = {
       bottle: null,
       ingredient: null,
@@ -97,12 +105,10 @@ class ValveController extends React.Component {
       return (
           <div>
             <Autocomplete
-              options={this.props.ingredients}
+              options={this.props.ingredients || []}
               getOptionLabel={x => titleCase(x.name)}
               style={{ width: 650, zIndex: "1200", position: "fixed", top: "10px", left: "70px" }}
-              limitTags={2}
-              debug
-              maxSearchResults={2}
+              filterOptions={this.filterOptions}
               open={this.state.typing}
               onChange={this.inputChange}
               inputValue={this.state.searchText}

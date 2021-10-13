@@ -95,7 +95,7 @@ class DrinkCard extends React.Component {
     };
     if(ingredients.length > 0){
       return(
-        <TableContainer key={this.props.id + "tc"} style={styles.ingredientColumn}>
+        <TableContainer key={this.props.id + "tcs" + start + "e" + end} style={styles.ingredientColumn}>
           <Table>
             <TableBody>
             {this.state.ingredients.slice(start, end).map((value, index) =>
@@ -104,17 +104,15 @@ class DrinkCard extends React.Component {
                   //const ing_prop =  this.ingredients.find(x => x.ingredient == value.name)
                   if((value.required && this.props.valves.map(x => x.ingredient_id).includes(value.ingredient.id)) || value.ingredient.measure != "mL"){
                     return (
-                      <TableRow style={styles.ingredientRow}>
-                        <TableCell style={styles.ingredientCell}>{this.quantityText(value)}</TableCell>
-                        <TableCell style={styles.ingredientCell}>{titleCase(value.ingredient.name)}</TableCell>
+                      <TableRow key={this.props.id + "tr_i" + index} style={styles.ingredientRow}>
+                        <TableCell key={this.props.id + "tr_i" + index + "q"} style={styles.ingredientCell}>{this.quantityText(value)}</TableCell>
+                        <TableCell key={this.props.id + "tr_i" + index + "n"} style={styles.ingredientCell}>{titleCase(value.ingredient.name)}</TableCell>
                       </TableRow> )
                     } else {
-                      console.log("TT")
-                      console.log(this.props.valves)
                       return (
-                        <TableRow style={styles.ingredientRow}>
-                          <TableCell style={styles.ingredientCellUnavailable}>{this.quantityText(value)}</TableCell>
-                          <TableCell style={styles.ingredientCellUnavailable}>{titleCase(value.ingredient.name)}</TableCell>
+                        <TableRow key={this.props.id + "tr_i" + index} style={styles.ingredientRow}>
+                          <TableCell key={this.props.id + "tr_i" + index + "q"} style={styles.ingredientCellUnavailable}>{this.quantityText(value)}</TableCell>
+                          <TableCell key={this.props.id + "tr_i" + index + "n"} style={styles.ingredientCellUnavailable}>{titleCase(value.ingredient.name)}</TableCell>
                         </TableRow> )
                     }
                 } else {
