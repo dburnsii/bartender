@@ -1,1 +1,1 @@
-{"name": "rum and coke", "ingredients": [{"ingredient": "rum", "quantity": 30.0, "required": true}, {"ingredient": "cola", "quantity": 100.0, "required": true}], "alias": ["coke and rum"], "image": "rum_and_coke.jpg"}
+{"name": "rum and coke", "ingredients": [{"ingredient": "rum", "quantity": 60.0, "required": true}, {"ingredient": "cola", "quantity": 100.0, "required": true}], "alias": ["coke and rum"], "image": "rum_and_coke.jpg"}
