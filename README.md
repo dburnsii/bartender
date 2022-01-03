@@ -56,14 +56,16 @@ hardware, you can move on to getting the Raspberry Pi set up.
 #### Installation
  1. Install [Raspberry Pi OS](https://www.raspberrypi.org/software/) on your Pi
  2. Clone this repo into your Home Directory of choice
- 3. Run the `./install.sh` script from inside the bartender directory to get
+ 3. Run `git submodule update --init` to get the latest drink recipes.
+ 4. Run the `./install.sh` script from inside the bartender directory to get
  set up.
- 4. Reboot and grab a glass!
+ 5. Reboot and grab a glass!
 
 #### Updating
   1. `git pull` this repo to get the latest changes
-  2. Rerun the `./install.sh` script
-  3. Reboot the pi (Note: The reinstallation currently wipes out the pump database, so you'll need to repopulate the list of loaded bottles).
+  2. `git submodule update` to get the latest recipes
+  3. Rerun the `./install.sh` script
+  4. Reboot the pi (Note: The reinstallation currently wipes out the pump database, so you'll need to repopulate the list of loaded bottles).
 
 ### Contributing
 This project is still in the early phases and the repo is subject

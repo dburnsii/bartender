@@ -1,0 +1,3 @@
+[submodule "opendrinks"]
+	path = opendrinks
+	url = git@github.com:dburnsii/opendrinks.git
