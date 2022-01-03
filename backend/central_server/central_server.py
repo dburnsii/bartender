@@ -55,9 +55,11 @@ async def tare_scale(sid, data):
 async def simulated_pour(sid, data):
     await sio.emit('simulated_pour', data)
 
+
 @sio.event
 async def manual_pour_status(sid, data):
     await sio.emit('manual_pour_status', data)
+
 
 @sio.event
 async def manual_pour_init(sid, data):
@@ -186,6 +188,7 @@ async def disconnect(sid):
             del registered_services[service]
             await sio.emit('service_disconnected', {'name': service})
             break
+
 
 async def on_startup(app):
     n = sdnotify.SystemdNotifier()

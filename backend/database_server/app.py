@@ -143,15 +143,16 @@ class DrinkListApi(Resource):
                 Ingredient.query.join(Valve).with_entities(Ingredient.id)
 
             carbonated_ingredient_q = \
-                Ingredient.query.filter(Ingredient.carbonated == True).with_entities(Ingredient.id)
+                Ingredient.query.filter(
+                    Ingredient.carbonated is True).with_entities(Ingredient.id)
             # Find all the drink_ingredients that are missing
-            #| (DrinkIngredient.ingredient_id.not_in(carbonated_ingredient_q)) ).\
-            #
             drink_ingredient_q = \
                 DrinkIngredient.query.\
-                filter(DrinkIngredient.required == True).\
-                filter(DrinkIngredient.ingredient_id.not_in(available_ingredient_q)).\
-                filter(DrinkIngredient.ingredient_id.not_in(carbonated_ingredient_q)).\
+                filter(DrinkIngredient.required is True).\
+                filter(DrinkIngredient.ingredient_id.
+                       not_in(available_ingredient_q)).\
+                filter(DrinkIngredient.ingredient_id.
+                       not_in(carbonated_ingredient_q)).\
                 join(Drink).with_entities(Drink.id)
             # Filter drinks by those that aren't missing required ingredients
             drink_q = drink_q.filter(Drink.id.not_in(drink_ingredient_q))
@@ -181,7 +182,7 @@ class IngredientListApi(Resource):
             ingredients_q = ingredients_q.filter(Ingredient.measure == "mL")
         if(args['carbonated'] == 0):
             ingredients_q = ingredients_q.filter(
-                                Ingredient.carbonated is False)
+                Ingredient.carbonated is False)
         return jsonify(ingredients_q.all())
 
 
@@ -193,7 +194,7 @@ class ValveApi(Resource):
     def put(self, valve_id):
         args = parser.parse_args()
         i = Ingredient.query.filter(
-                Ingredient.id == args['ingredient']).first()
+            Ingredient.id == args['ingredient']).first()
         Valve.query.filter(
             Valve.pin == valve_id).update({Valve.ingredient_id: i.id})
         db.session.commit()

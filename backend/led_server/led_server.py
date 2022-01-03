@@ -39,7 +39,9 @@ def manual_pour_status(data):
     if(data['complete']):
         idle(None)
     elif data["percentage"] >= 0 and data["percentage"] <= 100:
-        serial_queue.append({"command": "drinkProgress", "progress": data["percentage"] * 100})
+        serial_queue.append({"command": "drinkProgress",
+                            "progress": data["percentage"] * 100})
+
 
 @sio.event
 def activate_valve(data):
@@ -50,11 +52,11 @@ def activate_valve(data):
             print("Activating leds above valve {}".format(data['pin']))
             if("colors" in data):
                 serial_queue.append({"command": "highlight",
-                              "locations": [data['pin']],
-                              "colors": data['colors']})
+                                     "locations": [data['pin']],
+                                     "colors": data['colors']})
             else:
                 serial_queue.append({"command": "highlight",
-                              "locations": [data['pin']]})
+                                     "locations": [data['pin']]})
     else:
         print("Simulating LED activation on valve {}".format(data['pin']))
 
@@ -65,11 +67,11 @@ def highlight_bottles(data):
     print("Highlighting leds above valve {}".format(data['pins']))
     if("colors" in data):
         serial_queue.append({"command": "highlight",
-                      "locations": data['pins'],
-                      "colors": data['colors']})
+                             "locations": data['pins'],
+                             "colors": data['colors']})
     else:
         serial_queue.append({"command": "highlight",
-                      "locations": data['pins']})
+                             "locations": data['pins']})
 
 
 @sio.event

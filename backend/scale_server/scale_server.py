@@ -39,6 +39,7 @@ def cup_presence_request():
     sys.stdout.flush()
     sio.emit('cup_presence', {'present': present})
 
+
 @sio.event
 def manual_pour_init(data):
     global present
@@ -47,7 +48,7 @@ def manual_pour_init(data):
     global manual_start
 
     print("Received manual pour request: {}".format(data))
-    #if not present:
+    # if not present:
     #    return
     manual_target = data['quantity']
     manual_start = weight
@@ -167,9 +168,13 @@ while 1:
                 if(manual_percentage >= 1.0):
                     print("Manual pour complete!")
                     manual_target = 0
-                    sio.emit('manual_pour_status', {'percentage': manual_percentage, 'complete': True})
+                    sio.emit('manual_pour_status', {
+                             'percentage': manual_percentage,
+                             'complete': True})
                 else:
-                    sio.emit('manual_pour_status', {'percentage': manual_percentage, 'complete': False})
+                    sio.emit('manual_pour_status', {
+                             'percentage': manual_percentage,
+                             'complete': False})
             weight_request()
             time.sleep(0.05)
         elif connected:
@@ -184,9 +189,13 @@ while 1:
                     if(manual_percentage >= 1.0):
                         print("Manual pour complete!")
                         manual_target = 0
-                        sio.emit('manual_pour_status', {'percentage': manual_percentage, 'complete': True})
+                        sio.emit('manual_pour_status', {
+                                    'percentage': manual_percentage,
+                                    'complete': True})
                     else:
-                        sio.emit('manual_pour_status', {'percentage': manual_percentage, 'complete': False})
+                        sio.emit('manual_pour_status', {
+                                    'percentage': manual_percentage,
+                                    'complete': False})
             else:
                 if present:
                     present = False

@@ -78,6 +78,8 @@ def create_drink_queue(ingredients, valves):
                 return None
             pass
         output.append(
-            {'pin': valve['pin'], 'quantity': ingredient['quantity'], 'name': ingredient['ingredient']['name']})
+            {'pin': valve['pin'],
+             'quantity': ingredient['quantity'],
+             'name': ingredient['ingredient']['name']})
         total += ingredient['quantity']
     return (output, total)

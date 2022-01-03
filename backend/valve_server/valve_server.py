@@ -141,11 +141,13 @@ def abort_pour(data):
     sio.emit("drink_pour_active", {"status": False, "progress": 0})
     sio.emit("manual_pour_status", {"complete": True, "progress": 0})
 
+
 @sio.event
 def manual_pour_status(data):
     global manual_pour_active
     if data['complete']:
         manual_pour_active = False
+
 
 @sio.event
 def weight(data):
@@ -165,9 +167,10 @@ def weight(data):
 
     # Check if we finished pouring our last ingredient
     if pour_target > 0:
-        if manual_pour_active is False and utils.variance(scale_cache) < scale_failure_threshold:
-            print("Minimum variance detected on scale. Aborting pour. Check "
-                  "to make sure bottle is connected and flowing.")
+        if (manual_pour_active is False and
+           utils.variance(scale_cache) < scale_failure_threshold):
+            print("Minimum variance detected on scale. Aborting pour. "
+                  "Check to make sure bottle is connected and flowing.")
             abort_pour("")
             return
         if scale_cache[-1] >= pour_target:
@@ -183,7 +186,9 @@ def weight(data):
                 if ingredient["pin"] is None:
                     print("Kick off manual pour!")
                     manual_pour_active = True
-                    sio.emit("manual_pour_init", {"name": ingredient["name"], "quantity": ingredient["quantity"] })
+                    sio.emit("manual_pour_init", {
+                               "name": ingredient["name"],
+                               "quantity": ingredient["quantity"]})
                     sio.emit("simulated_pour", {"status": True})
                 else:
                     sio.emit("activate_valve", {"pin": ingredient["pin"]})
