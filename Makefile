@@ -1,4 +1,4 @@
-.PHONY: all clean tar
+.PHONY: all clean install tar deb
 
 NAME=bartender
 VERSION=0.1.0
@@ -8,6 +8,7 @@ prefix = /usr
 
 PKG=${NAME}-${VERSION}-${ARCH}
 PKG_TAR=build/${PKG}.tar.gz
+PKG_DEB=build/${PKG}.deb
 USR_DIR=$(prefix)/share/bartender
 INSTALL_DIR=${PKG}${USR_DIR}
 
@@ -38,7 +39,7 @@ systemd/%.service: systemd/%.template
 		-e 's%<BARTENDER_DIR>%${USR_DIR}%g' \
 		$< > $@
 
-${PKG_TAR}: all
+install: all
 	-rm ${PKG_TAR}
 	-rm -rf ${PKG}
 	install -d ${INSTALL_DIR}
@@ -56,10 +57,17 @@ ${PKG_TAR}: all
 	cp debian/control ${PKG}/DEBIAN
 	cp systemd/*.service ${PKG}/DEBIAN/
 
+${PKG_TAR}: install
 	install -d build
 	tar -czvf $@ ${PKG}
 
 tar: ${PKG_TAR}
+
+${PKG_DEB}: install
+	install -d build
+	dpkg-deb -b ${PKG} ${PKG_DEB}
+
+deb: ${PKG_DEB}
 
 clean:
 	-rm -rf ${PKG_TAR}
