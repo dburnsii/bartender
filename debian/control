@@ -1,0 +1,7 @@
+Source: bartender
+Maintainer: Desone Burns II <dburnsii@live.com>
+Description: The open-source drink making machine.
+Build-Depends: debhelper
+
+Package: bartender
+Architecture: armhf

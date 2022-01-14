@@ -12,3 +12,6 @@ hardware/stl
 fp-info-cache
 *-cache.lib
 venv
+build
+bartender-*
+systemd/*.service

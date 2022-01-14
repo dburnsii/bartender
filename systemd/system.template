@@ -4,7 +4,9 @@ After=central
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 [BARTENDERDIR]/backend/system_server/system_server.py
+Environment=VIRTUAL_ENV=<BARTENDER_DIR>/venv
+Environment=PATH=<BARTENDER_DIR>/venv/bin:$PATH
+ExecStart=/usr/bin/python3 <BARTENDER_DIR>/backend/system_server/system_server.py
 User=pi
 
 [Install]

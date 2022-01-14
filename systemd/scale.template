@@ -4,7 +4,9 @@ After=central
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 [BARTENDERDIR]/backend/scale_server/scale_server.py
+Environment=VIRTUAL_ENV=<BARTENDER_DIR>/venv
+Environment=PATH=<BARTENDER_DIR>/venv/bin:$PATH
+ExecStart=/usr/bin/python3 <BARTENDER_DIR>/backend/scale_server/scale_server.py
 User=pi
 
 [Install]

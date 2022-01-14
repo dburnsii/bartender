@@ -4,7 +4,9 @@ After=central
 
 [Service]
 Type=simple
-WorkingDirectory=[BARTENDERDIR]/frontend/build
+Environment=VIRTUAL_ENV=<BARTENDER_DIR>/venv
+Environment=PATH=<BARTENDER_DIR>/venv/bin:$PATH
+WorkingDirectory=<BARTENDER_DIR>/frontend/build
 ExecStart=/usr/bin/python3 -m http.server 3000
 User=pi
 
