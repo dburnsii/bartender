@@ -1,0 +1,1 @@
+grep -qxF 'include bartenderconfig.txt' /boot/config.txt || echo 'include bartenderconfig.txt' >> /boot/config.txt

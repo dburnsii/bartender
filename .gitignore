@@ -1,7 +1,7 @@
 .idea
 node_modules
 db.sqlite3
-bartender.db
+.bartender.db
 __pycache__/
 *.py[cod]
 media/images/*

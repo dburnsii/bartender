@@ -1,0 +1,1 @@
+sed -i '/include bartenderconfig.txt/d' /boot/config.txt

@@ -5,3 +5,4 @@ Build-Depends: debhelper
 Package: bartender
 Architecture: armhf
 Version: 0.1.0
+Depends: firefox-esr
