@@ -1,0 +1,51 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Build Debian
+
+on:
+  push:
+    branches:
+      - main
+      - 'dburnsii/debian_package'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-deb:
+    runs-on: ubuntu-20.04
+    name: Build on Debian Bullseye
+    steps:
+      -
+        name: Git Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: linux/arm/v7, linux/arm64
+      -
+        name: Build .deb Armv7
+        run: |
+          docker run --platform linux/arm/v7 --volume $(pwd):/home/bartender dburnsii/bartender-build:latest
+      -
+        name: Upload Armv7 .deb
+        uses: actions/upload-artifact@v2
+        with:
+          name: bartender-armv7.deb
+          path: build/*.deb
+      -
+        name: Cleanup
+        run: |
+          make clean
+      -
+        name: Build DEB Arm64
+        run: |
+          docker run --platform linux/arm64 --volume $(pwd):/home/bartender dburnsii/bartender-build:latest
+      -
+        name: Upload Arm64 .deb
+        uses: actions/upload-artifact@v2
+        with:
+          name: bartender-arm64.deb
+          path: build/*.deb

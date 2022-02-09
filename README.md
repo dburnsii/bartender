@@ -43,12 +43,16 @@ is available there as well. After purchasing and assembling the required
 hardware, you can move on to getting the Raspberry Pi set up.
 
 ### Software
-#### Build Time
+#### Build Requirements
+ - [**Qemu User Static**](https://github.com/multiarch/qemu-user-static) - Multi-platform build support
+  - [**Docker**](https://www.docker.com/) - Build environment
+
+#### Development
 - [**Kicad**](https://www.kicad.org/) - PCBs
 - [**FreeCad**](https://www.freecadweb.org/) - 3D Models
 - [**Platform.io**](https://platformio.org/) - For Arduino Companion
 
-#### Run Time
+#### Runtime
  - [**Raspberry Pi OS**](https://www.raspberrypi.org/software/) - Operating System
  - [**React**](https://reactjs.org/) - Frontend
  - [**Python**](https://www.python.org/) - Backend Microservices
