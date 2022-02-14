@@ -29,10 +29,13 @@ venv: requirements.txt
 	  PATH=$(shell pwd)/venv/bin:$(PATH) \
 	  pip3 install -r requirements.txt
 
-frontend/build: frontend
+frontend/node_modules: frontend
 	cd frontend && \
-	npm install && \
-	npm run build
+	npm -d install
+
+frontend/build: frontend/node_modules
+	cd frontend && \
+	npm -d run build
 
 systemd/%.service: systemd/%.template
 	sed \
