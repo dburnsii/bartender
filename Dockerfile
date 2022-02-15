@@ -6,9 +6,6 @@ RUN apt-get install --no-install-recommends -y python3 python3-pip \
                        libsystemd-dev systemd npm make \
                        && rm -rf /var/lib/apt/lists/*
 
-ENV CC=arm-linux-gnueabihf-gcc
-ENV CXX=arm-linux-gnueabihf-g++
-
 WORKDIR /home/bartender
 
 CMD ["/usr/bin/make", "deb"]
