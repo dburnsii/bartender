@@ -1,1 +1,5 @@
+# Exclude the bartender configuration when booting up
 sed -i '/include bartenderconfig.txt/d' /boot/config.txt
+
+# Update lightdm config
+sed -i 's/xserver-command=X -nocursor -s 0/#xserver-command=X/' /etc/lightdm/lightdm.conf

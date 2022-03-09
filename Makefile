@@ -1,8 +1,12 @@
-.PHONY: all clean install tar deb
+.PHONY: all clean install tar deb cachesetup
+
+SHELL := /bin/bash
 
 NAME=bartender
-VERSION=0.1.0
+VERSION=0.1.1
 ARCH=armhf
+
+CORES=$(shell nproc)
 
 prefix = /usr
 
@@ -23,13 +27,25 @@ SYSTEMD_TARGET_FILES := \
 
 all: opendrinks backend venv frontend/build companion ${SYSTEMD_TARGET_FILES}
 
-venv: requirements.txt
-	python3 -m venv venv
+cachesetup:
+	mkdir -p .cache
+	npm config set cache .cache/npm --global
+	pip config set global.cache-dir .cache/pip
+
+venv: cachesetup requirements.txt
+	python3 -m venv venv --upgrade-deps
+	VIRTUAL_ENV=$(shell pwd)/venv \
+		PATH=$(shell pwd)/venv/bin:$(PATH) \
+		pip install -I wheel
 	VIRTUAL_ENV=$(shell pwd)/venv \
 	  PATH=$(shell pwd)/venv/bin:$(PATH) \
-	  pip3 install -r requirements.txt
+		pip3 install -I -r requirements.txt
 
-frontend/node_modules: frontend
+	# Don't add this flag until after the install is complete, otherwise attempts
+	# to use system installed version of setuptools.
+	sed -i "s/include-system-site-packages = false/include-system-site-packages = true/" venv/pyvenv.cfg
+
+frontend/node_modules: cachesetup frontend
 	cd frontend && \
 	npm -d install
 
@@ -49,6 +65,7 @@ install: all
 	cp -r linux/* ${PKG}/
 	cp -r opendrinks ${INSTALL_DIR}/
 	cp -r backend ${INSTALL_DIR}/
+	chmod a+w ${INSTALL_DIR}/backend/database_server
 	ln -sf ${USR_DIR}/opendrinks ${INSTALL_DIR}/backend/opendrinks
 	cp -r frontend/build ${INSTALL_DIR}/
 	mv ${INSTALL_DIR}/build ${INSTALL_DIR}/frontend
@@ -85,3 +102,4 @@ clean:
 	-rm -rf venv
 	-rm -rf frontend/build
 	-rm systemd/*.service
+	-rm -rf .cache

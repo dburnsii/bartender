@@ -6,6 +6,8 @@ RUN apt-get install --no-install-recommends -y python3 python3-pip \
                        libsystemd-dev systemd npm make \
                        && rm -rf /var/lib/apt/lists/*
 
+RUN pip3 install -U pip setuptools
+
 WORKDIR /home/bartender
 
 CMD ["/usr/bin/make", "deb"]

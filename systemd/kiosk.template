@@ -1,7 +1,7 @@
 [Unit]
 Description=Bartender Kiosk (Browser) Server
 After=frontend.service database.service graphical.target
-Requires=graphical.target
+Requires=frontend.service graphical.target
 StartLimitIntervalSec=0
 
 [Service]

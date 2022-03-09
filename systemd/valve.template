@@ -1,6 +1,7 @@
 [Unit]
 Description=Bartender Valve Server
-After=central
+Requires=central.service
+After=central.service
 
 [Service]
 Type=simple

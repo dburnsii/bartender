@@ -1,6 +1,7 @@
 [Unit]
 Description=Bartender Led Server
-After=central
+Requires=central.service
+After=central.service
 
 [Service]
 Type=simple

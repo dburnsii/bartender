@@ -1,1 +1,9 @@
+# Include the bartender configuration when booting up
 grep -qxF 'include bartenderconfig.txt' /boot/config.txt || echo 'include bartenderconfig.txt' >> /boot/config.txt
+sed -i 's/dtoverlay=vc4-kms-v3d/#dtoverlay=vc4-kms-v3d/g' /boot/config.txt
+
+# Update lightdm to remove the cursor
+sed -i 's/#xserver-command=X/xserver-command=X -nocursor -s 0/' /etc/lightdm/lightdm.conf
+
+# Disable welcome prompt on login
+rm -f /etc/xdg/autostart/piwiz.desktop
