@@ -1,15 +1,16 @@
 from flask import Flask, send_from_directory, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade, current
 from flask_cors import CORS
 from flask_restful import Resource, Api, reqparse
 from dataclasses import dataclass
-from sqlalchemy import or_, null
+from sqlalchemy import or_, null, create_engine
+import update
 
 app = Flask(__name__, static_url_path='/static')
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///bartender.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///.bartender.db"
 
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, engine_options="")
 migrate = Migrate(app, db)
 cors = CORS(app)
 api = Api(app)
@@ -251,4 +252,9 @@ api.add_resource(ValveListApi, '/valves')
 api.add_resource(ConfigApi, '/config', '/config/<string:key>')
 
 if __name__ == '__main__':
+    create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    with app.app_context():
+        upgrade()
+    updater = update.BartenderUpdater()
+    updater.update_database()
     app.run(host="0.0.0.0", debug=True)

@@ -1,0 +1,9 @@
+frontend
+hardware
+companion
+bartender-*
+tests
+venv
+build
+backend
+systemd

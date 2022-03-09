@@ -1,0 +1,79 @@
+name: Build Debian Packages
+
+on:
+  push:
+    branches:
+      - main
+      - 'dburnsii/debian_package'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-deb-armv7:
+    runs-on: ubuntu-20.04
+    name: Build Armv7 on Debian Bullseye
+    steps:
+      -
+        name: Git Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+      -
+        name: Setup Cache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-armv7
+        with:
+          path: |
+            .cache
+          key: ${{ runner.os }}-${{ env.cache-name}}
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: linux/arm/v7
+      -
+        name: Build .deb Armv7
+        run: |
+          docker run --platform linux/arm/v7 --volume $(pwd):/home/bartender dburnsii/bartender-build:latest
+      -
+        name: Upload Armv7 .deb
+        uses: actions/upload-artifact@v2
+        with:
+          name: bartender-armv7.deb
+          path: build/*.deb
+  build-deb-arm64:
+    runs-on: ubuntu-20.04
+    name: Build Arm64 on Debian Bullseye
+    steps:
+      -
+        name: Git Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+      -
+        name: Setup Cache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-arm64
+        with:
+          path: |
+            .cache
+          key: ${{ runner.os }}-${{ env.cache-name}}
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: linux/arm64
+      -
+        name: Build DEB Arm64
+        run: |
+          docker run --platform linux/arm64 --volume $(pwd):/home/bartender dburnsii/bartender-build:latest
+      -
+        name: Upload Arm64 .deb
+        uses: actions/upload-artifact@v2
+        with:
+          name: bartender-arm64.deb
+          path: build/*.deb

@@ -3,7 +3,10 @@ Description=Bartender Database Server
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 [BARTENDERDIR]/backend/database_server/app.py
+WorkingDirectory=<BARTENDER_DIR>/backend/database_server
+Environment=VIRTUAL_ENV=<BARTENDER_DIR>/venv
+Environment=PATH=<BARTENDER_DIR>/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=<BARTENDER_DIR>/venv/bin/python3 <BARTENDER_DIR>/backend/database_server/app.py
 User=pi
 
 [Install]

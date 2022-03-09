@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "sd-notify": "^2.8.0"
+  }
+}

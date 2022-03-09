@@ -1,10 +1,11 @@
 [Unit]
 Description=Bartender Frontend Server
-After=central
+Requires=central.service
+After=central.service
 
 [Service]
 Type=simple
-WorkingDirectory=[BARTENDERDIR]/frontend/build
+WorkingDirectory=<BARTENDER_DIR>/frontend
 ExecStart=/usr/bin/python3 -m http.server 3000
 User=pi
 
