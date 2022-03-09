@@ -25,7 +25,7 @@ jobs:
           cache-name: cache-armv7
         with:
           path: |
-            ~/.cache
+            .cache
           key: ${{ runner.os }}-${{ env.cache-name}}
       -
         name: Set up QEMU
@@ -59,7 +59,7 @@ jobs:
           cache-name: cache-arm64
         with:
           path: |
-            ~/.cache
+            .cache
           key: ${{ runner.os }}-${{ env.cache-name}}
       -
         name: Set up QEMU
