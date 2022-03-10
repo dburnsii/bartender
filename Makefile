@@ -101,6 +101,7 @@ clean:
 	-rm -rf ${PKG}
 	-rm -rf venv
 	-rm -rf frontend/build
+	-rm -rf frontend/node_modules
 	-rm systemd/*.service
 	-rm -rf .cache
 	-rm -rf build

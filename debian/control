@@ -4,5 +4,5 @@ Description: The open-source drink making machine.
 Build-Depends: debhelper
 Package: bartender
 Architecture: armhf
-Version: 0.1.0
+Version: 0.1.1
 Depends: firefox-esr
