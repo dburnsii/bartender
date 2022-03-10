@@ -32,7 +32,7 @@ cachesetup:
 	npm config set cache .cache/npm --global
 	pip config set global.cache-dir .cache/pip
 
-venv: cachesetup requirements.txt
+venv: requirements.txt
 	python3 -m venv venv --upgrade-deps
 	VIRTUAL_ENV=$(shell pwd)/venv \
 		PATH=$(shell pwd)/venv/bin:$(PATH) \
@@ -45,7 +45,7 @@ venv: cachesetup requirements.txt
 	# to use system installed version of setuptools.
 	sed -i "s/include-system-site-packages = false/include-system-site-packages = true/" venv/pyvenv.cfg
 
-frontend/node_modules: cachesetup frontend
+frontend/node_modules: frontend
 	cd frontend && \
 	npm -d install
 
@@ -103,3 +103,4 @@ clean:
 	-rm -rf frontend/build
 	-rm systemd/*.service
 	-rm -rf .cache
+	-rm -rf build
