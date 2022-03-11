@@ -4,7 +4,12 @@ SHELL := /bin/bash
 
 NAME=bartender
 VERSION=0.1.1
-ARCH=armhf
+
+ifeq ($(shell uname -m),armv7l)
+	ARCH=armhf
+else ifeq ($(shell uname -m),aarch64)
+	ARCH=arm64
+endif
 
 CORES=$(shell nproc)
 
