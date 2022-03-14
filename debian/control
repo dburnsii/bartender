@@ -3,6 +3,9 @@ Maintainer: Desone Burns II <dburnsii@live.com>
 Description: The open-source drink making machine.
 Build-Depends: debhelper
 Package: bartender
-Architecture: armhf
+Section: electronics
+Priority: standard
+Component: main
+Architecture: <ARCH>
 Version: 0.1.1
 Depends: firefox-esr

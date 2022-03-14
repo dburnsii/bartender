@@ -1,4 +1,4 @@
-.PHONY: all clean install tar deb cachesetup
+.PHONY: all clean install tar deb cachesetup deb_signed
 
 SHELL := /bin/bash
 
@@ -84,7 +84,9 @@ install: all
 	find ${INSTALL_DIR} -name ".*" -prune -exec rm -rf {} \;
 
 	install -d ${PKG}/DEBIAN
-	cp debian/control ${PKG}/DEBIAN
+	sed \
+		-e 's%<ARCH>%${ARCH}%g' \
+		debian/control > ${PKG}/DEBIAN/control
 	cp debian/postinst ${PKG}/DEBIAN
 	cp debian/postrm ${PKG}/DEBIAN
 	cp systemd/*.service ${PKG}/DEBIAN/
@@ -99,7 +101,13 @@ ${PKG_DEB}: install
 	install -d build
 	dpkg-deb -b ${PKG} ${PKG_DEB}
 
+
 deb: ${PKG_DEB}
+
+deb_signed: deb
+	echo ${GPG_SIGNING_KEY} | base64 --decode | gpg --import
+	dpkg-sig -s builder ${PKG_DEB}
+	dpkg-sig -c ${PKG_DEB}
 
 clean:
 	-rm -rf ${PKG_TAR}

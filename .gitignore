@@ -1,5 +1,6 @@
 .idea
 .cache
+.secrets
 node_modules
 db.sqlite3
 .bartender.db
