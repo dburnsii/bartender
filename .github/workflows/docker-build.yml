@@ -38,6 +38,10 @@ jobs:
         run: |
           docker run --platform linux/arm/v7 --volume $(pwd):/home/bartender -e GPG_SIGNING_KEY=${{secrets.GPG_SIGNING_KEY}} dburnsii/bartender-build:latest
       -
+        name: Fix permissions on build
+        run: |
+          sudo chmod -R a+rw .
+      -
         name: Upload Armv7 .deb
         uses: actions/upload-artifact@v2
         with:
@@ -71,6 +75,10 @@ jobs:
         name: Build DEB Arm64
         run: |
           docker run --platform linux/arm64 --volume $(pwd):/home/bartender -e GPG_SIGNING_KEY=${{secrets.GPG_SIGNING_KEY}} dburnsii/bartender-build:latest
+      -
+        name: Fix permissions on build
+        run: |
+          sudo chmod -R a+rw .
       -
         name: Upload Arm64 .deb
         uses: actions/upload-artifact@v2
