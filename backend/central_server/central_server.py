@@ -9,6 +9,7 @@ sio = socketio.AsyncServer(async_mode='aiohttp', cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
 
+
 class RegisteredService():
     def __init__(self, sid, name):
         self.sid = sid
@@ -114,13 +115,16 @@ async def screen_brightness(sid, data):
 async def apt_update(sid, data):
     await sio.emit('apt_update', data)
 
+
 @sio.event
 async def apt_upgrade(sid, data):
     await sio.emit('apt_upgrade', data)
 
+
 @sio.event
 async def apt_upgrade_progress(sid, data):
     await sio.emit('apt_upgrade_progress', data)
+
 
 @sio.event
 async def apt_updates_available(sid, data):

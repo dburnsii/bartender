@@ -10,17 +10,16 @@ from datetime import datetime, timedelta
 import apt
 import apt.progress
 
+
 class AcquireProgress(apt.progress.base.AcquireProgress):
     def status_change(self, pkg, percent, status):
-        print("Update progress change: '{}' '{}' '{}'\n\r".format(pkg, percent, status))
         sio.emit("apt_update_progress", {'status': percent})
+
 
 class InstallProgress(apt.progress.base.InstallProgress):
     def status_change(self, pkg, percent, status):
-        print("Install progress change: '{}' '{}' '{}'\n\r".format(pkg, percent, status))
-        print(percent)
-        print(percent.__class__)
         sio.emit("apt_upgrade_progress", {'progress': percent})
+
 
 print("Starting Admin Server.")
 
@@ -34,15 +33,18 @@ print("Loaded apt cache.")
 simulation = True
 sio = socketio.Client()
 
+
 @sio.event
 def apt_update(data):
     global update_requested
     update_requested = True
 
+
 @sio.event
 def apt_upgrade(data):
     global upgrade_requested
     upgrade_requested = True
+
 
 @sio.event
 def current_version(data):
@@ -52,10 +54,12 @@ def current_version(data):
         print("Broadcasting Bartender version '{}'".format(version))
         sio.emit('software_version', {'bartender_deb': version})
 
+
 @sio.event
 def connect():
     print("Connected to socket server.")
     sio.emit("register", {"name": "admin"})
+
 
 @sio.event
 def simulation(data):
@@ -64,10 +68,12 @@ def simulation(data):
     print("Updating simulation status.")
     simulation = data["status"]
 
+
 @sio.event
 def disconnect():
     print("Disconnected from server.")
     sys.exit(0)
+
 
 sio.connect("http://localhost:8080")
 
