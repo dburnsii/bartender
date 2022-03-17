@@ -4,18 +4,10 @@ from aiohttp import web
 import socketio
 import time
 import os
-import sdnotify
 
 sio = socketio.AsyncServer(async_mode='aiohttp', cors_allowed_origins='*')
 app = web.Application()
 sio.attach(app)
-
-registered_services = {}
-
-simulation = True
-if(os.uname()[4] == "armv7l"):
-    simulation = False
-
 
 class RegisteredService():
     def __init__(self, sid, name):
@@ -113,6 +105,27 @@ async def abort_pour(sid, data):
 async def screen_brightness(sid, data):
     await sio.emit('screen_brightness', data)
 
+
+#
+# Admin Server
+#
+
+@sio.event
+async def apt_update(sid, data):
+    await sio.emit('apt_update', data)
+
+@sio.event
+async def apt_upgrade(sid, data):
+    await sio.emit('apt_upgrade', data)
+
+@sio.event
+async def apt_upgrade_progress(sid, data):
+    await sio.emit('apt_upgrade_progress', data)
+
+@sio.event
+async def apt_updates_available(sid, data):
+    await sio.emit('apt_updates_available', data)
+
 #
 #  Central Server Stuff
 #
@@ -191,11 +204,30 @@ async def disconnect(sid):
 
 
 async def on_startup(app):
-    n = sdnotify.SystemdNotifier()
-    n.notify("READY=1")
+    if systemd:
+        n = sdnotify.SystemdNotifier()
+        n.notify("READY=1")
     print("Server started")
 
+
 if __name__ == '__main__':
+    print("Starting Central Server")
+
+    systemd = os.path.exists("/usr/bin/systemd")
+    if systemd:
+        import sdnotify
+    print("Using Systemd: {}".format(systemd))
+
+    print("Initialized Async Server.")
+
+    registered_services = {}
+
+    # Assume if we're running on an ARM OS, and systemd is installed, we're
+    # on real hardware.
+    simulation = True
+    if(os.uname()[4] == "armv7l" or os.uname()[4] == "arm64") and systemd:
+        simulation = False
+
     print("Starting server")
     app.on_startup.append(on_startup)
     web.run_app(app)

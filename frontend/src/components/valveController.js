@@ -72,7 +72,7 @@ class ValveController extends React.Component {
   }
 
   getLabel(ingredient){
-    if(ingredient == null){
+    if(ingredient === null){
       return <CircularProgress/>
     } else if("name" in ingredient){
       return titleCase(ingredient.name);
@@ -92,7 +92,7 @@ class ValveController extends React.Component {
   }
 
   inputChange(e, value, reason) {
-    if(reason == "selectOption"){
+    if(reason === "selectOption"){
       fetch("http://" + window.location.hostname + ":5000/valves/" + this.props.pin + "?ingredient=" + value.id,
         {method: "PUT"})
         .then(response => {console.log(response); this.componentDidMount()});

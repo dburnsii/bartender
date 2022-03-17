@@ -1,8 +1,5 @@
 import React from 'react';
-import { Button, CircularProgress, Box, Typography } from '@mui/material';
-import { makeStyles, useTheme } from '@mui/material/styles';
-const drawerWidth = 60;
-
+import { CircularProgress, Box, Typography } from '@mui/material';
 
 
 class ScalePage extends React.Component {

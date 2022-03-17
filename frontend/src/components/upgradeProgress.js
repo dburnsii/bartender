@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Card, LinearProgress, Box, Typography, Modal} from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-class DrinkProgress extends React.Component {
+class UpgradeProgress extends React.Component {
   constructor(props){
     super(props);
     this.completedTime = 3000;
@@ -19,17 +19,21 @@ class DrinkProgress extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
+    // We got a progress update. Open the modal if it's not open already, and
+    // check to see if we've hit 100% completion on the update. If so, display
+    // the "completed" message and close the modal.
     if(this.props.progress !== nextProps.progress){
-      return true;
-    } else if(this.props.open !== nextProps.open){
-      if(nextProps.open){
-        this.setState({open: nextProps.open})
-      } else {
+      if(!this.state.open){
+        this.setState({open: true});
+      }
+      if(nextProps.progress >= 100){
         this.setState({complete: true})
         setTimeout(() => {
           this.setState({open: false, complete: false})
         }, this.completedTime);
       }
+      return true;
+    } else if(this.props.open !== nextProps.open){
       return true;
     } else if(this.state.open !== nextState.open){
       return true;
@@ -50,7 +54,7 @@ class DrinkProgress extends React.Component {
             color='success'
             style={styles.completeIcon}/>
           <Typography style={styles.completeText}>
-            Enjoy your beverage!
+            Please Reboot Me!
           </Typography>
         </Card>
       )
@@ -58,21 +62,13 @@ class DrinkProgress extends React.Component {
       return(
         <Card style={styles.card}>
           <Typography style={styles.text}>
-            Pour in progress
+            Upgrade in Progress
           </Typography>
           <LinearProgress
             variant="determinate"
+            color="success"
             value={this.props.progress}
             style={styles.progress}/>
-          <Box style={styles.cancelBox}>
-            <Button
-              style={styles.cancel}
-              variant="contained"
-              color="secondary"
-              onClick={this.props.cancelPour}>
-              Cancel
-            </Button>
-          </Box>
         </Card>
       );
     }
@@ -93,7 +89,7 @@ class DrinkProgress extends React.Component {
       progress : {
         width: "80%",
         height: "20px",
-        margin: "5% 10% 8% 10%",
+        margin: "10% 10% 8% 10%",
         borderRadius: "10px"
       },
       cancel : {
@@ -119,11 +115,11 @@ class DrinkProgress extends React.Component {
       }
     };
     return (
-      <Modal open={this.state.open} onClose={this.props.hide}>
+      <Modal open={this.state.open}>
         {this.progressContent(this.props.progress, this.state.complete, styles)}
       </Modal>
     );
   }
 }
 
-export default DrinkProgress
+export default UpgradeProgress

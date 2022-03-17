@@ -1,5 +1,4 @@
 import React from 'react';
-import Card from '@mui/material';
 
 class BokehParticle extends React.Component {
   constructor(props){
@@ -80,7 +79,7 @@ class BokehAnimation extends React.Component {
     this.count = 5;
     this.maxSize = 100;
     this.minSize = 10;
-    this.fps = 1000;   
+    this.fps = 1000;
     this.state = {
       particles: new Array(this.count).fill(<BokehParticle/>)
     }
@@ -104,8 +103,6 @@ class BokehAnimation extends React.Component {
   componentWillUnmount(){}
 
   render() {
-    const styles = {
-    };
     return(<div>{this.state.particles}</div>);
   }
 }

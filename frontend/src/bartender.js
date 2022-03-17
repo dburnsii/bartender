@@ -1,8 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { makeStyles, useTheme } from '@mui/material/styles';
 import Menu from './menu';
-import Scale from './scale';
 import Manual from './manual';
 import Search from './search';
 import Favorites from './favorites';
@@ -10,6 +7,7 @@ import Lights from './lights';
 import Settings from './settings';
 import DrinkProgress from './components/drinkProgress';
 import ManualPourProgress from './components/manualPourProgress';
+import UpgradeProgress from './components/upgradeProgress';
 import ErrorScreen from './components/errorScreen';
 import Screensaver from './components/screensaver';
 import io from 'socket.io-client';
@@ -27,6 +25,8 @@ class Bartender extends React.Component {
     this.skipManualPour = this.skipManualPour.bind(this);
     this.updateScreenTimeout = this.updateScreenTimeout.bind(this);
     this.updateScreenBrightness = this.updateScreenBrightness.bind(this);
+    this.handleCheckForUpdate = this.handleCheckForUpdate.bind(this);
+    this.handleAptUpgrade = this.handleAptUpgrade.bind(this);
     this.socket = io("ws://" + window.location.hostname + ":8080");
     this.weight = 0;
     this.updateWeight = throttle(w => this.setState({weight: w}), 500);
@@ -45,7 +45,9 @@ class Bartender extends React.Component {
       lastActive: Date.now(),
       idle: true,
       blankTime: 60 * 1000,
-      screenBrightness: 100
+      screenBrightness: 100,
+      updateAvailable: null,
+      upgradeProgress: 0
     };
   }
 
@@ -69,6 +71,19 @@ class Bartender extends React.Component {
     instance.setConfig("screen_brightness", brightness);
     instance.socket.emit("screen_brightness", {"value": brightness})
   }, 500);
+
+  handleCheckForUpdate() {
+    this.setState({updateAvailable: null});
+    this.socket.emit('apt_update', '');
+    console.log("Checking for updates");
+  }
+
+  handleAptUpgrade() {
+    this.setState({updateAvailable: null});
+    this.setState({upgradeProgress: 0.1});
+    this.socket.emit('apt_upgrade', '');
+    console.log("Starting system upgrade");
+  }
 
   activatePump(pin){
   }
@@ -95,24 +110,6 @@ class Bartender extends React.Component {
 
   skipManualPour(){
     console.log("Skip manual ingredient")
-  }
-
-  getPage(page){
-    switch(page){
-      case 'home':
-        return <Favorites socket={this.socket}/>
-      case 'search':
-        return <Search socket={this.socket}/>
-      case 'manual':
-        return <Manual weight={this.state.weight} socket={this.socket}
-                    presence={this.state.presence} metric={this.state.metric}/>
-      case 'lights':
-        return <Lights />
-      case 'settings':
-        return <Settings socket={this.socket} blankTime={this.state.blankTime} screenBrightness={this.state.screenBrightness} updateScreenTimeout={this.updateScreenTimeout} updateScreenBrightness={this.updateScreenBrightness}/>
-      default:
-        return <Favorites socket={this.socket}/>
-    }
   }
 
   mouseDown(e) {
@@ -152,6 +149,7 @@ class Bartender extends React.Component {
     this.getConfig('screen_brightness', (data) => {
       this.setState({screenBrightness: parseInt(data)})
     })
+
     this.socket.on('weight', (data) => {
       this.updateWeight(data['weight']);
       if(this.state.lastActive + this.state.blankTime < Date.now() && !this.state.idle){
@@ -209,9 +207,55 @@ class Bartender extends React.Component {
       console.log(data);
       this.setState({manual_pour_progress: data['percentage'] * 100, manual_pour_active: !data['complete']})
     });
+
+    // Software updates
+    this.socket.on('apt_updates_available', (data) => {
+      console.log("Updates available: " + data['status']);
+      this.setState({updateAvailable: data['status']});
+    });
+
+    this.socket.on('apt_update_progress', (data) => {
+      console.log(data);
+    });
+
+    this.socket.on('apt_upgrade_progress', (data) => {
+      console.log("Upgrade progress: " + data['progress']);
+      if(data['progress'] >= 100){
+        this.setState({upgradeProgress: data['progress'], updateAvailable: false});
+      } else {
+        this.setState({upgradeProgress: data['progress']});
+      }
+    });
   }
 
   componentWillUnmount(){}
+
+  getPage(page){
+    switch(page){
+      case 'home':
+        return <Favorites socket={this.socket}/>
+      case 'search':
+        return <Search socket={this.socket}/>
+      case 'manual':
+        return <Manual weight={this.state.weight} socket={this.socket}
+                    presence={this.state.presence} metric={this.state.metric}/>
+      case 'lights':
+        return <Lights />
+      case 'settings':
+        return <Settings
+                  socket={this.socket}
+                  blankTime={this.state.blankTime}
+                  screenBrightness={this.state.screenBrightness}
+                  updateScreenTimeout={this.updateScreenTimeout}
+                  updateScreenBrightness={this.updateScreenBrightness}
+                  updateAvalable={this.state.updateAvailable}
+                  updateProgress={this.state.updateProgress}
+                  handleCheckForUpdate={this.handleCheckForUpdate}
+                  handleUpgrade={this.handleAptUpgrade}/>
+      default:
+        return <Favorites socket={this.socket}/>
+    }
+  }
 
   render() {
     return (
@@ -219,7 +263,8 @@ class Bartender extends React.Component {
         <Menu page={this.state.page} changePage={this.changePage} />
         <DrinkProgress progress={this.state.pour_progress} open={this.state.pour_active} hide={this.hideProgress} cancelPour={this.cancelPour}/>
         <ManualPourProgress progress={this.state.manual_pour_progress} open={this.state.manual_pour_active} hide={this.hideManualPourProgress} cancelPour={this.cancelPour} skipPour={this.skipPour} name={this.state.manual_pour_name}/>
-        <ErrorScreen title={this.state.errorTitle} text={this.state.errorText} hide={this.clearError} open={this.state.errorText != ""}/>
+        <UpgradeProgress progress={this.state.upgradeProgress} />
+        <ErrorScreen title={this.state.errorTitle} text={this.state.errorText} hide={this.clearError} open={this.state.errorText !== ""}/>
         <Screensaver idle={this.state.idle}/>
         {this.getPage(this.state.page)}
       </div>

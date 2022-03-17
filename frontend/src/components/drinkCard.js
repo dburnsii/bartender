@@ -1,8 +1,7 @@
 import React from 'react';
-import { Button, Card, CircularProgress, Box, Typography, Dialog, DialogContent, DialogTitle, TableContainer, Table, TableBody, TableRow, TableCell, IconButton, Paper} from '@mui/material';
+import { Button, Card, Box, Typography, Dialog, TableContainer, Table, TableBody, TableRow, TableCell, IconButton } from '@mui/material';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
 import CloseIcon from '@mui/icons-material/Close';
-import Modal from '@mui/material/Modal';
 import { titleCase } from "title-case";
 import { green } from '@mui/material/colors';
 
@@ -25,7 +24,7 @@ class DrinkCard extends React.Component {
   componentDidMount(){
     console.log("Mounting card: " + this.props.name);
     console.log(this.props.valves)
-    if(this.state.ingredients.length == 0){
+    if(this.state.ingredients.length === 0){
       fetch("http://" + window.location.hostname + ":5000/drinks/" + this.props.id)
         .then(response => response.json())
         .then((data) => {
@@ -34,7 +33,7 @@ class DrinkCard extends React.Component {
           console.log(data);
           console.log(this.props.valves)
           this.ingredients.forEach((ingredient, index) => {
-                if(ingredient.required && ingredient.ingredient.measure == "mL" && !(ingredient.ingredient.name in this.props.valves)){
+                if(ingredient.required && ingredient.ingredient.measure === "mL" && !(ingredient.ingredient.name in this.props.valves)){
                   console.log("Missing required ingredient. marking as unavailable");
                   this.setState({available: false});
                   console.log(ingredient)
@@ -64,12 +63,12 @@ class DrinkCard extends React.Component {
   }
 
   quantityText(di){
-    //const ing_prop =  this.ingredients.find(x => x.ingredient == ingredient.name)
-    if(di.ingredient.measure == "mL"){
+    //const ing_prop =  this.ingredients.find(x => x.ingredient === ingredient.name)
+    if(di.ingredient.measure === "mL"){
       return `• ${di.quantity} mL`
-    } else if(di.ingredient.measure == "dash"){
+    } else if(di.ingredient.measure === "dash"){
       return `• ${di.quantity} dah(es)`
-    } else if(di.ingredient.measure == "count"){
+    } else if(di.ingredient.measure === "count"){
       return `• ${di.quantity}`
     }
   }
@@ -101,8 +100,8 @@ class DrinkCard extends React.Component {
             {this.state.ingredients.slice(start, end).map((value, index) =>
               {
                 if("ingredient" in value && "name" in value.ingredient && this.props.valves){
-                  //const ing_prop =  this.ingredients.find(x => x.ingredient == value.name)
-                  if((value.required && this.props.valves.map(x => x.ingredient_id).includes(value.ingredient.id)) || value.ingredient.measure != "mL"){
+                  //const ing_prop =  this.ingredients.find(x => x.ingredient === value.name)
+                  if((value.required && this.props.valves.map(x => x.ingredient_id).includes(value.ingredient.id)) || value.ingredient.measure !== "mL"){
                     return (
                       <TableRow key={this.props.id + "tr_i" + index} style={styles.ingredientRow}>
                         <TableCell key={this.props.id + "tr_i" + index + "q"} style={styles.ingredientCell}>{this.quantityText(value)}</TableCell>
@@ -247,7 +246,7 @@ class DrinkCard extends React.Component {
           PaperProps={{style: styles.modalPaper}}>
             <div style={styles.modalImageContainer}>
               <div style={styles.modalImageShadow}/>
-              <img style={styles.modalImage} src={"/images/drinks/images/" + this.props.image} />
+              <img alt="Drink" style={styles.modalImage} src={"/images/drinks/images/" + this.props.image} />
             </div>
             <Typography style={styles.modalTitle}>
               {titleCase(this.props.name)}
@@ -264,7 +263,7 @@ class DrinkCard extends React.Component {
           </div>
         </Dialog>
       <Card onClick={this.showDrink} style={styles.card}>
-        <img style={styles.image} src={"/images/drinks/images/" + this.props.image} />
+        <img style={styles.image} alt="Drink" src={"/images/drinks/images/" + this.props.image} />
         <Box style={styles.title}>{titleCase(this.props.name)}</Box>
       </Card>
       </div>

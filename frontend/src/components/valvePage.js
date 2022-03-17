@@ -5,7 +5,7 @@ import ValveController from './valveController';
 class ValvePage extends React.Component {
   constructor(props){
     super(props);
-    this.colors = [0xff0000, 0x00ff00, 0x5555ff, 0xffffff, 0xffff00, 0xff00ff, 0x00ffff, 0xffaaff, 0xaaff00, 0x3333ff];
+    this.colors = [0xff5533, 0x0000ff, 0x33ff33, 0xffffff, 0xffff00, 0xff00ff, 0x00ffff, 0xffaaff, 0xaaff00, 0x3333ff];
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -37,7 +37,6 @@ class ValvePage extends React.Component {
   componentWillUnmount(){}
 
   render() {
-    const styles = {};
     return (
       < Box >
         {this.getValves(this.props.page)}
