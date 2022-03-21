@@ -1,8 +1,7 @@
 import React from 'react';
-import { Button, Divider , Box, Typography, Grid } from '@mui/material';
+import { Button, Box, Grid } from '@mui/material';
 import ValvePage from './components/valvePage';
 import Scale from './components/scale';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LockClosedIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -107,7 +106,6 @@ class ManualModePage extends React.Component {
         textAlign: "right",
         display: "none"
       },
-
     };
     return (
         < Box position="relative" style={styles.box}>
@@ -115,7 +113,7 @@ class ManualModePage extends React.Component {
             <Grid item xs={2}>
               <Button
                 style={styles.prevButton}
-                disabled={this.state.page == 0}
+                disabled={this.state.page === 0}
                 disableRipple={true}
                 onClick={this.prevPage}>
                 <ChevronLeftIcon style={styles.prevButtonIcon}/>

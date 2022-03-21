@@ -1,11 +1,7 @@
 import React from 'react';
-import { Card, LinearProgress, Box, Typography, Modal} from '@mui/material';
-import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
+import { Card, Typography, Modal} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import WarningIcon from '@mui/icons-material/Warning';
-//import Modal from '@mui/material/Modal';
-import { titleCase } from "title-case";
-import { green } from '@mui/material/colors';
 
 class ErrorScreen extends React.Component {
   constructor(props){

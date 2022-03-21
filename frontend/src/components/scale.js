@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, CircularProgress, Box, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 class Scale extends React.Component {
   constructor(props){
@@ -18,7 +18,7 @@ class Scale extends React.Component {
 		unit = " fl oz";
 	}
 
-	if(weight == 0 || !this.props.presence) {
+	if(weight === 0 || !this.props.presence) {
 		return "0.0" + unit;
 	} else if(this.props.metric){
 		return weight + unit;

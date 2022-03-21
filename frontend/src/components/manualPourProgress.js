@@ -1,9 +1,6 @@
 import React from 'react';
 import { Button, Card, LinearProgress, Box, Typography, Modal} from '@mui/material';
-import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
-import CloseIcon from '@mui/icons-material/Close';
 import { titleCase } from "title-case";
-import { green } from '@mui/material/colors';
 
 class ManualPourProgress extends React.Component {
   constructor(props){

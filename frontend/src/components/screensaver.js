@@ -3,10 +3,6 @@ import { Typography, Card, Modal } from '@mui/material';
 import BokehAnimation from './bokeh';
 
 class Screensaver extends React.Component {
-  constructor(props){
-    super(props);
-  }
-
   componentDidMount(){
   }
 

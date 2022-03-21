@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Box, Button, CircularProgress } from '@mui/material';
+import { Box, Button, CircularProgress } from '@mui/material';
 import DrinkCard from './components/drinkCard';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';

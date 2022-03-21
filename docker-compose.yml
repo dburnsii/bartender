@@ -1,0 +1,49 @@
+x-basics: &basics
+  user: bartender
+  image: dburnsii/bartender-build:latest
+  volumes:
+    - ".:/home/bartender"
+  network_mode: "host"
+  environment:
+    VIRTUAL_ENV: "/home/bartender/venv"
+    PATH: "/home/bartender/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  restart: unless-stopped
+
+services:
+  central:
+    <<: *basics
+    command: python3 -u backend/central_server/central_server.py
+  database:
+    <<: *basics
+    working_dir: '/home/bartender/backend/database_server'
+    command: python3 app.py
+  frontend:
+    <<: *basics
+    working_dir: '/home/bartender/frontend'
+    command: npm run start
+  system:
+    <<: *basics
+    command: python3 backend/system_server/system_server.py
+    depends_on:
+      - central
+  led:
+    <<: *basics
+    command: python3 backend/led_server/led_server.py
+    depends_on:
+      - central
+  scale:
+    <<: *basics
+    command: python3 backend/scale_server/scale_server.py
+    depends_on:
+      - central
+  valve:
+    <<: *basics
+    command: python3 backend/valve_server/valve_server.py
+    depends_on:
+      - central
+  admin:
+    <<: *basics
+    user: root
+    command: python3 -u backend/admin_server/admin_server.py
+    depends_on:
+      - central
