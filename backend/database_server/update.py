@@ -8,8 +8,8 @@ from app import (Ingredient, Drink, DrinkIngredient, DrinkAlias,
 import os
 import json
 
-config_items = {"pin": "1234",
-                "blank_time": "120",
+config_items = {"lock_pin": "",
+                "blank_time": "60000",
                 "screen_brightness": "100",
                 "led_brightness": "100"}
 

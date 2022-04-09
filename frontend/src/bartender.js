@@ -6,6 +6,7 @@ import Favorites from './favorites';
 import Lights from './lights';
 import Settings from './settings';
 import DrinkProgress from './components/drinkProgress';
+import LockScreen from './components/lockScreen';
 import ManualPourProgress from './components/manualPourProgress';
 import UpgradeProgress from './components/upgradeProgress';
 import ErrorScreen from './components/errorScreen';
@@ -27,6 +28,9 @@ class Bartender extends React.Component {
     this.updateScreenBrightness = this.updateScreenBrightness.bind(this);
     this.handleCheckForUpdate = this.handleCheckForUpdate.bind(this);
     this.handleAptUpgrade = this.handleAptUpgrade.bind(this);
+    this.handleUnlock = this.handleUnlock.bind(this);
+    this.setLockPin = this.setLockPin.bind(this);
+    this.clearLockPin = this.clearLockPin.bind(this);
     this.socket = io("ws://" + window.location.hostname + ":8080");
     this.weight = 0;
     this.updateWeight = throttle(w => this.setState({weight: w}), 500);
@@ -43,9 +47,11 @@ class Bartender extends React.Component {
       errorTitle: "",
       errorText: "",
       lastActive: Date.now(),
-      idle: true,
+      idle: false,
+      locked: true,
       blankTime: 60 * 1000,
       screenBrightness: 100,
+      lockPin: "",
       updateAvailable: null,
       upgradeProgress: 0
     };
@@ -83,6 +89,21 @@ class Bartender extends React.Component {
     this.setState({upgradeProgress: 0.1});
     this.socket.emit('apt_upgrade', '');
     console.log("Starting system upgrade");
+  }
+
+  handleUnlock() {
+    console.log("Unlocking.")
+    this.setState({locked: false});
+  }
+
+  setLockPin(pin) {
+    this.setConfig("lock_pin", pin);
+    this.setState({lockPin: pin});
+  }
+
+  clearLockPin() {
+    this.deleteConfig("lock_pin");
+    this.setState({lockPin: ""});
   }
 
   activatePump(pin){
@@ -123,12 +144,18 @@ class Bartender extends React.Component {
 
   getConfig(key, callback){
     fetch("http://" + window.location.hostname + ":5000/config/" + key)
-      .then(response => response.json())
+      .then((r) => { console.log(r); console.log(r.ok); if (!r.ok) { console.log("nah") } else { return r }})
+      .then((r) => r.json())
       .then((data) => {
         console.log("Got config");
         console.log(data);
         callback(data);
-      });
+      })
+      .catch((error) => {
+        console.log("Missing config")
+        console.error(error);
+        callback(null);
+      })
   }
 
   setConfig(key, value){
@@ -137,9 +164,13 @@ class Bartender extends React.Component {
     xhr.setRequestHeader("key", key);
     xhr.setRequestHeader("value", value);
     xhr.send();
-    console.log("Set config")
-    console.log(value)
-    console.log(xhr)
+  }
+
+  deleteConfig(key){
+    var xhr = new XMLHttpRequest();
+    xhr.open("DELETE", "http://" + window.location.hostname + ":5000/config/" + key);
+    //xhr.setRequestHeader("key", key);
+    xhr.send();
   }
 
   componentDidMount(){
@@ -149,6 +180,10 @@ class Bartender extends React.Component {
     this.getConfig('screen_brightness', (data) => {
       this.setState({screenBrightness: parseInt(data)})
     })
+    this.getConfig('lock_pin', (data) => {
+      this.setState({lockPin: data});
+      console.log("Pin: " + data)
+    })
 
     this.socket.on('weight', (data) => {
       this.updateWeight(data['weight']);
@@ -156,10 +191,16 @@ class Bartender extends React.Component {
         console.log("Time for bed.");
         this.socket.emit('idle', {});
         this.setState({idle: true});
+        if(this.state.lockPin){
+          this.setState({locked: true});
+        }
       }
     });
     this.socket.on('idle', (data) => {
       this.setState({idle: true});
+      if(this.state.lockPin){
+        this.setState({locked: true});
+      }
     })
     this.socket.on('cup_presence', (data) => {
       this.setState({
@@ -246,12 +287,15 @@ class Bartender extends React.Component {
                   socket={this.socket}
                   blankTime={this.state.blankTime}
                   screenBrightness={this.state.screenBrightness}
+                  lockPin={this.state.lockPin}
                   updateScreenTimeout={this.updateScreenTimeout}
                   updateScreenBrightness={this.updateScreenBrightness}
                   updateAvalable={this.state.updateAvailable}
                   updateProgress={this.state.updateProgress}
                   handleCheckForUpdate={this.handleCheckForUpdate}
-                  handleUpgrade={this.handleAptUpgrade}/>
+                  handleUpgrade={this.handleAptUpgrade}
+                  setPin={this.setLockPin}
+                  clearPin={this.clearLockPin}/>
       default:
         return <Favorites socket={this.socket}/>
     }
@@ -265,6 +309,7 @@ class Bartender extends React.Component {
         <ManualPourProgress progress={this.state.manual_pour_progress} open={this.state.manual_pour_active} hide={this.hideManualPourProgress} cancelPour={this.cancelPour} skipPour={this.skipPour} name={this.state.manual_pour_name}/>
         <UpgradeProgress progress={this.state.upgradeProgress} />
         <ErrorScreen title={this.state.errorTitle} text={this.state.errorText} hide={this.clearError} open={this.state.errorText !== ""}/>
+        <LockScreen open={this.state.locked && !this.state.idle} unlock={this.handleUnlock} pin={this.state.lockPin}/>
         <Screensaver idle={this.state.idle}/>
         {this.getPage(this.state.page)}
       </div>

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button, Box, Typography, Grid, Slider, CircularProgress } from '@mui/material';
+import { Button, Box, Typography, Grid, Slider, CircularProgress, Switch } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import LockScreen from './components/lockScreen';
 
 class SettingsPage extends React.Component {
 
@@ -8,15 +9,60 @@ class SettingsPage extends React.Component {
     super(props);
     this.handleScreenTimeout = this.handleScreenTimeout.bind(this);
     this.handleScreenBrightness = this.handleScreenBrightness.bind(this);
+    this.lockPinScreen = this.lockPinScreen.bind(this);
+    this.clearPin = this.clearPin.bind(this);
+    this.setPin = this.setPin.bind(this);
+    this.cancelPin = this.cancelPin.bind(this);
+    this.handleLockPinToggle = this.handleLockPinToggle.bind(this);
     this.state = {
-      brightness: 50
+      brightness: 50,
+      settingPin: false
     };
   }
 
   handleScreenTimeout(event, value){this.props.updateScreenTimeout(value * 1000)}
   handleScreenBrightness(event, value){this.props.updateScreenBrightness(value)}
-  handleTogglePinLock(){}
-  handleResetPin(){}
+
+  handleLockPinToggle(){
+    this.setState({settingPin: true});
+  }
+
+  clearPin(){
+    this.setState({settingPin: false});
+    this.props.clearPin();
+  }
+
+  setPin(pin){
+    this.setState({settingPin: false});
+    this.props.setPin(pin);
+  }
+
+  cancelPin(){
+    this.setState({settingPin: false});
+  }
+
+
+  lockPinScreen(pin, active){
+    if(active){
+      if(this.props.lockPin){
+        // Disable the pin
+        return (<LockScreen
+                  open={true}
+                  purpose="disable"
+                  pin={pin}
+                  cancel={this.cancelPin}
+                  clearPin={this.clearPin} />)
+      } else {
+        // Enable the pin
+        return (<LockScreen
+                  open={true}
+                  purpose="enable"
+                  pin={pin}
+                  cancel={this.cancelPin}
+                  setPin={this.setPin}/>)
+      }
+    }
+  }
 
   updateButton(updateAvailable) {
     const styles = {
@@ -107,10 +153,20 @@ class SettingsPage extends React.Component {
                 onChange={this.handleScreenBrightness} />
             </Grid>
 
+            <Grid item xs={4}>
+              <Typography variant="h5">Pin Lock</Typography>
+            </Grid>
             <Grid item xs={8}>
+              <Switch
+                checked={this.props.lockPin && this.props.lockPin.length === 4}
+                onChange={this.handleLockPinToggle} />
+            </Grid>
+            {this.lockPinScreen(this.props.lockPin, this.state.settingPin)}
+
+            <Grid item xs={4}>
               <Typography variant="h5">Updates</Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={8}>
               {this.updateButton(this.props.updateAvalable)}
             </Grid>
 
