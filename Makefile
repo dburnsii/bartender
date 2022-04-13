@@ -3,7 +3,7 @@
 SHELL := /bin/bash
 
 NAME=bartender
-VERSION=0.1.2
+VERSION=0.1.3
 
 ifeq ($(shell uname -m),armv7l)
 	ARCH=armhf
@@ -86,6 +86,7 @@ install: all
 	install -d ${PKG}/DEBIAN
 	sed \
 		-e 's%<ARCH>%${ARCH}%g' \
+		-e 's%<VERSION>%${VERSION}%g' \
 		debian/control > ${PKG}/DEBIAN/control
 	cp debian/postinst ${PKG}/DEBIAN
 	cp debian/postrm ${PKG}/DEBIAN
