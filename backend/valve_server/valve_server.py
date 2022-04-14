@@ -18,7 +18,14 @@ scale_cache_size = 20
 cup_presence_status = False
 scale_failure_threshold = 5
 manual_override = False
+manual_override_old = False
 manual_pour_active = False
+clean_mode_stage = -1
+clean_mode_valve = -1
+clean_mode_start_time = 0
+clean_mode_cycle = "normal"
+clean_mode_cycle_map = {"normal": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 3.0, 1.0, 0.5, 0.5],
+                        "intense": [0.5, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0]}
 
 sio = socketio.Client()
 
@@ -32,14 +39,32 @@ def cleanup():
             gpio.output(pin, gpio.LOW)
         gpio.cleanup()
 
+@sio.event
+def clean_valve(data):
+    global clean_mode_stage
+    global clean_mode_valve
+    global clean_mode_start_time
+    global manual_override
+    global manual_override_old
+    if 'pin' not in data:
+        print("Missing 'pin' key.")
+        return
+    print("Running clean cycle on valve {}".format(data['pin']))
+    clean_mode_valve = data['pin']
+    clean_mode_stage = 0
+    clean_mode_start_time = time.time()
+    manual_override_old = manual_override
+    manual_override = True
 
 @sio.event
 def activate_valve(data):
     global cup_presence_status
-    print(data)
-    print("Oh you want me to turn on  pump {}?".format(data['pin']))
-    print(pins[int(data['pin'])])
+    if 'pin' not in data:
+        print("Missing 'pin' key.")
+        return
+
     if not simulation:
+        print("Activating pump {}".format(data['pin']))
         if cup_presence_status or manual_override:
             gpio.output(pins[int(data['pin'])], gpio.HIGH)
     else:
@@ -134,10 +159,16 @@ def abort_pour(data):
     global pour_target
     global pour_queue
     global manual_pour_active
-    deactivate_valves()
+    global clean_mode_stage
+    global clean_mode_valve
+    global clean_mode_start_time
     pour_target = 0
     pour_queue = []
     manual_pour_active = False
+    clean_mode_stage = -1
+    clean_mode_valve = -1
+    clean_mode_start_time = 0
+    deactivate_valves()
     sio.emit("drink_pour_active", {"status": False, "progress": 0})
     sio.emit("manual_pour_status", {"complete": True, "progress": 0})
 
@@ -249,9 +280,11 @@ def disconnect():
 
 sio.connect("http://localhost:8080")
 
+last_ping = time.time()
+last_clean_progress = time.time()
+
 while 1:
-    time.sleep(0.25)
-    sio.emit("ping", "")
+    time.sleep(0.1)
     if(time.time() - scale_heartbeat > 3):
         print("ERROR! Scale has no pulse! Shutting all valves off as a "
               "safety measure")
@@ -259,3 +292,34 @@ while 1:
         cup_presence_status = False
         pour_target = 0
         pour_queue = []
+    if(time.time() - last_ping > 5):
+        sio.emit("ping", "")
+    if(clean_mode_stage > -1):
+        # For cleaning mode, we use the start time of the cleaning cycle to
+        # determine the step we're on. We can read our GPIO outputs to confirm
+        # we're activated/deactivated when we should be, using the even/odd
+        # state of our current index (stage) to determine what the status
+        # should be.
+        clean_runtime = time.time() - clean_mode_start_time
+        expected_elapsed = sum(clean_mode_cycle_map[clean_mode_cycle][0:clean_mode_stage + 1])
+        if(clean_runtime > expected_elapsed):
+            clean_mode_stage += 1
+            if(clean_mode_stage == len(clean_mode_cycle_map[clean_mode_cycle])):
+                print("Clean mode complete!")
+                clean_mode_stage = -1
+                clean_mode_valve = -1
+                clean_mode_start_time = 0
+                manual_override = manual_override_old
+                deactivate_valves()
+                sio.emit("clean_progress", {"status": 100})
+            else:
+                print("Proceeding to clean mode stage {}".format(
+                                                        clean_mode_stage + 1))
+                if(clean_mode_stage % 2):
+                    activate_valve({"pin": clean_mode_valve})
+                else:
+                    deactivate_valve({"pin": clean_mode_valve})
+        if(time.time() - last_clean_progress >= 0.1):
+            progress = (sum(clean_mode_cycle_map[clean_mode_cycle]) /
+                            (time.time() - clean_mode_start_time))
+            sio.emit("clean_progress", {"status": progress})

@@ -4,6 +4,7 @@ import Manual from './manual';
 import Search from './search';
 import Favorites from './favorites';
 import Lights from './lights';
+import Clean from './clean';
 import Settings from './settings';
 import DrinkProgress from './components/drinkProgress';
 import ManualPourProgress from './components/manualPourProgress';
@@ -239,6 +240,8 @@ class Bartender extends React.Component {
       case 'manual':
         return <Manual weight={this.state.weight} socket={this.socket}
                     presence={this.state.presence} metric={this.state.metric}/>
+      case 'clean':
+        return <Clean socket={this.socket} />
       case 'lights':
         return <Lights />
       case 'settings':

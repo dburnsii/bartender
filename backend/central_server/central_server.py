@@ -97,6 +97,16 @@ async def abort_pour(sid, data):
     print("Aborting pour.")
     await sio.emit('abort_pour', data)
 
+@sio.event
+async def clean_valve(sid, data):
+    print("Clean valve request")
+    await sio.emit('clean_valve', data)
+
+@sio.event
+async def clean_progress(sid, data):
+    print("Clean progress")
+    await sio.emit('clean_progress', data)
+
 #
 # System server
 #

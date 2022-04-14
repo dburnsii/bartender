@@ -9,6 +9,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import LightIcon from '@mui/icons-material/Light';
 import NotInterestedIcon from '@mui/icons-material/NotInterested';
+import LocalLaundryServiceIcon from '@mui/icons-material/LocalLaundryService';
 import './menu.css';
 
 
@@ -26,8 +27,8 @@ class Menu extends React.Component {
          <ListItem button selected={this.props.page === 'manual'} key='Manual' onClick={() => this.props.changePage('manual')}>
             <ListItemIcon> <TuneIcon className="menuIcon" /></ListItemIcon>
          </ListItem>
-         <ListItem button selected={this.props.page === 'gasstation'} key='GasStation'>
-            <ListItemIcon> <NotInterestedIcon className="menuIcon" /></ListItemIcon>
+         <ListItem button selected={this.props.page === 'clean'} key='Clean' onClick={() => this.props.changePage('clean')}>
+            <ListItemIcon> <LocalLaundryServiceIcon className="menuIcon" /></ListItemIcon>
          </ListItem>
          <ListItem button selected={this.props.page === 'lights'} key='lights' onClick={() => this.props.changePage('lights')}>
             <ListItemIcon> <LightIcon className="menuIcon" /></ListItemIcon>
