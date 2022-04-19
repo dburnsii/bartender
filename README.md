@@ -59,17 +59,19 @@ hardware, you can move on to getting the Raspberry Pi set up.
 
 #### Installation
  1. Install [Raspberry Pi OS](https://www.raspberrypi.org/software/) on your Pi
- 2. Clone this repo into your Home Directory of choice
- 3. Run `git submodule update --init` to get the latest drink recipes.
- 4. Run the `./install.sh` script from inside the bartender directory to get
- set up.
+ 2. Add **The Bartender**'s official Debian repo to your `/etc/apt/sources.list` file:
+   - `echo "deb https://storage.googleapis.com/bartender-repo bullseye main" | sudo tee -a /etc/apt/sources.list`
+ 3. Add **The Batender**'s secure GPG key for updates:
+   - `wget -O - https://storage.googleapis.com/bartender-repo/bartender-repo.gpg.key | sudo apt-key add -`
  5. Reboot and grab a glass!
 
 #### Updating
-  1. `git pull` this repo to get the latest changes
-  2. `git submodule update` to get the latest recipes
-  3. Rerun the `./install.sh` script
-  4. Reboot the pi (Note: The reinstallation currently wipes out the pump database, so you'll need to repopulate the list of loaded bottles).
+  Navigate to the "Settings" screen, and press "Upgrade". Reboot.
+
+  The upgrade function is a very new feature, and may experience some problems.
+  To troubleshoot, please file an issue here and run
+  `sudo apt-get update && sudo apt-get -y upgrade` manually to get your system
+  up to date.
 
 ### Contributing
 This project is still in the early phases and the repo is subject

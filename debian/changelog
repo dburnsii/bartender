@@ -1,3 +1,9 @@
+bartender (0.1.2) unstable; urgency=medium
+
+  * Added Admin Server to allow for system updates through the UI
+
+ -- Desone Burns II <dburnsii@live.com>  Thu, 17 Mar 2022 16:00:00 -0700
+
 bartender (0.1.1) unstable; urgency=medium
 
   * Updates to ease installation and get packages working as expected.

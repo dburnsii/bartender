@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Box, Button, CircularProgress, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import DrinkCard from './components/drinkCard';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -29,19 +29,19 @@ class FavoritesPage extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    if(this.state.page != nextState.page){
+    if(this.state.page !== nextState.page){
       console.log("page changed")
       return true;
-    } else if (this.state.valves != nextState.valves){
+    } else if (this.state.valves !== nextState.valves){
       console.log("valves updated")
       console.log(this.state.valves)
       console.log(nextState.valves)
 
       return true;
-    } else if (this.state.filter != nextState.filter){
+    } else if (this.state.filter !== nextState.filter){
       console.log("filter status changed")
       return true;
-    } else if(this.state.drinks != nextState.drinks){
+    } else if(this.state.drinks !== nextState.drinks){
       console.log("Drnks updated")
       return true;
     }
@@ -98,7 +98,7 @@ class FavoritesPage extends React.Component {
         console.log("created new page")
         console.log(this.cards)
       }
-      if(this.cards[page].length == 0){
+      if(this.cards[page].length === 0){
         return (
           <Box style={{width: "100%",
                        height: "100%",

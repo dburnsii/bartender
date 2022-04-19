@@ -2,9 +2,7 @@ name: Build Debian Packages
 
 on:
   push:
-    branches:
-      - main
-      - 'dburnsii/debian_package'
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
