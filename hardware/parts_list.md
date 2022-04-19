@@ -3,19 +3,14 @@ Below is the list of parts that you'll need in order to build your own The Barte
 
 ### Custom PCBS
 The Bartender has a few PCBs that make assembly and maintenance a lot easier:
- - [ ] [Arduino Hat](https://oshpark.com/shared_projects/4fOb3c6I) - $3.15 (for 3, $1.05 each)
  - [ ] [Pump Array](https://oshpark.com/shared_projects/H87zFAoN) - $26.80 (for 3, $8.93 each)
  - [ ] [Raspberry Pi Hat](https://oshpark.com/shared_projects/1cpJF3GU) - $9.80 (for 3, $3.27 each)
 
- Total: $39.75 ($13.25 for a single set)
+ Total: $36.60 ($12.20 for a single set)
 
  All Prices are as listed from OshPark, and each order includes a minimum of 3 boards. The CAD files for these boards are provided, and you may be able to find them cheaper elsewhere.
 
 ### For the PCBs
-
-#### Arduino Hat
- - [ ] 1x 3-pin JST-XH Header (~$5/50 sets)
- - [ ] 2x 3-pin Header ($5 for more than you'll use for this project)
 
 #### Pump Array
  - [ ] 10x TIP-120 (~$6/10pcs)
@@ -25,7 +20,6 @@ The Bartender has a few PCBs that make assembly and maintenance a lot easier:
  - [ ] 10x 2-pin JST-XH Cables (various lengths, for the pumps)
  - [ ] 1x 12-pin JST-XH Header ($5/20pcs)
  - [ ] 1x 12-pin JST-XH 20cm Cable ($9/5pcs)
-
 
 #### Raspberry Pi Hat
  - [ ] 1x 12-pin JST-XH Connector (included above)
@@ -37,12 +31,11 @@ The Bartender has a few PCBs that make assembly and maintenance a lot easier:
  - [ ] 2x 4-Pin JST-XH Right-Angle Connector (included above)
  - [ ] 1x 10KG Load Cell (Often included with HX711 module)
 
-Total: ~$48
+Total: ~$38
 
 ### Off-The-Shelf
  - [ ] 1x Raspberry Pi 4 2GB ($35)
  - [ ] 1x 8GB MicroSD Card ($6)
- - [ ] 1x Arduino Beetle ($7)
  - [ ] 1x Waveshare 5" DSI Touchscreen ($45)
  - [ ] 1x HX711 Module (Shielded) ($2)
  - [ ] 1x 2M Addressable LED Strip ($15)
@@ -51,10 +44,8 @@ Total: ~$48
  - [ ] 1x Fused AC Inlet ($3)
  - [ ] 10x 365 DC Pump ($8)
  - [ ] 1x 1KG Roll of 3D Filament (Any Color) ($15)
- - [ ] 10x Stainless Steel Liquor Spouts ($10)
- - [ ] 10x Aquarium Check Valve ($6)
 
-Total: ~$237
+Total: ~$142
 
 
 ### The Home Depot
@@ -76,4 +67,4 @@ Total: ~$101
  - [ ] Spade Drill Bit Set
 
 
-Grand Total: ~$425.75
+Grand Total: ~$317.60

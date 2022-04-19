@@ -30,7 +30,7 @@ SYSTEMD_TARGET_FILES := \
 		%.service, \
 		${SYSTEMD_TEMPLATE_FILES})
 
-all: opendrinks backend venv frontend/build companion ${SYSTEMD_TARGET_FILES}
+all: opendrinks backend venv frontend/build ${SYSTEMD_TARGET_FILES}
 
 cachesetup:
 	mkdir -p .cache
