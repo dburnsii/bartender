@@ -240,7 +240,16 @@ class ConfigApi(Resource):
             return False
 
     def delete(self, key):
-        pass
+        if(key):
+            existing = Config.query.filter(Config.key == key).first()
+            if existing:
+                db.session.delete(existing)
+                db.session.commit()
+                return True
+            else:
+                return False
+        else:
+            return False
 
 
 api.add_resource(DrinkApi, '/drinks/<int:drink_id>')

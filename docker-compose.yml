@@ -8,6 +8,7 @@ x-basics: &basics
     VIRTUAL_ENV: "/home/bartender/venv"
     PATH: "/home/bartender/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
   restart: unless-stopped
+  mem_limit: 256m
 
 services:
   central:
@@ -21,6 +22,7 @@ services:
     <<: *basics
     working_dir: '/home/bartender/frontend'
     command: npm run start
+    mem_limit: 512m
   system:
     <<: *basics
     command: python3 backend/system_server/system_server.py
