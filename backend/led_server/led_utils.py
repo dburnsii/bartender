@@ -1,17 +1,18 @@
+
 def rgb_multiply(color, intensity=1):
     return tuple(map(lambda x: x * max(intensity, 0), color))
 
+
 def simulate_pixels(pixels):
     print("\r", end="")
+    led_template = "\033[38;2;{};{};{}m{}\033[38;2;255;255;255m"
     for pixel in pixels:
-        print("\033[38;2;{};{};{}m{}\033[38;2;255;255;255m".format(
-                                                                    int(pixel[0]),
-                                                                    int(pixel[1]),
-                                                                    int(pixel[2]),
-                                                                    "O"),
-                                                                end='',
-                                                                sep='',
-                                                                flush=True)
+        print(led_template.format(int(pixel[0]),
+                                  int(pixel[1]),
+                                  int(pixel[2]),
+                                  "O"),
+              end='', sep='', flush=True)
+
 
 def color_to_tuple(color):
     b = color % 256
@@ -20,6 +21,7 @@ def color_to_tuple(color):
     color >>= 8
     r = color
     return (r, g, b)
+
 
 def mix(color_a, color_b):
     # TODO: Add logic to this to do a better job of matching intensity

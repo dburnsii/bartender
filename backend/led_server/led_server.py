@@ -27,11 +27,13 @@ bottle_index = [500, 2000, 3500, 5500, 7500, 11000, 12000, 14000, 16000, 17750]
 def cleanup():
     pass
 
+
 class Mode(Enum):
     IDLE = 1
     ACTIVE = 2
     HIGHLIGHT = 3
     PROGRESS = 4
+
 
 class BartenderPixels(list):
     def __init__(self, simulation=True, count=72, led_max=255, fps=30):
@@ -47,12 +49,15 @@ class BartenderPixels(list):
         self.mode = Mode.IDLE
         self.idle_color = (0, 0, self.led_max)
         if simulation:
-            list.__init__(self, [(0,0,0) for i in range(self.count)])
+            list.__init__(self, [(0, 0, 0) for i in range(self.count)])
         else:
             import board
             from neopixel import NeoPixel
             self.neopixel = neopixel
-            self.neopixel.__init__(self, board.D18, self.count, auto_write=False)
+            self.neopixel.__init__(self,
+                                   board.D18,
+                                   self.count,
+                                   auto_write=False)
 
     def show(self):
         if(datetime.now() - self.last_show > timedelta(seconds=(1/self.fps))):
@@ -63,7 +68,7 @@ class BartenderPixels(list):
                 self.neopixel.show(self)
 
     def clear(self):
-        self[0:self.count] = [(0,0,0) for i in range(self.count)]
+        self[0:self.count] = [(0, 0, 0) for i in range(self.count)]
         self.show()
 
     def highlight(self, indices, colors=None, spread=10):
@@ -71,17 +76,15 @@ class BartenderPixels(list):
             indices = [indices]
 
         if colors is None:
-            colors = [(255,255,255) for i in range(len(indices))]
+            colors = [(255, 255, 255) for i in range(len(indices))]
         elif isinstance(colors[0], int):
             colors = list(map(lambda x: color_to_tuple(x), colors))
 
         # Set all pixels to black inititally
-        self[0:self.count] = [(0,0,0) for i in range(self.count)]
+        self[0:self.count] = [(0, 0, 0) for i in range(self.count)]
 
         i = 0
         for index in indices:
-            # TODO: Check pixels for existing brightness, and mix
-
             # Initialize variables for incrementing later
             spread_range_upper = (self.led_max * spread / 2)
             spread_range_lower = (self.led_max * spread / 2)
@@ -92,32 +95,38 @@ class BartenderPixels(list):
             if index % self.led_max:
                 lower = math.floor(index / self.led_max)
                 upper = math.ceil(index / self.led_max)
-                spread_range_upper -= ( ( upper * self.led_max) - index)
-                spread_range_lower -= ( index - ( lower * self.led_max))
+                spread_range_upper -= ((upper * self.led_max) - index)
+                spread_range_lower -= (index - (lower * self.led_max))
             else:
                 lower = math.floor(index / self.led_max - 1)
                 upper = math.floor(index / self.led_max + 1)
-                self[lower + 1] = mix(self[lower+1], rgb_multiply(colors[i], 1))
+                self[lower + 1] = \
+                    mix(self[lower+1], rgb_multiply(colors[i], 1))
                 spread_range_upper -= self.led_max
                 spread_range_lower -= self.led_max
 
             # Spread the value until reaching the spread limit
             while spread_range_upper > 0 or spread_range_lower > 0:
                 if lower >= 0:
-                    intensity = min(spread_range_lower, self.led_max) / self.led_max
-                    self[lower] = mix(self[lower], rgb_multiply(colors[i], intensity))
+                    intensity = \
+                        min(spread_range_lower, self.led_max) / self.led_max
+                    self[lower] = \
+                        mix(self[lower], rgb_multiply(colors[i], intensity))
                     lower -= 1
                 spread_range_lower -= self.led_max
                 if upper < self.count:
-                    intensity = min(spread_range_upper, self.led_max) / self.led_max
-                    self[upper] = mix(self[upper], rgb_multiply(colors[i], intensity))
+                    intensity = \
+                        min(spread_range_upper, self.led_max) / self.led_max
+                    self[upper] = \
+                        mix(self[upper], rgb_multiply(colors[i], intensity))
                     upper += 1
                 spread_range_upper -= self.led_max
             self.show()
             i += 1
 
     def update(self, idle_increment=50):
-        if(self.mode == Mode.IDLE and datetime.now() - self.last_show > timedelta(seconds=(1/self.fps))):
+        if(self.mode == Mode.IDLE and datetime.now() - self.last_show >
+                timedelta(seconds=(1/self.fps))):
             self.idle_index += self.idle_direction * idle_increment
             if self.idle_index >= self.range:
                 self.idle_index = self.range - self.led_max
@@ -127,7 +136,6 @@ class BartenderPixels(list):
                 self.idle_direction *= -1
             self.highlight(self.idle_index)
         self.show()
-
 
     def set_mode(self, mode):
         self.mode = mode
@@ -156,6 +164,7 @@ class BartenderPixels(list):
             self.show()
             time.sleep(0.01)
 
+
 @sio.event
 def manual_pour_status(data):
     if(data['complete']):
@@ -164,6 +173,7 @@ def manual_pour_status(data):
         # TODO: Enclosing animation
         pass
 
+
 @sio.event
 def activate_valve(data):
     global cup_presence_status
@@ -171,15 +181,18 @@ def activate_valve(data):
     pixels.set_mode(Mode.ACTIVE)
     pixels.highlight(bottle_index[data['pin']])
 
+
 @sio.event
 def highlight_bottles(data):
     global pixels
     pixels.set_mode(Mode.ACTIVE)
     if 'colors' in data:
-        pixels.highlight(list(map(lambda x: bottle_index[x], data['pins'])), colors=data['colors'], spread=5)
+        pixels.highlight(list(map(lambda x: bottle_index[x], data['pins'])),
+                         colors=data['colors'],
+                         spread=5)
     else:
-        pixels.highlight(list(map(lambda x: bottle_index[x], data['pins'])), spread=5)
-
+        pixels.highlight(list(map(lambda x: bottle_index[x], data['pins'])),
+                         spread=5)
 
 
 @sio.event
@@ -220,6 +233,7 @@ def simulation(data):
     simulation = data["status"]
 
     pixels = BartenderPixels(simulation=simulation)
+
 
 @sio.event
 def disconnect():
