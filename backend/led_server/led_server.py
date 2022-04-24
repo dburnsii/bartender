@@ -8,115 +8,153 @@ import sys
 import math
 from datetime import datetime, timedelta
 from enum import Enum
-
-class Mode(Enum):
-    IDLE = 1
-    HIGHLIGHT = 2
+from led_utils import rgb_multiply, simulate_pixels, color_to_tuple, mix
 
 # Disable this to avoid printing pixels to the terminal
 display_simulation = True
 
-led_max = 255
 simulation = True
 cup_presence_status = False
 pixels = None
-current_mode = Mode.IDLE
-idle_index = 0
-idle_direction = 1
-
-pixel_count = 60
-pixel_range = led_max * pixel_count
-pixel_fps = 30
-
-RED = (led_max, 0, 0)
-GREEN = (0, led_max, 0)
-BLUE = (0, 0, led_max)
-WHITE = (led_max, led_max, led_max)
-
-idle_color = WHITE
 
 sio = socketio.Client()
+
+# Temporarily hard-code the location of each bottle
+bottle_index = [500, 2000, 3500, 5500, 7500, 11000, 12000, 14000, 16000, 17750]
 
 
 @atexit.register
 def cleanup():
     pass
 
-def simulate_pixels():
-    global pixels
-    print("\r", end="")
-    for pixel in pixels:
-        print("\033[38;2;{};{};{}m{}\033[38;2;255;255;255m".format(
-                                                                    int(pixel[0]),
-                                                                    int(pixel[1]),
-                                                                    int(pixel[2]),
-                                                                    "O"),
-                                                                end='',
-                                                                sep='',
-                                                                flush=True)
+class Mode(Enum):
+    IDLE = 1
+    ACTIVE = 2
+    HIGHLIGHT = 3
+    PROGRESS = 4
 
-def rgb_multiply(color, intensity=1):
-    return tuple(map(lambda x: x * max(intensity, 0), color))
+class BartenderPixels(list):
+    def __init__(self, simulation=True, count=72, led_max=255, fps=30):
+        self.simulation = simulation
+        self.count = count
+        self.led_max = led_max
+        self.fps = fps
+        self.idle_index = 0
+        self.idle_direction = 1
+        self.current_mode = Mode.IDLE
+        self.range = self.led_max * self.count
+        self.last_show = datetime.now()
+        self.mode = Mode.IDLE
+        self.idle_color = (0, 0, self.led_max)
+        if simulation:
+            list.__init__(self, [(0,0,0) for i in range(self.count)])
+        else:
+            import board
+            from neopixel import NeoPixel
+            self.neopixel = neopixel
+            self.neopixel.__init__(self, board.D18, self.count, auto_write=False)
 
-def show_pixels():
-    global pixels
-    global simulation
-    global display_simulation
-    if simulation and display_simulation:
-        simulate_pixels()
-    else:
-        pixels.show()
+    def show(self):
+        if(datetime.now() - self.last_show > timedelta(seconds=(1/self.fps))):
+            self.last_show = datetime.now()
+            if self.simulation:
+                simulate_pixels(self)
+            else:
+                self.neopixel.show(self)
 
-def highlight(index, spread=10):
-    global led_max
-    global pixels
-    global pixel_count
+    def clear(self):
+        self[0:self.count] = [(0,0,0) for i in range(self.count)]
+        self.show()
 
-    pixels[0:pixel_count] = [(0,0,0) for i in range(pixel_count)]
+    def highlight(self, indices, colors=None, spread=10):
+        if not isinstance(indices, list):
+            indices = [indices]
 
-    spread_range_upper = (led_max * spread / 2)
-    spread_range_lower = (led_max * spread / 2)
-    lower = 0
-    upper = 0
-    if index % led_max:
-        lower = math.floor(index / led_max)
-        upper = math.ceil(index / led_max)
-        spread_range_upper -= ( ( upper * led_max) - index)
-        spread_range_lower -= ( index - ( lower * led_max))
-    else:
-        lower = math.floor(index / led_max - 1)
-        upper = math.floor(index / led_max + 1)
-        pixels[lower + 1] = rgb_multiply(idle_color, 1)
-        spread_range_upper -= led_max
-        spread_range_lower -= led_max
-    while spread_range_upper > 0 or spread_range_lower > 0:
-        if lower >= 0:
-            intensity = min(spread_range_lower, led_max) / led_max
-            pixels[lower] = rgb_multiply(idle_color, intensity)
-            lower -= 1
-        spread_range_lower -= led_max
-        if upper < pixel_count:
-            intensity = min(spread_range_upper, led_max) / led_max
-            pixels[upper] = rgb_multiply(idle_color, intensity)
-            upper += 1
-        spread_range_upper -= led_max
+        if colors is None:
+            colors = [(255,255,255) for i in range(len(indices))]
+        elif isinstance(colors[0], int):
+            colors = list(map(lambda x: color_to_tuple(x), colors))
 
-def update_idle(increment=50):
-    global simulation
-    global pixels
-    global pixel_count
-    global idle_index
-    global idle_direction
-    idle_index += idle_direction * increment
-    if idle_index >= pixel_range:
-        idle_index = pixel_range - led_max
-        idle_direction *= -1
-    elif idle_index < 0:
-        idle_index = 0
-        idle_direction *= -1
-    highlight(idle_index)
+        # Set all pixels to black inititally
+        self[0:self.count] = [(0,0,0) for i in range(self.count)]
+
+        i = 0
+        for index in indices:
+            # TODO: Check pixels for existing brightness, and mix
+
+            # Initialize variables for incrementing later
+            spread_range_upper = (self.led_max * spread / 2)
+            spread_range_lower = (self.led_max * spread / 2)
+            lower = 0
+            upper = 0
+
+            # Either set the center LED, or set the two closest to the index
+            if index % self.led_max:
+                lower = math.floor(index / self.led_max)
+                upper = math.ceil(index / self.led_max)
+                spread_range_upper -= ( ( upper * self.led_max) - index)
+                spread_range_lower -= ( index - ( lower * self.led_max))
+            else:
+                lower = math.floor(index / self.led_max - 1)
+                upper = math.floor(index / self.led_max + 1)
+                self[lower + 1] = mix(self[lower+1], rgb_multiply(colors[i], 1))
+                spread_range_upper -= self.led_max
+                spread_range_lower -= self.led_max
+
+            # Spread the value until reaching the spread limit
+            while spread_range_upper > 0 or spread_range_lower > 0:
+                if lower >= 0:
+                    intensity = min(spread_range_lower, self.led_max) / self.led_max
+                    self[lower] = mix(self[lower], rgb_multiply(colors[i], intensity))
+                    lower -= 1
+                spread_range_lower -= self.led_max
+                if upper < self.count:
+                    intensity = min(spread_range_upper, self.led_max) / self.led_max
+                    self[upper] = mix(self[upper], rgb_multiply(colors[i], intensity))
+                    upper += 1
+                spread_range_upper -= self.led_max
+            self.show()
+            i += 1
+
+    def update(self, idle_increment=50):
+        if(self.mode == Mode.IDLE and datetime.now() - self.last_show > timedelta(seconds=(1/self.fps))):
+            self.idle_index += self.idle_direction * idle_increment
+            if self.idle_index >= self.range:
+                self.idle_index = self.range - self.led_max
+                self.idle_direction *= -1
+            elif self.idle_index < 0:
+                self.idle_index = 0
+                self.idle_direction *= -1
+            self.highlight(self.idle_index)
+        self.show()
 
 
+    def set_mode(self, mode):
+        self.mode = mode
+
+    def wheel(self, pos):
+        # Input a value 0 to 255 to get a color value.
+        # The colours are a transition r - g - b - back to r.
+        if pos < 0 or pos > 255:
+            return (0, 0, 0)
+        if pos < 85:
+            return (255 - pos * 3, pos * 3, 0)
+        if pos < 170:
+            pos -= 85
+            return (0, 255 - pos * 3, pos * 3)
+        pos -= 170
+        return (pos * 3, 0, 255 - pos * 3)
+
+    def rainbow_cycle(self):
+        '''
+        Currently unused, but could be used for rainbow animations
+        '''
+        for j in range(255):
+            for i in range(self.count):
+                rc_index = (i * 256 // self.count) + j
+                self[i] = self.wheel(rc_index & 255)
+            self.show()
+            time.sleep(0.01)
 
 @sio.event
 def manual_pour_status(data):
@@ -129,18 +167,19 @@ def manual_pour_status(data):
 @sio.event
 def activate_valve(data):
     global cup_presence_status
-    if not simulation:
-        if cup_presence_status:
-            print("Activating leds above valve {}".format(data['pin']))
-            # TODO: Highlight bottle
-    else:
-        print("Simulating LED activation on valve {}".format(data['pin']))
-
+    global pixels
+    pixels.set_mode(Mode.ACTIVE)
+    pixels.highlight(bottle_index[data['pin']])
 
 @sio.event
 def highlight_bottles(data):
-    print("Highlighting leds above valve {}".format(data['pins']))
-    # TODO highlight bottle
+    global pixels
+    pixels.set_mode(Mode.ACTIVE)
+    if 'colors' in data:
+        pixels.highlight(list(map(lambda x: bottle_index[x], data['pins'])), colors=data['colors'], spread=5)
+    else:
+        pixels.highlight(list(map(lambda x: bottle_index[x], data['pins'])), spread=5)
+
 
 
 @sio.event
@@ -161,8 +200,8 @@ def cup_presence(data):
 
 @sio.event
 def idle(data):
-    global current_mode
-    current_mode = Mode.IDLE
+    global pixels
+    pixels.set_mode(Mode.IDLE)
 
 
 @sio.event
@@ -180,15 +219,7 @@ def simulation(data):
     print("Updating simulation status.")
     simulation = data["status"]
 
-    if simulation:
-        pixels = [(0,0,0) for i in range(pixel_count)]
-        if display_simulation:
-            print("o", end="")
-    else:
-        import board
-        import neopixel
-        pixels = neopixel.NeoPixel(board.D18, pixel_count, auto_write=False)
-
+    pixels = BartenderPixels(simulation=simulation)
 
 @sio.event
 def disconnect():
@@ -206,8 +237,5 @@ while 1:
     if(datetime.now() - lastping > timedelta(seconds=5)):
         lastping = datetime.now()
         sio.emit('ping', "")
-    if(datetime.now() - lastshow > timedelta(seconds=(1/pixel_fps))):
-        lastshow = datetime.now()
-        if current_mode == Mode.IDLE:
-            update_idle()
-        show_pixels()
+    if(pixels):
+        pixels.update()
