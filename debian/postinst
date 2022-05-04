@@ -7,3 +7,11 @@ sed -i 's/#xserver-command=X/xserver-command=X -nocursor -s 0/' /etc/lightdm/lig
 
 # Disable welcome prompt on login
 rm -f /etc/xdg/autostart/piwiz.desktop
+
+# Disable dhcpcd from launching wpa_supplicant
+rm /usr/lib/dhcpcd/dhcpcd-hooks/10-wpa_supplicant
+
+# Update wpa_supplicant to launch with dbus support
+sed -i 's%ExecStart=/sbin/wpa_supplicant -c%ExecStart=/sbin/wpa_supplicant -u -c%' /usr/lib/systemd/system/wpa_supplicant@.service
+systemctl disable wpa_supplicant
+systemctl enable wpa_supplicant@wlan0
