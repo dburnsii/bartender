@@ -53,11 +53,10 @@ class BartenderPixels(list):
         else:
             import board
             from neopixel import NeoPixel
-            self.neopixel = neopixel
-            self.neopixel.__init__(self,
-                                   board.D18,
-                                   self.count,
-                                   auto_write=False)
+            self.neopixel = NeoPixel(self,
+                                     board.D18,
+                                     self.count,
+                                     auto_write=False)
 
     def show(self):
         if(datetime.now() - self.last_show > timedelta(seconds=(1/self.fps))):
@@ -65,7 +64,8 @@ class BartenderPixels(list):
             if self.simulation:
                 simulate_pixels(self)
             else:
-                self.neopixel.show(self)
+                self.neopixel[0:-1] = self[0:-1]
+                self.neopixel.show()
 
     def clear(self):
         self[0:self.count] = [(0, 0, 0) for i in range(self.count)]
@@ -252,4 +252,5 @@ while 1:
         lastping = datetime.now()
         sio.emit('ping', "")
     if(pixels):
+        #pixels.rainbow_cycle()
         pixels.update()
