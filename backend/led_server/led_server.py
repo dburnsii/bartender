@@ -124,6 +124,25 @@ class BartenderPixels(list):
             self.show()
             i += 1
 
+    def progress(self, percentage):
+        if(not len(self)):
+            print("Pixels empty, skipping progress")
+
+        # Set all pixels to black inititally
+        self[0:self.count] = [(0, 0, 0) for i in range(self.count)]
+
+        if percentage > 0:
+            # Use a logarithmic method to determine how far to spread. This makes
+            # it easier for the user to know when pouring is complete.
+            spread = self.count / 2 * (0.01 ** (1 - percentage))
+            if(spread >= 1):
+                self[:math.floor(spread)] = [(255,255,255) for i in range(math.floor(spread))]
+                self[-math.floor(spread):] = [(255,255,255) for i in range(math.floor(spread))]
+
+            if(spread % 1 > 0):
+                self[math.floor(spread)] = rgb_multiply((255,255,255), spread % 1)
+                self[-math.floor(spread)-1] = rgb_multiply((255,255,255), spread % 1)
+
     def update(self, idle_increment=50):
         if(self.mode == Mode.IDLE and datetime.now() - self.last_show >
                 timedelta(seconds=(1/self.fps))):
@@ -167,11 +186,12 @@ class BartenderPixels(list):
 
 @sio.event
 def manual_pour_status(data):
+    global pixels
     if(data['complete']):
         idle(None)
     elif data["percentage"] >= 0 and data["percentage"] <= 100:
-        # TODO: Enclosing animation
-        pass
+        pixels.set_mode(Mode.ACTIVE)
+        pixels.progress(data["percentage"]/100)
 
 
 @sio.event
@@ -251,6 +271,6 @@ while 1:
     if(datetime.now() - lastping > timedelta(seconds=5)):
         lastping = datetime.now()
         sio.emit('ping', "")
-    if(pixels):
+    if(pixels is not None):
         #pixels.rainbow_cycle()
         pixels.update()
