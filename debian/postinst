@@ -4,6 +4,8 @@ sed -i 's/dtoverlay=vc4-kms-v3d/#dtoverlay=vc4-kms-v3d/g' /boot/config.txt
 
 # Update lightdm to remove the cursor
 sed -i 's/#xserver-command=X/xserver-command=X -nocursor -s 0/' /etc/lightdm/lightdm.conf
+# Also ensure lightdm is run by the pi user
+sed -i 's/autologin-user=rpi-first-boot-wizard/autologin-user=pi/' /etc/lightdm/lightdm.conf
 
 # Disable welcome prompt on login
 rm -f /etc/xdg/autostart/piwiz.desktop

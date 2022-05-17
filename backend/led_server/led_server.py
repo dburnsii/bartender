@@ -53,8 +53,7 @@ class BartenderPixels(list):
         else:
             import board
             from neopixel import NeoPixel
-            self.neopixel = NeoPixel(self,
-                                     board.D18,
+            self.neopixel = NeoPixel(board.D18,
                                      self.count,
                                      auto_write=False)
 
