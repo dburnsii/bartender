@@ -4,7 +4,7 @@ Below is the list of parts that you'll need in order to build your own The Barte
 ### Custom PCBS
 The Bartender has a few PCBs that make assembly and maintenance a lot easier:
  - [ ] [Pump Array](https://oshpark.com/shared_projects/H87zFAoN) - $26.80 (for 3, $8.93 each)
- - [ ] [Raspberry Pi Hat](https://oshpark.com/shared_projects/1cpJF3GU) - $9.80 (for 3, $3.27 each)
+ - [ ] [Raspberry Pi Hat](https://oshpark.com/shared_projects/1Qw7b2lh) - $9.80 (for 3, $3.27 each)
 
  Total: $36.60 ($12.20 for a single set)
 
@@ -24,6 +24,7 @@ The Bartender has a few PCBs that make assembly and maintenance a lot easier:
 #### Raspberry Pi Hat
  - [ ] 1x 12-pin JST-XH Connector (included above)
  - [ ] 1x 4-pin JST-XH Right-Angle Connector (~$5/10 sets)
+ - [ ] 1x 3-pin JST-XH Connector (~$5/50sets)
  - [ ] 1x 2-pin JST-XH Connector (Optional, included above)
  - [ ] 1x 2x20-pin Female Header (~$2)
 
@@ -31,7 +32,7 @@ The Bartender has a few PCBs that make assembly and maintenance a lot easier:
  - [ ] 2x 4-Pin JST-XH Right-Angle Connector (included above)
  - [ ] 1x 10KG Load Cell (Often included with HX711 module)
 
-Total: ~$38
+Total: ~$43
 
 ### Off-The-Shelf
  - [ ] 1x Raspberry Pi 4 2GB ($35)
@@ -67,4 +68,4 @@ Total: ~$101
  - [ ] Spade Drill Bit Set
 
 
-Grand Total: ~$317.60
+Grand Total: ~$298.20
