@@ -42,7 +42,7 @@ class FavoritesPage extends React.Component {
       console.log("filter status changed")
       return true;
     } else if(this.state.drinks !== nextState.drinks){
-      console.log("Drnks updated")
+      //console.log("Drnks updated")
       return true;
     }
     return false;
@@ -81,13 +81,13 @@ class FavoritesPage extends React.Component {
   }
 
   drinkCards(drinks, page){
-    console.log(drinks)
-    console.log("Valves before creating drink cards:")
-    console.log(this.state.valves);
+    //console.log(drinks)
+    //console.log("Valves before creating drink cards:")
+    //console.log(this.state.valves);
     if(drinks.length > page){
       if(this.cards.length <= page) {
         this.cards[page] = drinks[page].map((drink, index) => {
-            console.log("Making drink card: " + drink.name)
+            //console.log("Making drink card: " + drink.name)
            return (<DrinkCard
             key={drink['id'] + "card"}
             socket={this.props.socket}
@@ -95,8 +95,8 @@ class FavoritesPage extends React.Component {
             name={drink['name']}
             image={drink['image']}
             valves={this.state.valves}/>)})
-        console.log("created new page")
-        console.log(this.cards)
+        //console.log("created new page")
+        //console.log(this.cards)
       }
       if(this.cards[page].length === 0){
         return (

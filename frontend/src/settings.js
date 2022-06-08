@@ -1,7 +1,10 @@
 import React from 'react';
-import { Button, Box, Typography, Grid, Slider, CircularProgress, Switch } from '@mui/material';
+import { Button, Box, Typography, Grid, Slider, CircularProgress, Switch, Select, MenuItem } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import LockScreen from './components/lockScreen';
+import WifiSetup from './components/wifiSetup';
+
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 class SettingsPage extends React.Component {
 
@@ -14,9 +17,15 @@ class SettingsPage extends React.Component {
     this.setPin = this.setPin.bind(this);
     this.cancelPin = this.cancelPin.bind(this);
     this.handleLockPinToggle = this.handleLockPinToggle.bind(this);
+    this.hideWifi = this.hideWifi.bind(this);
+    this.showWifi = this.showWifi.bind(this);
+    this.wifiScanInterval = null;
     this.state = {
       brightness: 50,
-      settingPin: false
+      settingPin: false,
+      wifiMenu: false,
+      currentSSID: "",
+      networks: [],
     };
   }
 
@@ -39,6 +48,14 @@ class SettingsPage extends React.Component {
 
   cancelPin(){
     this.setState({settingPin: false});
+  }
+
+  hideWifi(){
+    this.setState({wifiMenu: false});
+  }
+
+  showWifi(){
+    this.setState({wifiMenu: true});
   }
 
 
@@ -97,13 +114,32 @@ class SettingsPage extends React.Component {
   }
 
   componentDidMount() {
+    this.props.socket.on('wifi_scan_results', (data) => {
+      this.setState({networks: data['networks']})
+      console.log("Got wifi networks")
+      console.log(data['networks'])
+    });
+
+    this.props.socket.on('wifi_current_ssid', (data) => {
+      this.setState({currentSSID: data['ssid']})
+      console.log("Got current SSID")
+      console.log(data['ssid'])
+    });
+
     if(this.props.updateAvalable == null){
       this.props.socket.emit('apt_update', '');
     }
+    this.props.socket.emit('wifi_scan', '');
+    this.wifiScanInterval = setInterval(() => {
+      this.props.socket.emit('wifi_scan', '');
+    }, 10000);
   }
 
   componentWillUnmount(){
-
+    if(this.wifiScanInterval){
+      clearInterval(this.wifiScanInterval);
+      this.wifiScanInterval = null;
+    }
   }
 
   render() {
@@ -169,6 +205,16 @@ class SettingsPage extends React.Component {
             <Grid item xs={8}>
               {this.updateButton(this.props.updateAvalable)}
             </Grid>
+
+            <Grid item xs={4}>
+              <Typography>WiFi</Typography>
+            </Grid>
+            <Grid item xs={6}>
+            </Grid>
+            <Grid item xs={2}>
+              <ArrowForwardIosIcon onClick={this.showWifi}/>
+            </Grid>
+            <WifiSetup currentSSID={this.state.currentSSID} networks={this.state.networks} open={this.state.wifiMenu} hide={this.hideWifi}/>
 
             <Grid item xs={4}>
             </Grid>

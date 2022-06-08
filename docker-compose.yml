@@ -7,7 +7,7 @@ x-basics: &basics
   environment:
     VIRTUAL_ENV: "/home/bartender/venv"
     PATH: "/home/bartender/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-  restart: unless-stopped
+  #restart: unless-stopped
   mem_limit: 256m
 
 services:
@@ -47,5 +47,11 @@ services:
     <<: *basics
     user: root
     command: python3 -u backend/admin_server/admin_server.py
+    depends_on:
+      - central
+  wifi:
+    <<: *basics
+    user: root
+    command: python3 -u backend/wifi_server/wifi_server.py
     depends_on:
       - central

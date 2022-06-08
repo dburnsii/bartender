@@ -131,6 +131,24 @@ async def apt_updates_available(sid, data):
     await sio.emit('apt_updates_available', data)
 
 #
+# WiFi Server
+#
+
+@sio.event
+async def wifi_current_ssid(sid, data):
+    await sio.emit('wifi_current_ssid', data)
+
+
+@sio.event
+async def wifi_scan(sid, data):
+    await sio.emit('wifi_scan', data)
+
+
+@sio.event
+async def wifi_scan_results(sid, data):
+    await sio.emit('wifi_scan_results', data)
+
+#
 #  Central Server Stuff
 #
 

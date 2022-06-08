@@ -22,28 +22,28 @@ class DrinkCard extends React.Component {
 
 
   componentDidMount(){
-    console.log("Mounting card: " + this.props.name);
-    console.log(this.props.valves)
+    //console.log("Mounting card: " + this.props.name);
+    //console.log(this.props.valves)
     if(this.state.ingredients.length === 0){
       fetch("http://" + window.location.hostname + ":5000/drinks/" + this.props.id)
         .then(response => response.json())
         .then((data) => {
           this.ingredients = data.ingredients
           this.setState({ingredients: this.ingredients});
-          console.log(data);
-          console.log(this.props.valves)
+          //console.log(data);
+          //console.log(this.props.valves)
           this.ingredients.forEach((ingredient, index) => {
                 if(ingredient.required && ingredient.ingredient.measure === "mL" && !(ingredient.ingredient.name in this.props.valves)){
-                  console.log("Missing required ingredient. marking as unavailable");
+                  //console.log("Missing required ingredient. marking as unavailable");
                   this.setState({available: false});
-                  console.log(ingredient)
+                  //console.log(ingredient)
                 } else {
-                  console.log(ingredient)
+                  //console.log(ingredient)
                 }
           });
         });
       } else {
-        console.log("Prefilled ingredients! " + JSON.stringify(this.state.ingredients))
+        //console.log("Prefilled ingredients! " + JSON.stringify(this.state.ingredients))
       }
   }
 
@@ -115,9 +115,9 @@ class DrinkCard extends React.Component {
                         </TableRow> )
                     }
                 } else {
-                  console.log("t!")
-                  console.log(value);
-                  console.log(this.props.valves)
+                  //console.log("t!")
+                  //console.log(value);
+                  //console.log(this.props.valves)
                   return (
                   <Typography>test</Typography>
                 ) }
