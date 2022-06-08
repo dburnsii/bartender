@@ -131,16 +131,20 @@ class BartenderPixels(list):
         self[0:self.count] = [(0, 0, 0) for i in range(self.count)]
 
         if percentage > 0:
-            # Use a logarithmic method to determine how far to spread. This makes
-            # it easier for the user to know when pouring is complete.
+            # Use a logarithmic method to determine how far to spread. This
+            # makes it easier for the user to know when pouring is complete.
             spread = self.count / 2 * (0.01 ** (1 - percentage))
             if(spread >= 1):
-                self[:math.floor(spread)] = [(255,255,255) for i in range(math.floor(spread))]
-                self[-math.floor(spread):] = [(255,255,255) for i in range(math.floor(spread))]
+                self[:math.floor(spread)] = \
+                    [(255, 255, 255) for i in range(math.floor(spread))]
+                self[-math.floor(spread):] = \
+                    [(255, 255, 255) for i in range(math.floor(spread))]
 
             if(spread % 1 > 0):
-                self[math.floor(spread)] = rgb_multiply((255,255,255), spread % 1)
-                self[-math.floor(spread)-1] = rgb_multiply((255,255,255), spread % 1)
+                self[math.floor(spread)] = rgb_multiply(
+                    (255, 255, 255), spread % 1)
+                self[-math.floor(spread) -
+                     1] = rgb_multiply((255, 255, 255), spread % 1)
 
     def update(self, idle_increment=50):
         if(self.mode == Mode.IDLE and datetime.now() - self.last_show >
@@ -271,5 +275,5 @@ while 1:
         lastping = datetime.now()
         sio.emit('ping', "")
     if(pixels is not None):
-        #pixels.rainbow_cycle()
+        # pixels.rainbow_cycle()
         pixels.update()
