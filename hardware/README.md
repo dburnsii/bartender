@@ -2,10 +2,10 @@
 
 ![Pi Hat PCB](kicad/bartender_pi_hat/bartender_pi_hat_3d.jpg)
 
-Here you'll find all the hardware you'll need to assemble your own **The Bartender**. 
-There are quite a few parts you'll need, and most of them can be purchased for very 
-cheap from eBay, however you'll likely end up with more parts than you'll need for 
-most things. As this project gains popularity, kits may become available to make 
+Here you'll find all the hardware you'll need to assemble your own **The Bartender**.
+There are quite a few parts you'll need, and most of them can be purchased for very
+cheap from eBay, however you'll likely end up with more parts than you'll need for
+most things. As this project gains popularity, kits may become available to make
 getting started a lot easier.
 
 ## Part List
@@ -39,5 +39,5 @@ of the future!
 using separate power supplies and a separate pump array board.
 
  - [ ] Run all 5v components from a 12v -> 5v buck converter (or other step-down)
- - [ ] Run Neopixels (accent lighting above bottles) directly from the Pi
+ - [x] Run Neopixels (accent lighting above bottles) directly from the Pi
  - [ ] Affix the Pump-Controller board components to the Pi Hat

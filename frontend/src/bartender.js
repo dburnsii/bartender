@@ -187,7 +187,9 @@ class Bartender extends React.Component {
 
     this.socket.on('weight', (data) => {
       this.updateWeight(data['weight']);
-      if(this.state.lastActive + this.state.blankTime < Date.now() && !this.state.idle){
+      if(this.state.lastActive + this.state.blankTime < Date.now()
+         && !this.state.idle
+         && this.state.upgradeProgress == 0){
         console.log("Time for bed.");
         this.socket.emit('idle', {});
         this.setState({idle: true});

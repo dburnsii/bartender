@@ -3,3 +3,11 @@ sed -i '/include bartenderconfig.txt/d' /boot/config.txt
 
 # Update lightdm config
 sed -i 's/xserver-command=X -nocursor -s 0/#xserver-command=X/' /etc/lightdm/lightdm.conf
+
+# Re-enable dhcpcd to launch wpa_supplicant
+ln -s /usr/share/dhcpcd/hooks/10-wpa_supplicant /usr/lib/dhcpcd/dhcpcd-hooks/
+
+# Update wpa_supplicant to launch without dbus support (the default)
+sed -i 's%ExecStart=/sbin/wpa_supplicant -u -c%ExecStart=/sbin/wpa_supplicant -c%' /usr/lib/systemd/system/wpa_supplicant@.service
+systemctl disable wpa_supplicant@wlan0
+systemctl enable wpa_supplicant

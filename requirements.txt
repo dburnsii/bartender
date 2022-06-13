@@ -1,3 +1,4 @@
+adafruit-circuitpython-neopixel==6.3.0
 aiofiles==0.7.0
 aiohttp==3.8.1
 aiosignal==1.2.0
@@ -52,6 +53,7 @@ python-socketio==5.4.0
 pytz==2021.3
 requests==2.26.0
 rpi-backlight==2.4.1
+rpi_ws281x==4.3.4
 sdnotify==0.3.2
 semantic-version==2.8.5
 six==1.16.0
