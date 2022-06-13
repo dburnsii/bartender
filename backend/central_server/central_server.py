@@ -148,6 +148,31 @@ async def wifi_scan(sid, data):
 async def wifi_scan_results(sid, data):
     await sio.emit('wifi_scan_results', data)
 
+
+@sio.event
+async def wifi_get_networks(sid, data):
+    await sio.emit('wifi_get_networks', data)
+
+
+@sio.event
+async def wifi_known_network_results(sid, data):
+    await sio.emit('wifi_known_network_results', data)
+
+
+@sio.event
+async def wifi_connect(sid, data):
+    await sio.emit('wifi_connect', data)
+
+
+@sio.event
+async def wifi_disconnect(sid, data):
+    await sio.emit('wifi_disconnect', data)
+
+
+@sio.event
+async def wifi_forget(sid, data):
+    await sio.emit('wifi_forget', data)
+
 #
 #  Central Server Stuff
 #

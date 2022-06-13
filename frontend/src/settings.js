@@ -25,7 +25,8 @@ class SettingsPage extends React.Component {
       settingPin: false,
       wifiMenu: false,
       currentSSID: "",
-      networks: [],
+      availableNetworks: [],
+      knownNetworks: []
     };
   }
 
@@ -115,8 +116,17 @@ class SettingsPage extends React.Component {
 
   componentDidMount() {
     this.props.socket.on('wifi_scan_results', (data) => {
-      this.setState({networks: data['networks']})
-      console.log("Got wifi networks")
+      var networks = data['networks'];
+      networks.sort((a, b) => a.signal < b.signal)
+      this.setState({availableNetworks: networks})
+      console.log("Got available wifi networks")
+      console.log(data['networks'])
+    });
+
+    this.props.socket.on('wifi_known_network_results', (data) => {
+      var networks = data['networks'];
+      this.setState({knownNetworks: networks})
+      console.log("Got known wifi networks")
       console.log(data['networks'])
     });
 
@@ -129,6 +139,7 @@ class SettingsPage extends React.Component {
     if(this.props.updateAvalable == null){
       this.props.socket.emit('apt_update', '');
     }
+    this.props.socket.emit('wifi_get_networks', '');
     this.props.socket.emit('wifi_scan', '');
     this.wifiScanInterval = setInterval(() => {
       this.props.socket.emit('wifi_scan', '');
@@ -214,7 +225,13 @@ class SettingsPage extends React.Component {
             <Grid item xs={2}>
               <ArrowForwardIosIcon onClick={this.showWifi}/>
             </Grid>
-            <WifiSetup currentSSID={this.state.currentSSID} networks={this.state.networks} open={this.state.wifiMenu} hide={this.hideWifi}/>
+            <WifiSetup
+              currentSSID={this.state.currentSSID}
+              availableNetworks={this.state.availableNetworks}
+              knownNetworks={this.state.knownNetworks}
+              open={this.state.wifiMenu}
+              hide={this.hideWifi}
+              socket={this.props.socket} />
 
             <Grid item xs={4}>
             </Grid>
