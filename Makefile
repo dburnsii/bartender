@@ -3,7 +3,7 @@
 SHELL := /bin/bash
 
 NAME=bartender
-VERSION=0.1.3
+VERSION=0.1.4
 
 ifeq ($(shell uname -m),armv7l)
 	ARCH=armhf
