@@ -94,3 +94,56 @@
     text-align: center;
     font-size: 24px;
 }
+
+.wifiAuthKeyboard {
+  height: 340px;
+  width: 100%;
+  position: fixed;
+  z-index: 1200;
+  left: 0px;
+  bottom: 0px;
+  background-color: #ececec;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 5px;
+  box-sizing: border-box;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+/*.wifiAuthKeyboard .hg-rows {
+  height: 60px;
+}*/
+
+.wifiAuthKeyboard .hg-rows .hg-row {
+  height: 60px;
+  margin-bottom: 5px;
+  display: flex;
+}
+
+.wifiAuthKeyboard .hg-rows .hg-row .hg-button {
+  height: 60px !important;
+  min-width: 50px;
+  border-radius: 10px;
+  margin: 5px;
+  background: #fff;
+  align-items: center;
+  border-bottom: 1px solid #b5b5b5;
+  box-shadow: 0 0 3px 1px rgba(0,0,0,.3);
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+  box-sizing: border-box;
+  cursor: pointer;
+  flex-grow: 1;
+  font-size: 24px;
+}
+
+.wifiAuthInput {
+
+}
+
+.wifiAuthInput input {
+    text-align: center;
+    font-size: 24px;
+}

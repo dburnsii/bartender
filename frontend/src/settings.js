@@ -218,7 +218,7 @@ class SettingsPage extends React.Component {
             </Grid>
 
             <Grid item xs={4}>
-              <Typography>WiFi</Typography>
+              <Typography variant="h5">WiFi</Typography>
             </Grid>
             <Grid item xs={6}>
             </Grid>

@@ -114,10 +114,12 @@ class WiFiServer:
             if ssid in self.known_networks:
                 self.current_ssid = ssid
             else:
-                if psk == "password":
+                if psk == "Password!":
+                    print("Password good! Connecting.")
                     self.known_networks.append(ssid)
-                    self.current_network = ssid
+                    self.current_ssid = ssid
                 else:
+                    print("Incorrect password.")
                     # TODO: error handling for bad password
                     pass
         self.sio.emit("wifi_current_ssid", {"ssid": self.current_ssid})
@@ -134,10 +136,12 @@ class WiFiServer:
         if self.current_ssid == ssid:
             self.disconnect()
         if simulation:
-            self.known_networks.remove(ssid)
+            if ssid in self.known_networks:
+                self.known_networks.remove(ssid)
         else:
             # TODO: Remove network
             pass
+        self.get_known_networks()
 
     def local_ip(self):
         return subprocess.check_output(["hostname", "-I"]).decode().strip()
@@ -184,7 +188,7 @@ def wifi_connect(data):
     if 'password' in data:
         wifi_interface.connect(data['name'], data['password'])
     else:
-        wifi_interface.connect(data['name'], '')
+        wifi_interface.connect(data['name'])
 
 @sio.event
 def wifi_disconnect(data):

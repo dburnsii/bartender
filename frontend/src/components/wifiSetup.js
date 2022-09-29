@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, LinearProgress, Box, Typography, Modal, List, ListItem, ListItemIcon, ListItemText, TextField } from '@mui/material';
+import { FormControl, InputLabel, InputAdornment, Input, IconButton, Button, Card, LinearProgress, Box, Typography, Modal, List, ListItem, ListItemIcon, ListItemText, TextField } from '@mui/material';
 import SignalWifi1BarIcon from '@mui/icons-material/SignalWifi1Bar';
 import SignalWifi1BarLockIcon from '@mui/icons-material/SignalWifi1BarLock';
 import SignalWifi2BarIcon from '@mui/icons-material/SignalWifi2Bar';
@@ -10,7 +10,12 @@ import SignalWifi4BarIcon from '@mui/icons-material/SignalWifi4Bar';
 import SignalWifi4BarLockIcon from '@mui/icons-material/SignalWifi4BarLock';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { titleCase } from "title-case";
+import Keyboard, {KeyboardReactInterface} from 'react-simple-keyboard';
+import 'react-simple-keyboard/build/css/index.css';
+import '../App.css'
 
 const wifiIcons = {
   signal1: SignalWifi1BarIcon,
@@ -35,10 +40,41 @@ class WifiSetup extends React.Component {
     this.forgetNetwork = this.forgetNetwork.bind(this);
     this.connectNetwork = this.connectNetwork.bind(this);
     this.disconnectNetwork = this.disconnectNetwork.bind(this);
+    this.inputField = React.createRef();
+    this.keyboard = React.createRef();
+    this.onAuthChange = this.onAuthChange.bind(this);
+    this.onAuthKeyPress = this.onAuthKeyPress.bind(this);
+    this.toggleHidePassword = this.toggleHidePassword.bind(this);
+    this.submitAuth = this.submitAuth.bind(this);
     this.state = {
       screen: "list",
-      selectedNetwork: ""
+      selectedNetwork: "",
+      authInput: "",
+      hidePassword: true
     }
+  }
+
+  keyboardLayout = {
+    'default': [
+      '` 1 2 3 4 5 6 7 8 9 0 - =',
+      'q w e r t y u i o p [ ] \\',
+      'a s d f g h j k l ; \'',
+      '{shift} z x c v b n m , . / {shift}',
+      '{bksp} {space} {enter}'
+    ],
+    'shift' : [
+      '~ ! @ # $ % ^ & * ( ) _ +',
+      'Q W E R T Y U I O P { } |',
+      'A S D F G H J K L : "',
+      '{shift} Z X C V B N M < > ? {shift}',
+      '{bksp} {space} {enter}'
+    ]
+  }
+
+  keyboardDisplay = {
+    '{shift}' : 'shift',
+    '{bksp}': "backspace",
+    "{enter}": "enter"
   }
 
   /*
@@ -102,6 +138,13 @@ class WifiSetup extends React.Component {
     this.setState({screen: "info"})
   }
 
+  submitAuth(){
+    this.props.socket.emit('wifi_connect',
+                           {name: this.state.selectedNetwork,
+                            password: this.state.authInput})
+    this.setState({screen: "list", authInput: ""});
+  }
+
   forgetNetwork(ssid){
     this.props.socket.emit('wifi_forget', {name: ssid})
     this.setState({screen: "list"})
@@ -110,7 +153,7 @@ class WifiSetup extends React.Component {
   connectNetwork(ssid, e){
     if(this.props.knownNetworks.find(x => x == ssid)){
       this.props.socket.emit('wifi_connect', {name: ssid})
-      this.setState({screen: 'loading'})
+      this.setState({screen: 'list'})
     } else {
       this.setState({screen: 'auth'})
     }
@@ -118,6 +161,29 @@ class WifiSetup extends React.Component {
 
   disconnectNetwork(){
     this.props.socket.emit('wifi_disconnect', '');
+  }
+
+  onAuthChange(input){
+    this.setState({authInput: input});
+  }
+
+  onAuthKeyPress(button){
+    if(button === "{shift}"){
+      this.keyboardShift = !this.keyboardShift
+    } else if(this.keyboardShift){
+      this.keyboardShift = false;
+    }
+    this.keyboard.setOptions({layoutName: this.keyboardShift ? 'shift' : 'default'})
+
+    if(button === "{enter}"){
+      console.log("Submit!")
+      console.log(this.state.authInput);
+      this.submitAuth();
+    }
+  }
+
+  toggleHidePassword(){
+    this.setState({hidePassword: !this.state.hidePassword});
   }
 
   wifiSetupScreen(){
@@ -184,8 +250,45 @@ class WifiSetup extends React.Component {
     } else if (this.state.screen == "auth") {
       return(
         <div>
-          <TextField></TextField>
-          <Button onClick={this.cancelAuthNetwork}>Cancel</Button>
+          <IconButton style={{display: "inline-block", width: "20%", textAlign: "left"}}
+            onClick={this.cancelAuthNetwork}>
+            <ArrowBackIcon
+              fontSize="large" />
+          </IconButton>
+          <FormControl
+            variant="outlined"
+            style={{width: "60%", marginRight: "20%"}}>
+            <InputLabel>
+              Password
+            </InputLabel>
+            <Input
+              value={this.state.authInput}
+              type={this.state.hidePassword ? 'password' : 'text'}
+              autoFocus={true}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={this.toggleHidePassword}>
+                    {this.state.hidePassword ?
+                      <VisibilityOffIcon/> :
+                      <VisibilityIcon/>}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+          <Keyboard
+            onChange={this.onAuthChange}
+            onKeyPress={this.onAuthKeyPress}
+            layout={this.keyboardLayout}
+            preventMouseDownDefault={true}
+            preventMouseUpDefault={true}
+            stopMouseDownPropagation={true}
+            stopMouseUpPropagation={true}
+            useMouseEvents={true}
+            keyboardRef={(r) => (this.keyboard = r)}
+            theme={"wifiAuthKeyboard"}
+            buttonTheme={"wifiAuthButton"} />
         </div>
         )
     } else if (this.state.screen == "loading") {
@@ -198,7 +301,7 @@ class WifiSetup extends React.Component {
       return(
         {
           width: "80%",
-          height: "40%",
+          height: "20%",
           marginLeft: "10%",
           marginRight: "10%",
           marginTop: "5%",
