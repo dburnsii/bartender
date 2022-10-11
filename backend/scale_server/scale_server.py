@@ -129,12 +129,12 @@ while 1:
             # with the hx711 module. Report this to the rest of the system.
             readtime = (time.time() - starttime)*1000
             print("{:.1f}g - {}ms".format(weight, readtime))
-            if(readtime < 3):
+            if (readtime < 3):
                 # Try to only notify the rest of the system every once in
                 # a while
                 print("Error reading scale.")
                 bad_reads += 1
-                if(bad_reads == 10):
+                if (bad_reads == 10):
                     bad_reads += 1
                     sio.emit("error", {"title": "Scale Not Responding",
                              "text": "Currently unable to get a read from the "
@@ -143,29 +143,29 @@ while 1:
                 time.sleep(1)
                 continue
             else:
-                if(bad_reads > 0):
+                if (bad_reads > 0):
                     sio.emit("clear_error", {"title": "Scale Not Responding"})
                 bad_reads = 0
 
             measures.append(weight)
             measures.pop(0)
-            if(weight > cup_threshold and variance() < 5 and not present):
+            if (weight > cup_threshold and variance() < 5 and not present):
                 print("Cup detected")
                 present = True
                 cup_presence_request()
                 hx.tare()
                 continue
-            elif(weight < (cup_threshold * -0.5) and
-                 variance() < 5 and
-                 present):
+            elif (weight < (cup_threshold * -0.5) and
+                  variance() < 5 and
+                  present):
                 print("Cup removed")
                 present = False
                 cup_presence_request()
                 hx.tare()
-            elif(manual_target > 0):
+            elif (manual_target > 0):
                 manual_percentage = (weight - manual_start) / manual_target
                 print("Manual percentage: {}".format(manual_percentage))
-                if(manual_percentage >= 1.0):
+                if (manual_percentage >= 1.0):
                     print("Manual pour complete!")
                     manual_target = 0
                     sio.emit('manual_pour_status', {
@@ -186,16 +186,16 @@ while 1:
                 if manual_target > 0:
                     manual_percentage = (weight - manual_start) / manual_target
                     print("Manual percentage: {}".format(manual_percentage))
-                    if(manual_percentage >= 1.0):
+                    if (manual_percentage >= 1.0):
                         print("Manual pour complete!")
                         manual_target = 0
                         sio.emit('manual_pour_status', {
-                                    'percentage': manual_percentage,
-                                    'complete': True})
+                            'percentage': manual_percentage,
+                            'complete': True})
                     else:
                         sio.emit('manual_pour_status', {
-                                    'percentage': manual_percentage,
-                                    'complete': False})
+                            'percentage': manual_percentage,
+                            'complete': False})
             else:
                 if present:
                     present = False

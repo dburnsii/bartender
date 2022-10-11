@@ -82,10 +82,10 @@ lastupdate = datetime.now()
 
 while 1:
     time.sleep(0.01)
-    if(datetime.now() - lastping > timedelta(seconds=5)):
+    if (datetime.now() - lastping > timedelta(seconds=5)):
         lastping = datetime.now()
         sio.emit('ping', "")
-    if(datetime.now() - lastupdate > timedelta(hours=1)):
+    if (datetime.now() - lastupdate > timedelta(hours=1)):
         lastupdate = datetime.now()
     if update_requested and apt_cache:
         print("Checking for updates")

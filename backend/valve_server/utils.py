@@ -7,7 +7,7 @@ def grab_valves():
     req = requests.get("http://localhost:5000/valves?resolve=1")
     req_json = req.json()
     for i in range(len(req_json)-1, -1, -1):
-        if("ingredient" not in req_json[i] or
+        if ("ingredient" not in req_json[i] or
            req_json[i]["ingredient"] is None):
             del req_json[i]
     return req_json

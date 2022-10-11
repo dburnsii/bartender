@@ -38,8 +38,8 @@ class BartenderUpdater(object):
             ing_file = open(os.path.join(self.ing_path, ing_filename), 'r')
             ing = json.loads(ing_file.read())
             ing = Ingredient(**ing)
-            if(self.session.query(Ingredient)
-                           .filter(Ingredient.name == ing.name).scalar()):
+            if (self.session.query(Ingredient)
+                    .filter(Ingredient.name == ing.name).scalar()):
                 # Skip, since the ingredient already exists
                 # TODO: Check if any fields have been updated
                 continue
@@ -55,7 +55,7 @@ class BartenderUpdater(object):
             drink_file = open(os.path.join(self.drink_path, drink_filename))
             drink_dict = json.loads(drink_file.read())
 
-            if(self.session.query(Drink)
+            if (self.session.query(Drink)
                     .filter(Drink.name == drink_dict['name']).scalar()):
                 # Skip, since the drink already exists
                 # TODO: Check if any fields have been updated
@@ -67,8 +67,8 @@ class BartenderUpdater(object):
             drink.opendrinks = True
             for ing in drink_dict['ingredients']:
                 ing_ref = self.session.query(Ingredient)\
-                           .filter(Ingredient.name == ing['ingredient'])\
-                           .first()
+                    .filter(Ingredient.name == ing['ingredient'])\
+                    .first()
                 di = DrinkIngredient(ingredient=ing_ref,
                                      quantity=ing['quantity'],
                                      required=ing['required'])
@@ -98,7 +98,7 @@ class BartenderUpdater(object):
         print("Setup config items")
 
         for item in config_items:
-            if(not self.session.query(Config)
+            if (not self.session.query(Config)
                     .filter(Config.key == item).scalar()):
                 config = Config(key=item, value=config_items[item])
                 self.session.add(config)

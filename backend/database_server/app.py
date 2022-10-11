@@ -175,13 +175,13 @@ class IngredientListApi(Resource):
     def get(self):
         args = parser.parse_args()
         ingredients_q = Ingredient.query
-        if(args['name']):
+        if (args['name']):
             ingredient = Ingredient.query(Ingredient.name == args['name'])\
                                    .first_or_404()
             return jsonify(ingredient)
-        if(args['pourable']):
+        if (args['pourable']):
             ingredients_q = ingredients_q.filter(Ingredient.measure == "mL")
-        if(args['carbonated'] == 0):
+        if (args['carbonated'] == 0):
             ingredients_q = ingredients_q.filter(
                 Ingredient.carbonated is False)
         return jsonify(ingredients_q.all())
@@ -211,7 +211,7 @@ class ValveApi(Resource):
 class ValveListApi(Resource):
     def get(self):
         args = parser.parse_args()
-        if(args['resolve']):
+        if (args['resolve']):
             pass
         return jsonify(Valve.query.all())
 
@@ -226,7 +226,7 @@ class ConfigApi(Resource):
 
     def put(self):
         args = parser.parse_args()
-        if(args['key'] and args['value']):
+        if (args['key'] and args['value']):
             existing = Config.query.filter(Config.key == args['key'])
             if not existing.scalar():
                 db.session.add(Config(key=args['key'], value=args['value']))
@@ -240,7 +240,7 @@ class ConfigApi(Resource):
             return False
 
     def delete(self, key):
-        if(key):
+        if (key):
             existing = Config.query.filter(Config.key == key).first()
             if existing:
                 db.session.delete(existing)

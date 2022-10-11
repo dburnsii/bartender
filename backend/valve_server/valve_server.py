@@ -74,7 +74,7 @@ def drink_pour(data):
     global pour_total
     global scale_cache
     global cup_presence_status
-    if(len(pour_queue)):
+    if (len(pour_queue)):
         print("Uh... we're  little busy...")
         sio.emit("error", {"title": "Pour in progress",
                            "text": "A drink is currently being poured. please"
@@ -99,9 +99,9 @@ def drink_pour(data):
         if not utils.ing_pourable(ingredient):
             print("Skipping non-pourable ingredient: {}".
                   format(ingredient["ingredient"]))
-        elif(utils.ing_available(ingredient, valves)):
+        elif (utils.ing_available(ingredient, valves)):
             print("Found a loaded ingredient")
-        elif(not ingredient["required"]):
+        elif (not ingredient["required"]):
             print("Skipping a non-required ingredient")
         else:
             print("{} not in {}".format(ingredient["ingredient"], valves))
@@ -124,7 +124,7 @@ def drink_pour(data):
         sio.emit("activate_valve", {"pin": first_ingredient["pin"]})
     # Add a rouge value to trick the variance algorithm into thinking the pour
     # has started
-    if(len(scale_cache) > 100):
+    if (len(scale_cache) > 100):
         scale_cache.pop(0)
     scale_cache.append(-100)
 
@@ -161,7 +161,7 @@ def weight(data):
 
     # Cache the recent scale values for no-progress detection
     scale_cache.append(data["weight"])
-    if(len(scale_cache) > scale_cache_size):
+    if (len(scale_cache) > scale_cache_size):
         scale_cache.pop(0)
     scale_heartbeat = time.time()
 
@@ -177,7 +177,7 @@ def weight(data):
             print("Ingredient target reached!")
             deactivate_valves()
             pour_target = 0
-            if(len(pour_queue)):
+            if (len(pour_queue)):
                 print(pour_queue)
                 ingredient = pour_queue.pop(0)
                 pour_target = scale_cache[-1] + ingredient["quantity"]
@@ -187,8 +187,8 @@ def weight(data):
                     print("Kick off manual pour!")
                     manual_pour_active = True
                     sio.emit("manual_pour_init", {
-                               "name": ingredient["name"],
-                               "quantity": ingredient["quantity"]})
+                        "name": ingredient["name"],
+                        "quantity": ingredient["quantity"]})
                     sio.emit("simulated_pour", {"status": True})
                 else:
                     sio.emit("activate_valve", {"pin": ingredient["pin"]})
@@ -252,7 +252,7 @@ sio.connect("http://localhost:8080")
 while 1:
     time.sleep(0.25)
     sio.emit("ping", "")
-    if(time.time() - scale_heartbeat > 3):
+    if (time.time() - scale_heartbeat > 3):
         print("ERROR! Scale has no pulse! Shutting all valves off as a "
               "safety measure")
         deactivate_valves()

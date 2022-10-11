@@ -134,6 +134,7 @@ async def apt_updates_available(sid, data):
 # WiFi Server
 #
 
+
 @sio.event
 async def wifi_current_ssid(sid, data):
     await sio.emit('wifi_current_ssid', data)
@@ -272,7 +273,7 @@ if __name__ == '__main__':
     # Assume if we're running on an ARM OS, and systemd is installed, we're
     # on real hardware.
     simulation = True
-    if(os.uname()[4] in ["armv7l", "arm64", "aarch64"]) and systemd:
+    if (os.uname()[4] in ["armv7l", "arm64", "aarch64"]) and systemd:
         simulation = False
 
     print("Starting server")
