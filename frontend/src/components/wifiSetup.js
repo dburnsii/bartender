@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, InputLabel, InputAdornment, Input, IconButton, Button, Card, LinearProgress, Box, Typography, Modal, List, ListItem, ListItemIcon, ListItemText, TextField } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, FormControl, InputLabel, InputAdornment, Input, IconButton, Button, Card, LinearProgress, Box, Typography, Modal, List, ListItem, ListItemIcon, ListItemText, TextField, Grid } from '@mui/material';
 import SignalWifi1BarIcon from '@mui/icons-material/SignalWifi1Bar';
 import SignalWifi1BarLockIcon from '@mui/icons-material/SignalWifi1BarLock';
 import SignalWifi2BarIcon from '@mui/icons-material/SignalWifi2Bar';
@@ -12,6 +12,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import BlockIcon from '@mui/icons-material/Block';
+import LeakAddIcon from '@mui/icons-material/LeakAdd';
 import { titleCase } from "title-case";
 import Keyboard, {KeyboardReactInterface} from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
@@ -47,8 +49,8 @@ class WifiSetup extends React.Component {
     this.toggleHidePassword = this.toggleHidePassword.bind(this);
     this.submitAuth = this.submitAuth.bind(this);
     this.state = {
-      screen: "list",
-      selectedNetwork: "",
+      screen: props.currentSSID ? "info" : "list",
+      selectedNetwork: props.currentSSID,
       authInput: "",
       hidePassword: true
     }
@@ -77,27 +79,19 @@ class WifiSetup extends React.Component {
     "{enter}": "enter"
   }
 
-  /*
-  -30 dBm: This is the maximum signal strength.
-  -50 dBm: This is considered an excellent signal strength. - level 4
-  -60 dBm: This is a good signal strength. - level 3
-  -67 dBm: This is a reliable signal strength.
-  -70 dBm: This is not a strong signal strength. - level 2
-  -80 dBm: This is an unreliable signal strength. - level 1
-  */
   wifiIcon(signal, auth){
     var strength = "1";
-    if(signal <= -80){
-      strength = "1";
-    } else if(signal <= -70) {
-      strength = "2";
-    } else if(signal <= -60 ) {
-      strength = "3";
-    } else {
+    if(signal >= 80){
       strength = "4";
+    } else if(signal >= 60) {
+      strength = "3";
+    } else if(signal >= 40 ) {
+      strength = "2";
+    } else {
+      strength = "1";
     }
 
-    var secured = (auth && auth.length && auth[0].length) ? "secure" : "";
+    var secured = (auth > 0) ? "secure" : "";
     return React.createElement(wifiIcons[`signal${strength}${secured}`], {
 
     });
@@ -186,7 +180,32 @@ class WifiSetup extends React.Component {
     this.setState({hidePassword: !this.state.hidePassword});
   }
 
+  authString(auth){
+    /*
+    NM_802_11_AP_SEC_NONE = 0x00000000 the access point has no special security requirements
+    NM_802_11_AP_SEC_PAIR_WEP40 = 0x00000001 40/64-bit WEP is supported for pairwise/unicast encryption
+    NM_802_11_AP_SEC_PAIR_WEP104 = 0x00000002 104/128-bit WEP is supported for pairwise/unicast encryption
+    NM_802_11_AP_SEC_PAIR_TKIP = 0x00000004 TKIP is supported for pairwise/unicast encryption
+    NM_802_11_AP_SEC_PAIR_CCMP = 0x00000008 AES/CCMP is supported for pairwise/unicast encryption
+    NM_802_11_AP_SEC_GROUP_WEP40 = 0x00000010 40/64-bit WEP is supported for group/broadcast encryption
+    NM_802_11_AP_SEC_GROUP_WEP104 = 0x00000020 104/128-bit WEP is supported for group/broadcast encryption
+    NM_802_11_AP_SEC_GROUP_TKIP = 0x00000040 TKIP is supported for group/broadcast encryption
+    NM_802_11_AP_SEC_GROUP_CCMP = 0x00000080 AES/CCMP is supported for group/broadcast encryption
+    NM_802_11_AP_SEC_KEY_MGMT_PSK = 0x00000100 WPA/RSN Pre-Shared Key encryption is supported
+    NM_802_11_AP_SEC_KEY_MGMT_802_1X = 0x00000200 802.1x authentication and key management is supported
+    */
+    return "WPA"
+  }
+
   wifiSetupScreen(){
+    const styles = {
+      wifiActionButton : {
+        height: '100%',
+        paddingLeft: '16px',
+        paddingRight: '16px'
+      }
+    };
+
     if(this.state.screen == "list"){
       return (
         <div>
@@ -197,7 +216,6 @@ class WifiSetup extends React.Component {
           <List>
             {this.currentNetwork()}
             {this.props.availableNetworks.map((network) => {
-              //logic goes here
               if(network.name === ""){
                 return null
               } else if(network.name === this.props.currentSSID){
@@ -219,32 +237,77 @@ class WifiSetup extends React.Component {
         </div>
       )
     } else if (this.state.screen == "info") {
+      const my_network = this.props.availableNetworks.find(x => x.name == this.props.currentSSID);
       return(
         <div>
           <ArrowBackIcon onClick={this.deselectNetwork} fontSize="large"/>
-          <Typography>
-            {this.state.selectedNetwork}
-          </Typography>
-          {this.props.knownNetworks.includes(this.state.selectedNetwork) &&
-            this.props.currentSSID !== this.state.selectedNetwork
-            ? <Button
-                variant="contained"
-                color="error"
-                onClick={(e) => this.forgetNetwork(this.state.selectedNetwork, e)}>
-                Forget</Button> : null
-           }
-          {this.props.currentSSID !== this.state.selectedNetwork
-            ? <Button
-                variant="contained"
-                color="success"
-                onClick={(e) => this.connectNetwork(this.state.selectedNetwork, e)}>
-                Connect
-                </Button>
-            : <Button
-                  variant="contained"
-                  color="error"
-                  onClick={this.disconnectNetwork}>Disconnect</Button>
-          }
+          <Grid container spacing={2} style={{paddingLeft: "32px", paddingTop: "24px"}}>
+            <Grid item xs={3}>
+              <Typography variant="h5">
+                SSID:
+              </Typography>
+            </Grid>
+            <Grid item xs={9}>
+              <Typography variant="h5">
+                {this.state.selectedNetwork}
+              </Typography>
+            </Grid>
+            <Grid item xs={3}>
+              <Typography variant="h5">
+                Strength:
+              </Typography>
+            </Grid>
+            <Grid item xs={9}>
+              <Typography variant="h5">
+                {my_network.signal}%
+              </Typography>
+            </Grid>
+            <Grid item xs={3}>
+              <Typography variant="h5">
+                Security:
+              </Typography>
+            </Grid>
+            <Grid item xs={9}>
+              <Typography variant="h5">
+                {this.authString(my_network.auth)}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container item xs={12} spacing={2} justifyContent="center" style={{position: 'absolute', bottom: '16px', left: '16px', right: '16px', height: '20%'}}>
+            {this.props.knownNetworks.includes(this.state.selectedNetwork) &&
+              this.props.currentSSID !== this.state.selectedNetwork
+              ? <Grid item xs={6}>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    fullWidth={true}
+                    style={styles['wifiActionButton']}
+                    onClick={(e) => this.forgetNetwork(this.state.selectedNetwork, e)}>
+                    Forget</Button>
+                  </Grid> : null
+             }
+             <Grid item xs={6}>
+              {this.props.currentSSID !== this.state.selectedNetwork
+                ? <Button
+                    variant="contained"
+                    color="success"
+                    fullWidth={true}
+                    style={{height: '100%'}}
+                    onClick={(e) => this.connectNetwork(this.state.selectedNetwork, e)}>
+                    <LeakAddIcon/>
+                    Connect
+                    </Button>
+                : <Button
+                      variant="contained"
+                      color="error"
+                      fullWidth={true}
+                      style={{height: '100%'}}
+                      onClick={this.disconnectNetwork}>
+                      <BlockIcon/>Disconnect
+                  </Button>
+              }
+            </Grid>
+          </Grid>
         </div>
       )
     } else if (this.state.screen == "auth") {
@@ -318,7 +381,8 @@ class WifiSetup extends React.Component {
           marginRight: "10%",
           marginTop: "5%",
           padding: "3%",
-          transition: "height 0.5s"
+          transition: "height 0.5s",
+          position: "relative"
         }
       )
     }

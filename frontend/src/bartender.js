@@ -13,6 +13,8 @@ import ErrorScreen from './components/errorScreen';
 import Screensaver from './components/screensaver';
 import io from 'socket.io-client';
 import throttle from 'lodash.throttle';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline'
 
 
 class Bartender extends React.Component {
@@ -273,6 +275,12 @@ class Bartender extends React.Component {
 
   componentWillUnmount(){}
 
+  getTheme(){
+    return(
+      createTheme({palette: {mode: 'light'}})
+    )
+  }
+
   getPage(page){
     switch(page){
       case 'home':
@@ -305,16 +313,18 @@ class Bartender extends React.Component {
 
   render() {
     return (
-      <div style={{overflow: "hidden", width: "800px", height: "480px"}} onPointerDown={this.mouseDown}>
-        <Menu page={this.state.page} changePage={this.changePage} />
-        <DrinkProgress progress={this.state.pour_progress} open={this.state.pour_active} hide={this.hideProgress} cancelPour={this.cancelPour}/>
-        <ManualPourProgress progress={this.state.manual_pour_progress} open={this.state.manual_pour_active} hide={this.hideManualPourProgress} cancelPour={this.cancelPour} skipPour={this.skipPour} name={this.state.manual_pour_name}/>
-        <UpgradeProgress progress={this.state.upgradeProgress} />
-        <ErrorScreen title={this.state.errorTitle} text={this.state.errorText} hide={this.clearError} open={this.state.errorText !== ""}/>
-        <LockScreen open={this.state.locked && !this.state.idle} unlock={this.handleUnlock} pin={this.state.lockPin}/>
-        <Screensaver idle={this.state.idle}/>
-        {this.getPage(this.state.page)}
-      </div>
+      <ThemeProvider theme={this.getTheme()}>
+        <div style={{overflow: "hidden", width: "800px", height: "480px"}} onPointerDown={this.mouseDown}>
+          <Menu page={this.state.page} changePage={this.changePage} />
+          <DrinkProgress progress={this.state.pour_progress} open={this.state.pour_active} hide={this.hideProgress} cancelPour={this.cancelPour}/>
+          <ManualPourProgress progress={this.state.manual_pour_progress} open={this.state.manual_pour_active} hide={this.hideManualPourProgress} cancelPour={this.cancelPour} skipPour={this.skipPour} name={this.state.manual_pour_name}/>
+          <UpgradeProgress progress={this.state.upgradeProgress} />
+          <ErrorScreen title={this.state.errorTitle} text={this.state.errorText} hide={this.clearError} open={this.state.errorText !== ""}/>
+          <LockScreen open={this.state.locked && !this.state.idle} unlock={this.handleUnlock} pin={this.state.lockPin}/>
+          <Screensaver idle={this.state.idle}/>
+          {this.getPage(this.state.page)}
+        </div>
+      </ThemeProvider>
     );
   }
 }

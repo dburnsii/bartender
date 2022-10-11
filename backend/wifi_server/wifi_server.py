@@ -16,12 +16,13 @@ class WiFiServer:
         if not self.simulation:
             from pydbus import SystemBus
             self.system_bus = SystemBus()
-            self.supplicant_str = "fi.w1.wpa_supplicant1"
-            self.wpa_supplicant = self.system_bus.get(self.supplicant_str)
-            for interface_str in self.wpa_supplicant.Interfaces:
-                interface = self.system_bus.get(self.supplicant_str, interface_str)
-                if interface.Ifname == "wlan0":
+            self.nm_str = "org.freedesktop.NetworkManager"
+            self.network_manager = self.system_bus.get(self.nm_str)
+            for interface_str in self.network_manager.Devices:
+                interface = self.system_bus.get(self.nm_str, interface_str)
+                if interface.DeviceType == 2:
                     self.wifi_interface = interface
+                    self.wifi_interface_path = interface_str
 
             if not self.wifi_interface:
                 print("No wifi interface found!")
@@ -35,38 +36,40 @@ class WiFiServer:
             self.glib_thread = Thread(target=self.loop.run)
             self.glib_thread.start()
 
-            self.wifi_interface.onScanDone = self.scan_done
-            print("Connected via '{}'".format(self.wifi_interface.Ifname))
+            self.wifi_interface.onAccessPointAdded = self.scan_update
+            self.wifi_interface.onAccessPointRemoved = self.scan_update
+            self.wifi_interface.onStateChanged = self.state_update
+            print("Connecting via '{}'".format(self.wifi_interface.Interface))
         else:
             self.current_ssid = "Current Network"
             self.known_networks = ["Current Network"]
             self.available_networks = [
                 {"name": "Current Network",
-                 "signal": -35,
+                 "signal": 80,
                  "auth": ['wpa-psk']},
                 {"name": "Strongest Network",
-                 "signal": -30,
+                 "signal": 100,
                  "auth": ['wpa-psk']},
                 {"name": "Weakest Network",
-                 "signal": -80,
+                 "signal": 20,
                  "auth": ['wpa-psk']},
                 {"name": "Open Network",
-                 "signal": -60,
+                 "signal": 50,
                  "auth": ['']},
                 {"name": "",
-                 "signal": -45,
+                 "signal": 50,
                  "auth": ['']},
                 {"name": "EAP Network",
-                 "signal": -50,
+                 "signal": 50,
                  "auth": ['wpa-eap']}]
 
     def get_current_network(self):
         if not simulation:
-            if self.wifi_interface.State == "completed":
-                current_bss_str = self.wifi_interface.CurrentBSS
+            if self.wifi_interface.State == 100:
+                current_bss_str = self.wifi_interface.ActiveAccessPoint
                 self.current_ssid = \
-                    self.system_bus.get(self.supplicant_str,
-                                        current_bss_str).SSID
+                    self.convert_ssid(self.system_bus.get(self.nm_str,
+                                                          current_bss_str).Ssid)
             else:
                 self.current_ssid = ""
         self.sio.emit("wifi_current_ssid", {"ssid": self.current_ssid})
@@ -75,31 +78,38 @@ class WiFiServer:
     def get_known_networks(self):
         if not self.simulation:
             networks = []
-            network_paths = self.wifi_interface.Networks
+            network_paths = self.wifi_interface.AvailableConnections
             for network_path in network_paths:
-                network = self.system_bus.get(self.supplicant_str, network_path)
-                networks.append(network.Properties['ssid'])
+                network = self.system_bus.get(self.nm_str, network_path)
+                settings = network.GetSettings()
+                if settings["connection"]["type"] == "802-11-wireless":
+                    networks.append(self.convert_ssid(settings["802-11-wireless"]["ssid"]))
             self.known_networks = networks
         self.sio.emit("wifi_known_network_results", {"networks": self.known_networks})
         print("Known networks: {}".format(self.known_networks))
 
     def run_scan(self):
         if not self.simulation:
-            self.wifi_interface.Scan({"Type": self.GLib.Variant("s", "active")})
+            self.wifi_interface.onAccessPointAdded = self.scan_update
+            self.wifi_interface.onAccessPointRemoved = self.scan_update
+            self.wifi_interface.RequestScan({})
         else:
-            self.scan_done(0)
+            self.scan_update(0)
 
-    def scan_done(self, status):
-        print("Scan done!")
+    def scan_update(self, status):
+        print("Scan results updated!")
+        self.wifi_interface.onAccessPointAdded = None
+        self.wifi_interface.onAccessPointRemoved = None
         if not self.simulation:
             self.available_networks = []
-            for network_str in self.wifi_interface.BSSs:
-                network = self.system_bus.get(self.supplicant_str, network_str)
-                ssid = ''.join(map(lambda x: chr(x), network.SSID))
-                auth = network.RSN['KeyMgmt']
-                signal = network.Signal
-                print("{} - {} - {}".format(ssid, signal, auth))
-                self.available_networks.append({"name": ssid, "signal": signal, "auth": auth})
+            for network_str in self.wifi_interface.AccessPoints:
+                network = self.system_bus.get(self.nm_str, network_str)
+                ssid = self.convert_ssid(network.Ssid)
+                auth = network.RsnFlags
+                signal = network.Strength
+                self.available_networks.append({"name": ssid,
+                                                "signal": signal,
+                                                "auth": auth})
         self.sio.emit("wifi_scan_results",
                       {"networks": self.available_networks})
         self.get_current_network()
@@ -108,8 +118,27 @@ class WiFiServer:
     def connect(self, ssid, psk=None):
         print("Connecting to ssid: {}".format(ssid))
         if not self.simulation:
-            # TODO: Check if there network exists already. If not, create it.
-            pass
+            connections = self.wifi_interface.AvailableConnections
+            connection_found = False
+            for connection in connections:
+                c_settings = self.system_bus.get(self.nm_str,
+                                                 connection).GetSettings()
+                c_ssid = \
+                    self.convert_ssid(c_settings["802-11-wireless"]["ssid"])
+                if c_settings["connection"]["type"] == "802-11-wireless" and \
+                   c_ssid == ssid:
+                    self.network_manager.ActivateConnection(
+                                                    connection,
+                                                    self.wifi_interface_path,
+                                                    self.get_network(ssid))
+                    connection_found = True
+
+            if not connection_found:
+                output = self.network_manager.AddAndActivateConnection(
+                                      {"802-11-wireless-security": {"psk": self.s(psk)}},
+                                      self.wifi_interface_path,
+                                      self.get_network(ssid))
+            self.get_known_networks()
         else:
             if ssid in self.known_networks:
                 self.current_ssid = ssid
@@ -139,13 +168,42 @@ class WiFiServer:
             if ssid in self.known_networks:
                 self.known_networks.remove(ssid)
         else:
-            # TODO: Remove network
-            pass
+            self.system_bus.get(self.nm_str, self.get_connection(ssid)).Delete()
         self.get_known_networks()
+
+    def state_update(self, arg1, arg2, arg3):
+        print(arg1)
+        print(arg2)
+        print(arg3)
+        self.get_current_network()
 
     def local_ip(self):
         return subprocess.check_output(["hostname", "-I"]).decode().strip()
 
+    def get_network(self, ssid):
+        for network_str in self.wifi_interface.AccessPoints:
+            network = self.system_bus.get(self.nm_str, network_str)
+            found_ssid = self.convert_ssid(network.Ssid)
+            if found_ssid == ssid:
+                return network_str
+
+    def get_connection(self, ssid):
+        if not self.simulation:
+            networks = []
+            network_paths = self.wifi_interface.AvailableConnections
+            for network_path in network_paths:
+                network = self.system_bus.get(self.nm_str, network_path)
+                settings = network.GetSettings()
+                if settings["connection"]["type"] == "802-11-wireless":
+                    found_ssid = self.convert_ssid(settings["802-11-wireless"]["ssid"])
+                    if found_ssid == ssid:
+                        return network_path
+
+    def s(self, string):
+        return self.GLib.Variant("s", string)
+
+    def convert_ssid(self, raw_ssid):
+        return ''.join(map(lambda x: chr(x), raw_ssid))
 
 print("Starting WiFi Server.")
 
@@ -164,8 +222,8 @@ def connect():
 def simulation(data):
     global simulation
     global wifi_interface
-    print("Updating simulation status.")
     simulation = data["status"]
+    print("Updating simulation status: {}".format(simulation))
     wifi_interface = WiFiServer(sio, simulation=simulation)
     wifi_interface.run_scan()
 
