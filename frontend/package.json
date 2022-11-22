@@ -15,7 +15,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "^5.0.1",
-    "react-simple-keyboard": "^3.4.224",
+    "react-simple-keyboard": "^3.4.225",
     "socket.io-client": "^4.5.2",
     "title-case": "^3.0.3",
     "web-vitals": "^3.0.3"

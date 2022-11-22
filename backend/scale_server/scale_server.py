@@ -12,18 +12,25 @@ simulated_pour_status = False
 weight = 0
 measures = [0, 0, 0]
 # TODO: Make this user selectable
-calibration = 222.23
+# calibration = 222.23
+calibration = 10000
 cup_threshold = 30
 bad_reads = 0
-hx = None
+adc = None
+adc_module = "nau7802"
 manual_target = 0
 manual_start = 0
 
 
 def cleanup():
+    global adc
+    global adc_module
     print("Cleanup")
     if not simulation:
-        GPIO.cleanup()
+        if adc_module == "hx711":
+            GPIO.cleanup()
+        elif adc_module == "nau7802":
+            adc.cleanup()
     sio.disconnect()
     sys.exit()
 
@@ -48,6 +55,8 @@ def manual_pour_init(data):
     global manual_start
 
     print("Received manual pour request: {}".format(data))
+    # TODO: Leave this out until we can stabilize the cup detection. Might
+    #       also be good to leave out for cleaning.
     # if not present:
     #    return
     manual_target = data['quantity']
@@ -67,17 +76,25 @@ def simulation(data):
 
     if not simulation:
         print("Initializing hardware")
-        global GPIO
-        global HX711
-        global hx
-        import RPi.GPIO as GPIO
-        from hx711 import HX711
+        global adc
+        global adc_module
+        if adc_module == "hx711":
+            global GPIO
+            global HX711
+            import RPi.GPIO as GPIO
+            from hx711 import HX711
+            print("Initializing HX711")
+            adc = HX711(6, 5)
+            adc.set_reference_unit(1)
+            adc.reset()
+            adc.tare()
+        elif adc_module == "nau7802":
+            print("Initializing HX711")
+            from nau7802 import NAU7802
+            adc = NAU7802(gain=128)
+        else:
+            print("No valid module selected.")
 
-        print("Initializing scale")
-        hx = HX711(6, 5)
-        hx.set_reference_unit(1)
-        hx.reset()
-        hx.tare()
         print("Scale ready!")
 
 
@@ -90,10 +107,10 @@ def simulated_pour(data):
 @sio.event
 def tare_scale(data):
     print("Zeroing scale")
-    global hx
+    global adc
     global present
-    hx.reset()
-    hx.tare()
+    adc.reset()
+    adc.tare()
     present = False
     cup_presence_request()
 
@@ -119,9 +136,9 @@ def connect():
 sio.connect('http://localhost:8080')
 while 1:
     try:
-        if not simulation and hx:
+        if not simulation and adc:
             starttime = time.time()
-            val = hx.get_weight(3)
+            val = adc.get_weight(3)
             weight = val / calibration
 
             # If the read from the scale happens in less than 3ms, this is
@@ -153,7 +170,7 @@ while 1:
                 print("Cup detected")
                 present = True
                 cup_presence_request()
-                hx.tare()
+                adc.tare()
                 continue
             elif (weight < (cup_threshold * -0.5) and
                   variance() < 5 and
@@ -161,7 +178,7 @@ while 1:
                 print("Cup removed")
                 present = False
                 cup_presence_request()
-                hx.tare()
+                adc.tare()
             elif (manual_target > 0):
                 manual_percentage = (weight - manual_start) / manual_target
                 print("Manual percentage: {}".format(manual_percentage))

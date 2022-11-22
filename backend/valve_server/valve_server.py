@@ -23,6 +23,17 @@ manual_pour_active = False
 sio = socketio.Client()
 
 
+class ValveController:
+    """
+    Controller for MCP23017 I2C GPIO Expander
+    """
+    def __init__(self, simulation=True):
+        pass
+
+    def write(self, index, value):
+        pass
+
+
 @atexit.register
 def cleanup():
     sio.disconnect()

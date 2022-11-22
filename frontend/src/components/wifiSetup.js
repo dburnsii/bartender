@@ -1,5 +1,5 @@
 import React from 'react';
-import { BottomNavigation, BottomNavigationAction, FormControl, InputLabel, InputAdornment, Input, IconButton, Button, Card, LinearProgress, Box, Typography, Modal, List, ListItem, ListItemIcon, ListItemText, TextField, Grid } from '@mui/material';
+import { FormControl, InputLabel, InputAdornment, Input, IconButton, Button, Card, Typography, Modal, List, ListItem, ListItemIcon, ListItemText, Grid } from '@mui/material';
 import SignalWifi1BarIcon from '@mui/icons-material/SignalWifi1Bar';
 import SignalWifi1BarLockIcon from '@mui/icons-material/SignalWifi1BarLock';
 import SignalWifi2BarIcon from '@mui/icons-material/SignalWifi2Bar';
@@ -8,14 +8,12 @@ import SignalWifi3BarIcon from '@mui/icons-material/SignalWifi3Bar';
 import SignalWifi3BarLockIcon from '@mui/icons-material/SignalWifi3BarLock';
 import SignalWifi4BarIcon from '@mui/icons-material/SignalWifi4Bar';
 import SignalWifi4BarLockIcon from '@mui/icons-material/SignalWifi4BarLock';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import BlockIcon from '@mui/icons-material/Block';
 import LeakAddIcon from '@mui/icons-material/LeakAdd';
-import { titleCase } from "title-case";
-import Keyboard, {KeyboardReactInterface} from 'react-simple-keyboard';
+import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import '../App.css'
 
@@ -98,9 +96,9 @@ class WifiSetup extends React.Component {
   }
 
   currentNetwork(){
-    if(this.props.currentSSID != ""){
+    if(this.props.currentSSID !== ""){
       var currentNetwork =
-          this.props.availableNetworks.find(x => x.name == this.props.currentSSID);
+          this.props.availableNetworks.find(x => x.name === this.props.currentSSID);
       return(
         <ListItem
           divider={true}
@@ -145,7 +143,7 @@ class WifiSetup extends React.Component {
   }
 
   connectNetwork(ssid, e){
-    if(this.props.knownNetworks.find(x => x == ssid)){
+    if(this.props.knownNetworks.find(x => x === ssid)){
       this.props.socket.emit('wifi_connect', {name: ssid})
       this.setState({screen: 'list'})
     } else {
@@ -206,7 +204,7 @@ class WifiSetup extends React.Component {
       }
     };
 
-    if(this.state.screen == "list"){
+    if(this.state.screen === "list"){
       return (
         <div>
           <Typography variant="h4">
@@ -236,8 +234,8 @@ class WifiSetup extends React.Component {
           </div>
         </div>
       )
-    } else if (this.state.screen == "info") {
-      const my_network = this.props.availableNetworks.find(x => x.name == this.props.currentSSID);
+    } else if (this.state.screen === "info") {
+      const my_network = this.props.availableNetworks.find(x => x.name === this.state.selectedNetwork);
       return(
         <div>
           <ArrowBackIcon onClick={this.deselectNetwork} fontSize="large"/>
@@ -249,7 +247,7 @@ class WifiSetup extends React.Component {
             </Grid>
             <Grid item xs={9}>
               <Typography variant="h5">
-                {this.state.selectedNetwork}
+                {my_network.name}
               </Typography>
             </Grid>
             <Grid item xs={3}>
@@ -310,7 +308,7 @@ class WifiSetup extends React.Component {
           </Grid>
         </div>
       )
-    } else if (this.state.screen == "auth") {
+    } else if (this.state.screen === "auth") {
       return(
         <div>
           <IconButton style={{display: "inline-block", width: "20%", textAlign: "left"}}
@@ -354,7 +352,7 @@ class WifiSetup extends React.Component {
             buttonTheme={"wifiAuthButton"} />
         </div>
         )
-    } else if (this.state.screen == "loading") {
+    } else if (this.state.screen === "loading") {
       return(<Button onClick={this.cancelAuthNetwork}>CANCEL LOADING</Button>)
     }
   }
@@ -396,12 +394,9 @@ class WifiSetup extends React.Component {
   }
 
   render() {
-    const styles = {
-
-    };
     return (
       <Modal open={this.props.open} onClose={this.props.hide}>
-        <Card style={this.cardStyle(this.state.screen == "auth")}>
+        <Card style={this.cardStyle(this.state.screen === "auth")}>
           {this.wifiSetupScreen()}
         </Card>
       </Modal>

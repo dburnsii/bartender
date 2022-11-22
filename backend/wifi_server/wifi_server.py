@@ -102,9 +102,9 @@ class WiFiServer:
 
     def scan_update(self, status):
         print("Scan results updated!")
-        self.wifi_interface.onAccessPointAdded = None
-        self.wifi_interface.onAccessPointRemoved = None
         if not self.simulation:
+            self.wifi_interface.onAccessPointAdded = None
+            self.wifi_interface.onAccessPointRemoved = None
             self.available_networks = []
             for network_str in self.wifi_interface.AccessPoints:
                 network = self.system_bus.get(self.nm_str, network_str)

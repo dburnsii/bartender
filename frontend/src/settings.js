@@ -1,8 +1,9 @@
 import React from 'react';
-import { Button, Box, Typography, Grid, Slider, CircularProgress, Switch, Select, MenuItem } from '@mui/material';
+import { Button, Box, Typography, Grid, CircularProgress, Switch } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import LockScreen from './components/lockScreen';
 import WifiSetup from './components/wifiSetup';
+import DisplaySetup from './components/displaySetup';
 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
@@ -10,8 +11,6 @@ class SettingsPage extends React.Component {
 
   constructor(props){
     super(props);
-    this.handleScreenTimeout = this.handleScreenTimeout.bind(this);
-    this.handleScreenBrightness = this.handleScreenBrightness.bind(this);
     this.lockPinScreen = this.lockPinScreen.bind(this);
     this.clearPin = this.clearPin.bind(this);
     this.setPin = this.setPin.bind(this);
@@ -19,19 +18,18 @@ class SettingsPage extends React.Component {
     this.handleLockPinToggle = this.handleLockPinToggle.bind(this);
     this.hideWifi = this.hideWifi.bind(this);
     this.showWifi = this.showWifi.bind(this);
+    this.hideDisplay = this.hideDisplay.bind(this);
+    this.showDisplay = this.showDisplay.bind(this);
     this.wifiScanInterval = null;
     this.state = {
-      brightness: 50,
       settingPin: false,
       wifiMenu: false,
+      displayMenu: false,
       currentSSID: "",
       availableNetworks: [],
       knownNetworks: []
     };
   }
-
-  handleScreenTimeout(event, value){this.props.updateScreenTimeout(value * 1000)}
-  handleScreenBrightness(event, value){this.props.updateScreenBrightness(value)}
 
   handleLockPinToggle(){
     this.setState({settingPin: true});
@@ -57,6 +55,14 @@ class SettingsPage extends React.Component {
 
   showWifi(){
     this.setState({wifiMenu: true});
+  }
+
+  hideDisplay(){
+    this.setState({displayMenu: false});
+  }
+
+  showDisplay(){
+    this.setState({displayMenu: true});
   }
 
 
@@ -172,33 +178,22 @@ class SettingsPage extends React.Component {
           <Typography variant="h4">Settings</Typography>
           <br/>
           <Grid container rowSpacing={4} columnSpacing={3}>
-            <Grid item xs={4}>
-              <Typography variant="h5">Screen timeout</Typography>
+            <Grid item xs={4} onClick={this.showDisplay}>
+              <Typography variant="h5">Display</Typography>
             </Grid>
-            <Grid item xs={8}>
-              <Slider
-                min={5}
-                max={300}
-                style={styles.settingsSlider}
-                valueLabelFormat={(x) => x + "s"}
-                value={this.props.blankTime/1000}
-                valueLabelDisplay="on"
-                onChange={this.handleScreenTimeout} />
+            <Grid item xs={6} onClick={this.showDisplay}>
             </Grid>
-
-            <Grid item xs={4}>
-              <Typography variant="h5">Screen Brightness</Typography>
+            <Grid item xs={2} onClick={this.showDisplay}>
+              <ArrowForwardIosIcon/>
             </Grid>
-            <Grid item xs={8}>
-              <Slider
-                min={1}
-                max={100}
-                style={styles.settingsSlider}
-                valueLabelFormat={(x) => x + "%"}
-                value={this.props.screenBrightness}
-                valueLabelDisplay="on"
-                onChange={this.handleScreenBrightness} />
-            </Grid>
+            <DisplaySetup
+              open={this.state.displayMenu}
+              hide={this.hideDisplay}
+              updateScreenTimeout={this.props.updateScreenTimeout}
+              updateScreenBrightness={this.props.updateScreenBrightness}
+              blankTime={this.props.blankTime}
+              screenBrightness={this.props.screenBrightness}
+              socket={this.props.socket} />
 
             <Grid item xs={4}>
               <Typography variant="h5">Pin Lock</Typography>
@@ -217,13 +212,16 @@ class SettingsPage extends React.Component {
               {this.updateButton(this.props.updateAvalable)}
             </Grid>
 
-            <Grid item xs={4}>
+            <Grid item xs={4} onClick={this.showWifi}>
               <Typography variant="h5">WiFi</Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={6} onClick={this.showWifi}>
+              <Typography variant="h5" align="right">
+                {this.state.currentSSID}
+              </Typography>
             </Grid>
-            <Grid item xs={2}>
-              <ArrowForwardIosIcon onClick={this.showWifi}/>
+            <Grid item xs={2} onClick={this.showWifi}>
+              <ArrowForwardIosIcon/>
             </Grid>
             <WifiSetup
               currentSSID={this.state.currentSSID}
