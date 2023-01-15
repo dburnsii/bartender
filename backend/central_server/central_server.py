@@ -38,11 +38,13 @@ async def register(sid, data):
     registered_services[service_name] = RegisteredService(sid, service_name)
     await sio.emit("simulation", {"status": simulation}, to=sid)
 
+
 @sio.event
 async def ping(sid, data):
     for service in registered_services:
         if registered_services[service].sid == sid:
             registered_services[service].feed()
+
 
 @sio.event
 async def active_services(sid, data):
@@ -51,6 +53,7 @@ async def active_services(sid, data):
         if service.active():
             services.append(service.name)
     await sio.emit('active_services', {'service_list': services})
+
 
 @sio.event
 async def disconnect(sid):
@@ -61,6 +64,7 @@ async def disconnect(sid):
             del registered_services[service]
             await sio.emit('service_disconnected', {'name': service})
             break
+
 
 @sio.on("*")
 async def catch_all(event, sid, data):

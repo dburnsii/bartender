@@ -150,6 +150,7 @@ class NAU7802:
         print("Cleaning up")
         self.bus.close()
 
+
 if __name__ == "__main__":
     adc = NAU7802()
     adc.tare()

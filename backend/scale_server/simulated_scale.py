@@ -2,6 +2,7 @@
 
 import time
 
+
 class Simulator:
     def __init__(self):
         self.zero = 0
@@ -32,6 +33,7 @@ class Simulator:
 
     def cleanup(self):
         print("Cleaning up")
+
 
 if __name__ == "__main__":
     adc = Simulator()

@@ -9,7 +9,6 @@ import gc
 last_weight = time.time()
 
 
-
 sio = socketio.Client()
 connected = False
 present = False
@@ -23,7 +22,7 @@ calibration = 10000
 cup_threshold = 30
 bad_reads = 0
 adc = None
-adc_module = "simulation" # One of: "hx711", "nau7802", or "simulation"
+adc_module = "simulation"  # One of: "hx711", "nau7802", or "simulation"
 manual_target = 0
 manual_start = 0
 
@@ -125,6 +124,7 @@ def tare_scale(data):
     present = False
     cup_presence_request()
 
+
 @sio.event
 def calibrate_scale(data):
     global adc
@@ -141,7 +141,7 @@ def calibrate_scale(data):
         current_weight = adc.get_weight(10)
     calibration = known_weight / current_weight
     print("New calibration value: {}".format(calibration))
-    #TODO: Save calibration
+    # TODO: Save calibration
 
 
 @sio.event
@@ -161,10 +161,11 @@ def connect():
     global connected
     connected = True
 
-sio.connect('http://localhost:8080')
-def main():
+
+if __name__ == "__main__":
     global simulation
     global present
+    sio.connect('http://localhost:8080')
     while 1:
         try:
             if not simulation and adc:
@@ -185,14 +186,15 @@ def main():
                     if (bad_reads == 10):
                         bad_reads += 1
                         sio.emit("error", {"title": "Scale Not Responding",
-                                "text": "Currently unable to get a read from the "
-                                        "scale. Please make sure it's properly "
-                                        "connected."})
+                                 "text": ("Currently unable to get a read "
+                                          "from the scale. Please make sure "
+                                          "it's properly connected.")})
                     time.sleep(1)
                     continue
                 else:
                     if (bad_reads > 0):
-                        sio.emit("clear_error", {"title": "Scale Not Responding"})
+                        sio.emit("clear_error", {"title":
+                                                 "Scale Not Responding"})
                     bad_reads = 0
 
                 measures.append(weight)
@@ -204,8 +206,8 @@ def main():
                     adc.tare()
                     continue
                 elif (weight < (cup_threshold * -0.5) and
-                    variance() < 5 and
-                    present):
+                      variance() < 5 and
+                      present):
                     print("Cup removed")
                     present = False
                     cup_presence_request()
@@ -232,8 +234,10 @@ def main():
                         cup_presence_request()
                     weight += 2
                     if manual_target > 0:
-                        manual_percentage = (weight - manual_start) / manual_target
-                        print("Manual percentage: {}".format(manual_percentage))
+                        manual_percentage = \
+                            (weight - manual_start) / manual_target
+                        print("Manual percentage: {}"
+                              .format(manual_percentage))
                         if (manual_percentage >= 1.0):
                             print("Manual pour complete!")
                             manual_target = 0
@@ -258,5 +262,3 @@ def main():
 
         except (KeyboardInterrupt, SystemExit):
             cleanup()
-
-main()

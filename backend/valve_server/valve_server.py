@@ -8,7 +8,7 @@ import socketio
 
 
 controller = None
-controller_type = "simulation" # One of: simulation, gpio, mcp23017
+controller_type = "simulation"  # One of: simulation, gpio, mcp23017
 pour_target = 0
 pour_total = 0
 pour_queue = []
@@ -21,6 +21,7 @@ manual_override = False
 manual_pour_active = False
 
 sio = socketio.Client()
+
 
 @atexit.register
 def cleanup():
@@ -248,7 +249,7 @@ while 1:
     if (time.time() - scale_heartbeat > 3):
         if not manual_override:
             print("ERROR! Scale has no pulse! Shutting all valves off as a "
-                "safety measure")
+                  "safety measure")
             deactivate_valves()
             cup_presence_status = False
             pour_target = 0
