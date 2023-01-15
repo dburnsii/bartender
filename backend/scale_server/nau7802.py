@@ -136,7 +136,7 @@ class NAU7802:
         print("Calibration gain: {}".format(
             self.bus.read_i2c_block_data(DA, 0x06, 3)))
         b = self.bus.read_byte_data(DA, CTRL2) | CAL_ERR
-        if(b):
+        if b:
             print("calibration error")
 
     def tare(self):
