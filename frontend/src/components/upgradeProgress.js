@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, LinearProgress, Box, Typography, Modal} from '@mui/material';
+import { Card, LinearProgress, Typography, Modal} from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 class UpgradeProgress extends React.Component {

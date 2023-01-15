@@ -1,7 +1,13 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+
 import socketio
 import time
 import sys
+from simulated_scale import Simulator
+
+import gc
+last_weight = time.time()
+
 
 
 sio = socketio.Client()
@@ -17,7 +23,7 @@ calibration = 10000
 cup_threshold = 30
 bad_reads = 0
 adc = None
-adc_module = "nau7802"
+adc_module = "simulation" # One of: "hx711", "nau7802", or "simulation"
 manual_target = 0
 manual_start = 0
 
@@ -32,6 +38,7 @@ def cleanup():
         elif adc_module == "nau7802":
             adc.cleanup()
     sio.disconnect()
+    gc.collect()
     sys.exit()
 
 
@@ -40,7 +47,7 @@ def variance():
 
 
 @sio.event
-def cup_presence_request():
+def cup_presence_request(data):
     global present
     print("Broadcasting presence '{}'".format(present))
     sys.stdout.flush()
@@ -72,13 +79,15 @@ def weight_request():
 @sio.event
 def simulation(data):
     global simulation
+    global adc
+    global adc_module
     simulation = data['status']
 
     if not simulation:
         print("Initializing hardware")
-        global adc
-        global adc_module
-        if adc_module == "hx711":
+        if adc_module == "simulation" or simulation:
+            adc = Simulator()
+        elif adc_module == "hx711":
             global GPIO
             global HX711
             import RPi.GPIO as GPIO
@@ -89,17 +98,19 @@ def simulation(data):
             adc.reset()
             adc.tare()
         elif adc_module == "nau7802":
-            print("Initializing HX711")
+            print("Initializing NAU7802")
+            global NAU7802
             from nau7802 import NAU7802
             adc = NAU7802(gain=128)
         else:
             print("No valid module selected.")
 
-        print("Scale ready!")
+    print("Scale ready!")
 
 
 @sio.event
 def simulated_pour(data):
+    print("Detected simulated pour")
     global simulated_pour_status
     simulated_pour_status = data['status']
 
@@ -113,6 +124,24 @@ def tare_scale(data):
     adc.tare()
     present = False
     cup_presence_request()
+
+@sio.event
+def calibrate_scale(data):
+    global adc
+    global calibration
+    global simulation
+    print("Calibrate")
+    if "weight" not in data:
+        print("Missing known weight")
+        return
+    known_weight = data["weight"]
+    if simulation:
+        current_weight = 100
+    else:
+        current_weight = adc.get_weight(10)
+    calibration = known_weight / current_weight
+    print("New calibration value: {}".format(calibration))
+    #TODO: Save calibration
 
 
 @sio.event
@@ -132,98 +161,102 @@ def connect():
     global connected
     connected = True
 
-
 sio.connect('http://localhost:8080')
-while 1:
-    try:
-        if not simulation and adc:
-            starttime = time.time()
-            val = adc.get_weight(3)
-            weight = val / calibration
+def main():
+    global simulation
+    global present
+    while 1:
+        try:
+            if not simulation and adc:
+                starttime = time.time()
+                val = adc.get_weight(3)
+                weight = val / calibration
 
-            # If the read from the scale happens in less than 3ms, this is
-            # usually because we're not actually able to communicate
-            # with the hx711 module. Report this to the rest of the system.
-            readtime = (time.time() - starttime)*1000
-            print("{:.1f}g - {}ms".format(weight, readtime))
-            if (readtime < 3):
-                # Try to only notify the rest of the system every once in
-                # a while
-                print("Error reading scale.")
-                bad_reads += 1
-                if (bad_reads == 10):
+                # If the read from the scale happens in less than 3ms, this is
+                # usually because we're not actually able to communicate
+                # with the hx711 module. Report this to the rest of the system.
+                readtime = (time.time() - starttime)*1000
+                print("{:.1f}g - {}ms".format(weight, readtime))
+                if (readtime < 3):
+                    # Try to only notify the rest of the system every once in
+                    # a while
+                    print("Error reading scale.")
                     bad_reads += 1
-                    sio.emit("error", {"title": "Scale Not Responding",
-                             "text": "Currently unable to get a read from the "
-                                       "scale. Please make sure it's properly "
-                                       "connected."})
-                time.sleep(1)
-                continue
-            else:
-                if (bad_reads > 0):
-                    sio.emit("clear_error", {"title": "Scale Not Responding"})
-                bad_reads = 0
-
-            measures.append(weight)
-            measures.pop(0)
-            if (weight > cup_threshold and variance() < 5 and not present):
-                print("Cup detected")
-                present = True
-                cup_presence_request()
-                adc.tare()
-                continue
-            elif (weight < (cup_threshold * -0.5) and
-                  variance() < 5 and
-                  present):
-                print("Cup removed")
-                present = False
-                cup_presence_request()
-                adc.tare()
-            elif (manual_target > 0):
-                manual_percentage = (weight - manual_start) / manual_target
-                print("Manual percentage: {}".format(manual_percentage))
-                if (manual_percentage >= 1.0):
-                    print("Manual pour complete!")
-                    manual_target = 0
-                    sio.emit('manual_pour_status', {
-                             'percentage': manual_percentage,
-                             'complete': True})
+                    if (bad_reads == 10):
+                        bad_reads += 1
+                        sio.emit("error", {"title": "Scale Not Responding",
+                                "text": "Currently unable to get a read from the "
+                                        "scale. Please make sure it's properly "
+                                        "connected."})
+                    time.sleep(1)
+                    continue
                 else:
-                    sio.emit('manual_pour_status', {
-                             'percentage': manual_percentage,
-                             'complete': False})
-            weight_request()
-            time.sleep(0.05)
-        elif connected:
-            if simulated_pour_status:
-                if not present:
+                    if (bad_reads > 0):
+                        sio.emit("clear_error", {"title": "Scale Not Responding"})
+                    bad_reads = 0
+
+                measures.append(weight)
+                measures.pop(0)
+                if (weight > cup_threshold and variance() < 5 and not present):
+                    print("Cup detected")
                     present = True
                     cup_presence_request()
-                weight += 5
-                if manual_target > 0:
+                    adc.tare()
+                    continue
+                elif (weight < (cup_threshold * -0.5) and
+                    variance() < 5 and
+                    present):
+                    print("Cup removed")
+                    present = False
+                    cup_presence_request()
+                    adc.tare()
+                elif (manual_target > 0):
                     manual_percentage = (weight - manual_start) / manual_target
                     print("Manual percentage: {}".format(manual_percentage))
                     if (manual_percentage >= 1.0):
                         print("Manual pour complete!")
                         manual_target = 0
                         sio.emit('manual_pour_status', {
-                            'percentage': manual_percentage,
-                            'complete': True})
+                                'percentage': manual_percentage,
+                                'complete': True})
                     else:
                         sio.emit('manual_pour_status', {
-                            'percentage': manual_percentage,
-                            'complete': False})
+                                'percentage': manual_percentage,
+                                'complete': False})
+                weight_request()
+                time.sleep(0.05)
+            elif connected:
+                if simulated_pour_status:
+                    if not present:
+                        present = True
+                        cup_presence_request()
+                    weight += 2
+                    if manual_target > 0:
+                        manual_percentage = (weight - manual_start) / manual_target
+                        print("Manual percentage: {}".format(manual_percentage))
+                        if (manual_percentage >= 1.0):
+                            print("Manual pour complete!")
+                            manual_target = 0
+                            sio.emit('manual_pour_status', {
+                                'percentage': manual_percentage,
+                                'complete': True})
+                        else:
+                            sio.emit('manual_pour_status', {
+                                'percentage': manual_percentage,
+                                'complete': False})
+                else:
+                    if present:
+                        present = False
+                        weight = 0
+                        cup_presence_request()
+                weight_request()
+                time.sleep(0.1)
             else:
-                if present:
-                    present = False
-                    weight = 0
-                    cup_presence_request()
-            weight_request()
-            time.sleep(0.1)
-        else:
-            print("Not connected...")
-            # sio.connect('http://localhost:8080')
-            time.sleep(1)
+                print("Not connected...")
+                # sio.connect('http://localhost:8080')
+                time.sleep(1)
 
-    except (KeyboardInterrupt, SystemExit):
-        cleanup()
+        except (KeyboardInterrupt, SystemExit):
+            cleanup()
+
+main()

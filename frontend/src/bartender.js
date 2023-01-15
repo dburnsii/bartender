@@ -14,7 +14,6 @@ import Screensaver from './components/screensaver';
 import io from 'socket.io-client';
 import throttle from 'lodash.throttle';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline'
 
 
 class Bartender extends React.Component {
@@ -191,7 +190,7 @@ class Bartender extends React.Component {
       this.updateWeight(data['weight']);
       if(this.state.lastActive + this.state.blankTime < Date.now()
          && !this.state.idle
-         && this.state.upgradeProgress == 0){
+         && this.state.upgradeProgress === 0){
         console.log("Time for bed.");
         this.socket.emit('idle', {});
         this.setState({idle: true});

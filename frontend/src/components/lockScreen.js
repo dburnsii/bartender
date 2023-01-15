@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Typography, TextField, Modal, CircularProgress} from '@mui/material';
-import Keyboard, {KeyboardReactInterface} from 'react-simple-keyboard';
+import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import '../App.css'
 

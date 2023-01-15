@@ -1,15 +1,3 @@
-# Include the bartender configuration when booting up
-grep -qxF 'include bartenderconfig.txt' /boot/config.txt || echo 'include bartenderconfig.txt' >> /boot/config.txt
-sed -i 's/dtoverlay=vc4-kms-v3d/#dtoverlay=vc4-kms-v3d/g' /boot/config.txt
-
-# Update lightdm to remove the cursor
-sed -i 's/#xserver-command=X/xserver-command=X -nocursor -s 0/' /etc/lightdm/lightdm.conf
-# Also ensure lightdm is run by the pi user
-sed -i 's/autologin-user=rpi-first-boot-wizard/autologin-user=pi/' /etc/lightdm/lightdm.conf
-
-# Disable welcome prompt on login
-rm -f /etc/xdg/autostart/piwiz.desktop
-
 # Disable dhcpcd from launching wpa_supplicant
 rm /usr/lib/dhcpcd/dhcpcd-hooks/10-wpa_supplicant
 
@@ -17,3 +5,10 @@ rm /usr/lib/dhcpcd/dhcpcd-hooks/10-wpa_supplicant
 sed -i 's%ExecStart=/sbin/wpa_supplicant -c%ExecStart=/sbin/wpa_supplicant -u -c%' /usr/lib/systemd/system/wpa_supplicant@.service
 systemctl disable wpa_supplicant
 systemctl enable wpa_supplicant@wlan0
+
+useradd -m bartender
+chown -R bartender:bartender /usr/share/bartender
+chown -R bartender:bartender /home/bartender
+usermod -a -G i2c bartender
+usermod -a -G tty bartender
+#usermod -a -G gpio bartender

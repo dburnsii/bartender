@@ -1,5 +1,7 @@
 [Unit]
 Description=Bartender WiFi Socket.io Server
+Requires=central.service
+After=central.service
 
 [Service]
 Type=simple

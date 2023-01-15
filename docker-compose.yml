@@ -22,7 +22,7 @@ services:
     <<: *basics
     working_dir: '/home/bartender/frontend'
     command: npm run start
-    mem_limit: 512m
+    mem_limit: 1G
   system:
     <<: *basics
     command: python3 backend/system_server/system_server.py

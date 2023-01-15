@@ -5,7 +5,7 @@ import socketio
 import sys
 import rpi_backlight
 
-simulation = False
+simulation = True
 
 sio = socketio.Client()
 backlight = None

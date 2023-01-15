@@ -1,14 +1,14 @@
 [Unit]
 Description=Bartender Valve Server
-Requires=central.service
-After=central.service
+Requires=central.service database.service
+After=central.service database.service
 
 [Service]
 Type=simple
 Environment=VIRTUAL_ENV=<BARTENDER_DIR>/venv
 Environment=PATH=<BARTENDER_DIR>/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ExecStart=<BARTENDER_DIR>/venv/bin/python3 <BARTENDER_DIR>/backend/valve_server/valve_server.py
-User=pi
+#User=bartender
 
 [Install]
 WantedBy=multi-user.target

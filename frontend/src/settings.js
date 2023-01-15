@@ -4,6 +4,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import LockScreen from './components/lockScreen';
 import WifiSetup from './components/wifiSetup';
 import DisplaySetup from './components/displaySetup';
+import ScaleSetup from './components/scaleSetup';
 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
@@ -20,6 +21,8 @@ class SettingsPage extends React.Component {
     this.showWifi = this.showWifi.bind(this);
     this.hideDisplay = this.hideDisplay.bind(this);
     this.showDisplay = this.showDisplay.bind(this);
+    this.showScale = this.showScale.bind(this);
+    this.hideScale = this.hideScale.bind(this);
     this.wifiScanInterval = null;
     this.state = {
       settingPin: false,
@@ -65,6 +68,13 @@ class SettingsPage extends React.Component {
     this.setState({displayMenu: true});
   }
 
+  hideScale(){
+    this.setState({scaleMenu: false});
+  }
+
+  showScale(){
+    this.setState({scaleMenu: true});
+  }
 
   lockPinScreen(pin, active){
     if(active){
@@ -229,6 +239,22 @@ class SettingsPage extends React.Component {
               knownNetworks={this.state.knownNetworks}
               open={this.state.wifiMenu}
               hide={this.hideWifi}
+              socket={this.props.socket} />
+            
+            <Grid item xs={4} onClick={this.showScale}>
+              <Typography variant="h5">Scale</Typography>
+            </Grid>
+            <Grid item xs={6} onClick={this.showScale}>
+              <Typography variant="h5" align="right">
+                TODO
+              </Typography>
+            </Grid>
+            <Grid item xs={2} onClick={this.showScale}>
+              <ArrowForwardIosIcon/>
+            </Grid>
+            <ScaleSetup
+              open={this.state.scaleMenu}
+              hide={this.hideScale}
               socket={this.props.socket} />
 
             <Grid item xs={4}>

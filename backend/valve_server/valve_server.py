@@ -6,9 +6,9 @@ import sys
 import atexit
 import socketio
 
-simulation = True
 
-pins = [21, 26, 20, 19, 16, 12, 22, 23, 27, 4]
+controller = None
+controller_type = "simulation" # One of: simulation, gpio, mcp23017
 pour_target = 0
 pour_total = 0
 pour_queue = []
@@ -21,18 +21,6 @@ manual_override = False
 manual_pour_active = False
 
 sio = socketio.Client()
-
-
-class ValveController:
-    """
-    Controller for MCP23017 I2C GPIO Expander
-    """
-    def __init__(self, simulation=True):
-        pass
-
-    def write(self, index, value):
-        pass
-
 
 @atexit.register
 def cleanup():
@@ -47,34 +35,30 @@ def cleanup():
 @sio.event
 def activate_valve(data):
     global cup_presence_status
-    print(data)
-    print("Oh you want me to turn on  pump {}?".format(data['pin']))
-    print(pins[int(data['pin'])])
-    if not simulation:
-        if cup_presence_status or manual_override:
-            gpio.output(pins[int(data['pin'])], gpio.HIGH)
-    else:
-        print("Simulating pour on valve {}".format(data['pin']))
-        sio.emit("simulated_pour", {"status": True})
+    global controller
+    global manual_override
+
+    print("Activating Valve: {}".format(data['pin']))
+    if cup_presence_status or manual_override:
+        controller.activate(int(data['pin']))
 
 
 @sio.event
 def deactivate_valve(data):
-    print(data)
-    print("Had enough of {} huh?".format(data['pin']))
-    if not simulation:
-        gpio.output(pins[int(data['pin'])], gpio.LOW)
+    print("Deactivating Valve: {}".format(data['pin']))
+    # As of right now, we can only allow one valve to operate
+    # at a time, due to the scale constraints. If this is
+    # overcome, this may resume deactivating single valves,
+    # but until then, it doesn't hurt to make sure all valves
+    # are turned off.
+    deactivate_valves()
 
 
 @sio.event
 def deactivate_valves(data=None):
-    global simulation
     print("Shutting off all valves.")
-    if not simulation:
-        for pin in pins:
-            gpio.output(pin, gpio.LOW)
-    else:
-        sio.emit("simulated_pour", {"status": False})
+    for pin in range(controller.count):
+        controller.deactivate(pin)
 
 
 @sio.event
@@ -99,11 +83,10 @@ def drink_pour(data):
                                    "place a cup on the scale before pouring a "
                                    "drink."})
         return
-    print(data)
+
     print("Pouring you a drank, oh-woah-we-woah")
     valves = utils.grab_valves()
     drink = utils.grab_drink(data["id"])
-    print(drink)
     pour_queue = []
     pour_total = 0
     for ingredient in drink["ingredients"]:
@@ -129,10 +112,7 @@ def drink_pour(data):
     pour_target = scale_cache[-1] + first_ingredient["quantity"]
     print("Pour target: {}".format(pour_target))
     sio.emit("drink_pour_active", {"status": True})
-    if simulation:
-        sio.emit("simulated_pour", {"status": True})
-    else:
-        sio.emit("activate_valve", {"pin": first_ingredient["pin"]})
+    controller.activate(first_ingredient["pin"])
     # Add a rouge value to trick the variance algorithm into thinking the pour
     # has started
     if (len(scale_cache) > 100):
@@ -202,7 +182,7 @@ def weight(data):
                         "quantity": ingredient["quantity"]})
                     sio.emit("simulated_pour", {"status": True})
                 else:
-                    sio.emit("activate_valve", {"pin": ingredient["pin"]})
+                    controller.activate(ingredient["pin"])
             else:
                 print("Finished pouring drink!")
                 sio.emit("drink_pour_active", {"status": False, "progress": 0})
@@ -236,25 +216,27 @@ def connect():
 
 @sio.event
 def simulation(data):
-    global simulation
+    global controller_type
+    global controller
     print("Updating simulation status.")
     simulation = data["status"]
 
-    if not simulation:
-        global gpio
-        import RPi.GPIO as gpio
-        gpio.setmode(gpio.BCM)
-        for pin in pins:
-            gpio.setup(pin, gpio.OUT)
-            gpio.output(pin, gpio.LOW)
+    if controller_type == "gpio":
+        from gpio_controller import GpioController
+        controller = GpioController()
+    elif controller_type == "mcp23017":
+        from mcp_controller import McpController
+        controller = McpController()
+    else:
+        from sim_controller import SimulationController
+        controller = SimulationController()
+        controller.init_socket(sio)
 
 
 @sio.event
 def disconnect():
     print("Disconnected from server. Shutting off all pumps.")
-    if not simulation:
-        for pin in pins:
-            gpio.output(pin, gpio.LOW)
+    controller.cleanup()
     sys.exit(0)
 
 
@@ -264,9 +246,10 @@ while 1:
     time.sleep(0.25)
     sio.emit("ping", "")
     if (time.time() - scale_heartbeat > 3):
-        print("ERROR! Scale has no pulse! Shutting all valves off as a "
-              "safety measure")
-        deactivate_valves()
-        cup_presence_status = False
-        pour_target = 0
-        pour_queue = []
+        if not manual_override:
+            print("ERROR! Scale has no pulse! Shutting all valves off as a "
+                "safety measure")
+            deactivate_valves()
+            cup_presence_status = False
+            pour_target = 0
+            pour_queue = []

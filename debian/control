@@ -8,4 +8,4 @@ Priority: standard
 Component: main
 Architecture: <ARCH>
 Version: <VERSION>
-Depends: firefox-esr, python3, python3-apt
+Depends: firefox, python3, python3-apt, adduser, xinit, xserver-xorg, xdotool

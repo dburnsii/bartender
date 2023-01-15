@@ -52,11 +52,11 @@ venv: requirements.txt
 
 frontend/node_modules: frontend
 	cd frontend && \
-	npm -d install
+	npm -d install --max-old-space-size=4096
 
 frontend/build: frontend/node_modules
 	cd frontend && \
-	npm -d run build
+	npm -d run build --max-old-space-size=4096
 
 systemd/%.service: systemd/%.template
 	sed \

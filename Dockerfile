@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM ubuntu:jammy
 
 # Install build packages
 RUN apt-get update && apt-get -y upgrade

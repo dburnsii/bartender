@@ -11,36 +11,28 @@ jobs:
     runs-on: ubuntu-20.04
     name: Build Armv7 on Debian Bullseye
     steps:
-      -
-        name: Git Checkout
-        uses: actions/checkout@v2
+      - name: Git Checkout
+        uses: actions/checkout@v3
         with:
           submodules: 'true'
-      -
-        name: Setup Cache
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-armv7
+      - name: Build Frontend
+        uses: actions/setup-node@v3
         with:
-          path: |
-            .cache
-          key: ${{ runner.os }}-${{ env.cache-name}}
-      -
-        name: Set up QEMU
+          node-version: 16
+          cache: 'npm'
+      - run: cd frontend && npm run build
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
           image: tonistiigi/binfmt:latest
           platforms: linux/arm/v7
-      -
-        name: Build .deb Armv7
+      - name: Build .deb Armv7
         run: |
           docker run --platform linux/arm/v7 --volume $(pwd):/home/bartender -e GPG_SIGNING_KEY=${{secrets.GPG_SIGNING_KEY}} dburnsii/bartender-build:latest
-      -
-        name: Fix permissions on build
+      - name: Fix permissions on build
         run: |
           sudo chmod -R a+rw .
-      -
-        name: Upload Armv7 .deb
+      - name: Upload Armv7 .deb
         uses: actions/upload-artifact@v2
         with:
           name: bartender-armv7.deb
@@ -49,36 +41,28 @@ jobs:
     runs-on: ubuntu-20.04
     name: Build Arm64 on Debian Bullseye
     steps:
-      -
-        name: Git Checkout
-        uses: actions/checkout@v2
+      - name: Git Checkout
+        uses: actions/checkout@v3
         with:
           submodules: 'true'
-      -
-        name: Setup Cache
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-arm64
+      - name: Build Frontend
+        uses: actions/setup-node@v3
         with:
-          path: |
-            .cache
-          key: ${{ runner.os }}-${{ env.cache-name}}
-      -
-        name: Set up QEMU
+          node-version: 16
+          cache: 'npm'
+      - run: make frontend/build
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
           image: tonistiigi/binfmt:latest
           platforms: linux/arm64
-      -
-        name: Build DEB Arm64
+      - name: Build DEB Arm64
         run: |
           docker run --platform linux/arm64 --volume $(pwd):/home/bartender -e GPG_SIGNING_KEY=${{secrets.GPG_SIGNING_KEY}} dburnsii/bartender-build:latest
-      -
-        name: Fix permissions on build
+      - name: Fix permissions on build
         run: |
           sudo chmod -R a+rw .
-      -
-        name: Upload Arm64 .deb
+      - name: Upload Arm64 .deb
         uses: actions/upload-artifact@v2
         with:
           name: bartender-arm64.deb

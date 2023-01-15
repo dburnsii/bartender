@@ -57,6 +57,7 @@ class NAU7802:
         self.zero = 0
         self.reset()
         self.setup()
+        self.calibrate_offset()
 
     def setup(self):
         if not self.powered:
@@ -74,9 +75,13 @@ class NAU7802:
             while not (b & CR):
                 b = self.bus.read_byte_data(DA, PU_CTRL)
             v = self.bus.read_i2c_block_data(DA, ADC_B2, 3)
-            output += (v[0] << 16) + (v[1] << 8) + v[2]
+            adc_read = (v[0] << 16) + (v[1] << 8) + v[2]
+            # Flip for negative value
+            if adc_read & 0x800000:
+                adc_read ^= 0xFFFFFF
+                adc_read = -adc_read
+            output += adc_read
         output = (output / count) - self.zero
-        print(output)
         return output
 
     def reset(self):
@@ -137,23 +142,24 @@ class NAU7802:
     def tare(self):
         self.zero = self.get_weight(10)
 
+    def toggle_pga_cap(self):
+        b = self.bus.read_byte_data(DA, 0x1C)
+        self.bus.write_byte_data(DA, 0x1C, b ^ 0x80)
+
     def cleanup(self):
         print("Cleaning up")
         self.bus.close()
 
-# atexit.register(cleanup)
+if __name__ == "__main__":
+    adc = NAU7802()
+    adc.tare()
+    adc.toggle_pga_cap()
+    adc.calibrate_offset()
+    adc.tare()
 
-# if main:
-#     adc = NAU7805()
+    atexit.register(adc.cleanup)
 
-#     adc.reset()
-#     adc.setup()
-
-#     time.sleep(1)
-
-#     adc.calibrate_offset()
-
-#     while True:
-#         v = int((read() + read() + read())/ 3)
-#         print(int(v/1000))
-#         time.sleep(0.2)
+    while True:
+        v = adc.get_weight()
+        print(v)
+        time.sleep(0.2)

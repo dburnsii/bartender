@@ -49,8 +49,8 @@ pymongo==3.5.1
 pyparsing==2.4.7
 pyserial==3.5
 pytest==6.2.5
-python-engineio==4.2.1
-python-socketio==5.4.0
+python-engineio==4.3.4
+python-socketio==5.7.2
 pytz==2021.3
 requests==2.26.0
 rpi-backlight==2.4.1
@@ -72,3 +72,4 @@ wsproto==1.0.0
 WTForms==2.3.3
 yarl==1.7.2
 zeroconf==0.36.7
+adafruit-circuitpython-mcp230xx

@@ -1,6 +1,8 @@
 bartender (0.1.4) unstable; urgency=medium
 
   * Integrated LEDs into RPi Software
+  * Added WiFi setup in UI
+  * Updates for Armbian deployment
 
 -- Desone Burns II <dburnsii@live.com>  Sun, 19 Jun 2022 11:00:00 -0700
 

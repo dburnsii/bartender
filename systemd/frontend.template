@@ -7,7 +7,7 @@ After=central.service
 Type=simple
 WorkingDirectory=<BARTENDER_DIR>/frontend
 ExecStart=/usr/bin/python3 -m http.server 3000
-User=pi
+User=bartender
 
 [Install]
 WantedBy=multi-user.target

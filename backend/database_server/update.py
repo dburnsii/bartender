@@ -11,7 +11,8 @@ import json
 config_items = {"lock_pin": "",
                 "blank_time": "60000",
                 "screen_brightness": "100",
-                "led_brightness": "100"}
+                "led_brightness": "100",
+                "scale_calibration": "100"}
 
 
 class BartenderUpdater(object):
