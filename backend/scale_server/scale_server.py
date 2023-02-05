@@ -3,6 +3,7 @@
 import socketio
 import time
 import sys
+import requests
 from simulated_scale import Simulator
 
 import gc
@@ -25,6 +26,7 @@ adc = None
 adc_module = "simulation"  # One of: "hx711", "nau7802", or "simulation"
 manual_target = 0
 manual_start = 0
+config_url = "http://localhost:5000/config/"
 
 
 def cleanup():
@@ -43,6 +45,23 @@ def cleanup():
 
 def variance():
     return max(measures) - min(measures)
+
+
+def get_config(key):
+    r = requests.get(config_url + key)
+    if r.ok:
+        print(r.text)
+        return r.text.strip().replace("\"", "")
+    else:
+        print("Error getting config: '{}'".format(key))
+        return None
+
+def set_config(key, value):
+    r = requests.put(config_url + key, value)
+    if r.ok:
+        print("Successfully updated: {}".format(key))
+    else:
+        print("Failed to update config: {}".format(key))
 
 
 @sio.event
@@ -81,29 +100,31 @@ def simulation(data):
     global adc
     global adc_module
     simulation = data['status']
+    print(simulation)
 
-    if not simulation:
-        print("Initializing hardware")
-        if adc_module == "simulation" or simulation:
-            adc = Simulator()
-        elif adc_module == "hx711":
-            global GPIO
-            global HX711
-            import RPi.GPIO as GPIO
-            from hx711 import HX711
-            print("Initializing HX711")
-            adc = HX711(6, 5)
-            adc.set_reference_unit(1)
-            adc.reset()
-            adc.tare()
-        elif adc_module == "nau7802":
-            print("Initializing NAU7802")
-            global NAU7802
-            from nau7802 import NAU7802
-            adc = NAU7802(gain=128)
-        else:
-            print("No valid module selected.")
+    adc_module = get_config("scale_controller")
 
+    print("Initializing hardware")
+    if adc_module == "simulation":
+        adc = Simulator()
+    elif adc_module == "hx711":
+        global GPIO
+        global HX711
+        import RPi.GPIO as GPIO
+        from hx711 import HX711
+        print("Initializing HX711")
+        adc = HX711(6, 5)
+        adc.set_reference_unit(1)
+        adc.reset()
+        adc.tare()
+    elif adc_module == "nau7802":
+        print("Initializing NAU7802")
+        global NAU7802
+        from nau7802 import NAU7802
+        adc = NAU7802(gain=128)
+    else:
+        print("No valid module selected.")
+        adc = Simulator()
     print("Scale ready!")
 
 
@@ -122,7 +143,7 @@ def tare_scale(data):
     adc.reset()
     adc.tare()
     present = False
-    cup_presence_request()
+    cup_presence_request("")
 
 
 @sio.event
@@ -141,7 +162,7 @@ def calibrate_scale(data):
         current_weight = adc.get_weight(10)
     calibration = known_weight / current_weight
     print("New calibration value: {}".format(calibration))
-    # TODO: Save calibration
+    set_config("scale_calibration", str(calibration))
 
 
 @sio.event
@@ -163,9 +184,12 @@ def connect():
 
 
 if __name__ == "__main__":
-    global simulation
-    global present
     sio.connect('http://localhost:8080')
+
+    calibration = int(get_config("scale_calibration"))
+    if calibration is None:
+        calibration = 100
+
     while 1:
         try:
             if not simulation and adc:

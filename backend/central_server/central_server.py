@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from aiohttp import web
+import asyncio
 import socketio
 import time
 import os
@@ -36,6 +37,7 @@ async def register(sid, data):
     print(data)
     service_name = data["name"]
     registered_services[service_name] = RegisteredService(sid, service_name)
+    await asyncio.sleep(1)
     await sio.emit("simulation", {"status": simulation}, to=sid)
 
 

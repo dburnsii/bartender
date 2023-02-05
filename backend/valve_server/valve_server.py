@@ -5,6 +5,7 @@ import time
 import sys
 import atexit
 import socketio
+import requests
 
 
 controller = None
@@ -31,6 +32,15 @@ def cleanup():
             gpio.setup(pin, gpio.OUT)
             gpio.output(pin, gpio.LOW)
         gpio.cleanup()
+
+def get_config(key):
+    r = requests.get(config_url + key)
+    if r.ok:
+        print(r.text)
+        return r.text.strip().replace("\"", "")
+    else:
+        print("Error getting config: '{}'".format(key))
+        return None
 
 
 @sio.event
@@ -222,12 +232,17 @@ def simulation(data):
     print("Updating simulation status.")
     simulation = data["status"]
 
+    controller_type = get_config("valve_controller")
+
     if controller_type == "gpio":
-        from gpio_controller import GpioController
+        from gpio import GpioController
         controller = GpioController()
     elif controller_type == "mcp23017":
-        from mcp_controller import McpController
-        controller = McpController()
+        from mcp23017 import McpController
+        controller = GpioController()
+    elif controller_type == "pcal6416a":
+        from pcal6416a import GpioController
+        controller = GpioController()
     else:
         from sim_controller import SimulationController
         controller = SimulationController()

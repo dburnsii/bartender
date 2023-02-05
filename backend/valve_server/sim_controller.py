@@ -4,6 +4,7 @@ import socketio
 
 class SimulationController(Controller):
     def __init__(self, count=10):
+        print("Initializing Simuldated Valve Controller")
         super().__init__(count)
 
     def init_socket(self, sio):

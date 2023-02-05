@@ -12,7 +12,10 @@ config_items = {"lock_pin": "",
                 "blank_time": "60000",
                 "screen_brightness": "100",
                 "led_brightness": "100",
-                "scale_calibration": "100"}
+                "scale_calibration": "100",
+                "simulation": "0",
+                "valve_controller": "pcal6416a",
+                "scale_controller": "nau7802"}
 
 
 class BartenderUpdater(object):

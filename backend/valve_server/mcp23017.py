@@ -8,6 +8,7 @@ from controller import Controller
 
 class GpioController(Controller):
     def __init__(self, count=10):
+        print("Initializing MCP23017 Valve Controller")
         self.pins = [8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7]
         self.count = count
         i2c = busio.I2C(board.SCL, board.SDA)
@@ -19,14 +20,14 @@ class GpioController(Controller):
             pin.value = False
 
     def activate(self, index):
-        if index >= count or index < 0:
+        if index >= self.count or index < 0:
             print("Invalid pin: {}".format(index))
             return
         pin = self.mcp.get_pin(self.pins[index])
         pin.value = True
 
     def deactivate(self, index):
-        if index >= count or index < 0:
+        if index >= self.count or index < 0:
             print("Invalid pin: {}".format(index))
             return
         pin = self.mcp.get_pin(self.pins[index])

@@ -2,16 +2,22 @@ import React from 'react';
 import { Card, Modal, Grid, Typography, Button, Slider, Select, MenuItem } from '@mui/material';
 import '../App.css'
 
-class ScaleSetup extends React.Component {
+class HardwareSetup extends React.Component {
   constructor(props){
     super(props);
     this.handleScaleType = this.handleScaleType.bind(this);
     this.handleScaleCalibrationBegin = this.handleScaleCalibrationBegin.bind(this);
     this.handleScaleTare = this.handleScaleTare.bind(this);
     this.handleScaleCalibration = this.handleScaleCalibration.bind(this);
+    this.handleScaleChange = this.handleScaleChange.bind(this);
+    this.handleValveChange = this.handleValveChange.bind(this);
     this.cardContent = this.cardContent.bind(this);
+    this.queryControllers = this.queryControllers.bind(this);
+    
     this.state = {
-      screen: "menu"
+      screen: "menu",
+      scaleController: "",
+      valveController: ""
     }
   }
 
@@ -44,7 +50,42 @@ class ScaleSetup extends React.Component {
     this.setTimeout(() => {this.setState({screen: "menu"}, 2000)});
   }
 
-  componentDidMount(){}
+  handleScaleChange(event){
+    fetch(this.configURL, 
+      { method: 'PUT',
+        headers : {
+          key: "scale_controller",
+          value: event.target.value
+        }
+      })
+    .then((response) => this.queryControllers());
+  }
+
+  handleValveChange(event){
+    fetch(this.configURL, 
+      { method: 'PUT',
+        headers : {
+          key: "valve_controller",
+          value: event.target.value
+        }
+      })
+    .then((response) => this.queryControllers());
+  }
+
+  queryControllers(){
+    console.log(this.configURL)
+    fetch(this.configURL + "/valve_controller")
+      .then((response) => response.json())
+      .then((json) => this.setState({"valveController": json}));
+    fetch(this.configURL + "/scale_controller")
+      .then((response) => response.json())
+      .then((json) => this.setState({"scaleController": json}));
+  }
+
+  componentDidMount(){
+    this.configURL = "http://" + window.location.hostname + ":5000/config"
+    this.queryControllers();
+  }
 
   componentWillUnmount(){}
 
@@ -52,23 +93,43 @@ class ScaleSetup extends React.Component {
     if (screen === "menu"){
       return (<Card style={this.cardStyle()}>
               <Grid container style={{paddingTop: "16px"}}>
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <Typography variant="h6">Scale Type</Typography>
                 </Grid>
-                <Grid item xs={8}>
-                  <Select>
+                <Grid item xs={6}>
+                  <Select
+                    value={this.state.scaleController}
+                    onChange={this.handleScaleChange} >
                     <MenuItem value="nau7802">NAU7802</MenuItem>
                     <MenuItem value="hx711">HX711</MenuItem>
+                    <MenuItem value="simulation">Simulator</MenuItem>
                   </Select>
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <Typography variant="h6">Scale Calibration</Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={6}>
                   <Button
-                    onClick={this.handleScaleCalibrationBegin}>
+                    onClick={this.handleScaleCalibrationBegin}
+                    variant="contained"
+                    style={{marginBottom: "16px", marginTop: "16px"}}
+                    >
                     Calibrate</Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="h6">Valve Type</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Select
+                    value={this.state.valveController}
+                    onChange={this.handleValveChange}
+                    autoWidth={true} >
+                    <MenuItem value="pcal6416a">PCAL6416A</MenuItem>
+                    <MenuItem value="mcp23017">MCP23017</MenuItem>
+                    <MenuItem value="gpio">GPIO</MenuItem>
+                    <MenuItem value="simulation">Simulator</MenuItem>
+                  </Select>
                 </Grid>
               </Grid>
             </Card>);
@@ -125,4 +186,4 @@ class ScaleSetup extends React.Component {
   }
 }
 
-export default ScaleSetup
+export default HardwareSetup

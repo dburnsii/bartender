@@ -4,6 +4,7 @@ from controller import Controller
 
 class GpioController(Controller):
     def __init__(self):
+        print("Initializing GPIO-Direct Valve Controller")
         self.pins = [21, 26, 20, 19, 16, 12, 22, 23, 27, 4]
         self.count = len(self.pins)
         gpio.setmode(gpio.BCM)
