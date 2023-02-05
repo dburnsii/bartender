@@ -56,6 +56,7 @@ def get_config(key):
         print("Error getting config: '{}'".format(key))
         return None
 
+
 def set_config(key, value):
     r = requests.put(config_url + key, value)
     if r.ok:

@@ -41,5 +41,4 @@ if __name__ == "__main__":
 
     while True:
         v = adc.get_weight()
-        #print(v)
         time.sleep(0.2)

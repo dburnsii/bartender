@@ -33,6 +33,7 @@ def cleanup():
             gpio.output(pin, gpio.LOW)
         gpio.cleanup()
 
+
 def get_config(key):
     r = requests.get(config_url + key)
     if r.ok:
