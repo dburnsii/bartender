@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
-        run: cd frontend && npm run build
+        run: make frontend/build
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
@@ -50,7 +50,7 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
-        run: make frontend/build
+      - run: make frontend/build
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
