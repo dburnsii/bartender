@@ -10,7 +10,7 @@ asgiref==3.4.1
 async-timeout==4.0.2
 attrs==21.4.0
 bidict==0.21.3
-bottle==0.12.19
+bottle==0.12.20
 certifi==2021.5.30
 chardet==4.0.0
 charset-normalizer==2.0.12
